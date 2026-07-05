@@ -55,4 +55,149 @@ describe("local HTTP server", () => {
       error: { code: "INVALID_MESSAGE_REQUEST" },
     });
   });
+
+  it("serves the developer Playground page", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/playground`);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(html).toContain("Steward Playground");
+    expect(html).toContain("EN-001 Strategy Selection");
+    expect(html).toContain("EN-002 Behavior Plan / Generation Request");
+    expect(html).toContain("Provider Response");
+    expect(html).toContain("PB Validation");
+    expect(html).toContain("EN-003 Constitutional Review");
+    expect(html).toContain("EN-004 Revision");
+    expect(html).toContain("EN-005 Fallback");
+    expect(html).toContain("Copy Trace JSON");
+    expect(html).toContain("/playground.js");
+  });
+
+  it("returns privileged inspection only from the Playground API", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/api/playground`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Should I make this decision?" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    const body = (await response.json()) as Record<string, unknown>;
+    expect(Object.keys(body).sort()).toEqual([
+      "learnerResponse",
+      "metadata",
+      "stages",
+    ]);
+    expect(body).toHaveProperty("stages.strategySelection");
+    expect(body).toHaveProperty("stages.providerRequest");
+    expect(body).toHaveProperty("stages.providerValidation");
+    expect(body).toHaveProperty("stages.constitutionalReview");
+    expect(body).toHaveProperty("metadata.provider", "fake");
+    expect(body).toHaveProperty("metadata.model", "local-demo");
+
+    const learnerResponse = body.learnerResponse as Record<string, unknown>;
+    expect(Object.keys(learnerResponse).sort()).toEqual([
+      "kind",
+      "revisions",
+      "text",
+    ]);
+  });
+
+  it("serves the Benchmark Runner and all canonical suite summaries", async () => {
+    const origin = await startServer();
+    const [pageResponse, fixtureResponse] = await Promise.all([
+      fetch(`${origin}/benchmarks`),
+      fetch(`${origin}/api/benchmarks`),
+    ]);
+    const html = await pageResponse.text();
+    const fixtures = (await fixtureResponse.json()) as {
+      sets: {
+        id: string;
+        totalConversations: number;
+      }[];
+    };
+
+    expect(pageResponse.status).toBe(200);
+    expect(html).toContain("Steward Benchmark Runner");
+    expect(html).toContain("Run Selected");
+    expect(html).toContain("Run All");
+    expect(html).toContain("/benchmarks.js");
+    expect(fixtureResponse.status).toBe(200);
+    expect(fixtures.sets).toHaveLength(12);
+    expect(fixtures.sets[0]).toMatchObject({
+      id: "EW-001",
+      totalConversations: 6,
+    });
+    expect(fixtures.sets.at(-1)).toMatchObject({
+      id: "EW-012",
+      totalConversations: 6,
+    });
+  });
+
+  it("defaults Benchmark API runs to learner-safe unscored results", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/api/benchmarks/run`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scope: "selected", setId: "EW-001" }),
+    });
+    const body = (await response.json()) as Record<string, unknown>;
+    const serialized = JSON.stringify(body);
+
+    expect(response.status).toBe(200);
+    expect(body).toHaveProperty("status", "UNSCORED");
+    expect(body).toHaveProperty("sets.0.casesUnscored", 6);
+    expect(serialized).not.toMatch(
+      /developerTrace|strategySelection|reviewResult|fallback/,
+    );
+  });
+
+  it("serves the Foundation Certification Dashboard", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/certification`);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(html).toContain("Steward Certification Dashboard");
+    expect(html).toContain("Run Foundation Certification");
+    expect(html).toContain(
+      "Certification execution collects outputs. Human scoring is still",
+    );
+    expect(html).toContain("required under EVAL-000.");
+    expect(html).toContain("/certification.js");
+  });
+
+  it("serves the developer Trace Comparison page", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/compare`);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(html).toContain("Trace Comparison");
+    expect(html).toContain("Trace A pasted JSON");
+    expect(html).toContain("Trace B pasted JSON");
+    expect(html).toContain("does not");
+    expect(html).toContain("infer constitutional meaning");
+    expect(html).toContain("/compare.js");
+  });
+
+  it("serves the Steward DevTools Home", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/devtools`);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(html).toContain("Steward developer tools");
+    expect(html).toContain("Foundation v1.0 Certified");
+    expect(html).toContain('href="/playground"');
+    expect(html).toContain('href="/benchmarks"');
+    expect(html).toContain('href="/certification"');
+    expect(html).toContain('href="/compare"');
+  });
 });

@@ -8,7 +8,7 @@ export class InvalidMessageRequest extends Error {
   readonly code = "INVALID_MESSAGE_REQUEST";
 }
 
-function parseMessage(body: unknown): string {
+export function parseMessage(body: unknown): string {
   if (
     typeof body !== "object" ||
     body === null ||

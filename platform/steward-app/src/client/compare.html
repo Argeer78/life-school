@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Steward Trace Comparison v1</title>
+    <link rel="stylesheet" href="/playground.css" />
+    <link rel="stylesheet" href="/compare.css" />
+  </head>
+  <body>
+    <main class="compare-shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Developer tool</p>
+          <h1>Trace Comparison <span>v1</span></h1>
+          <p class="subtitle">
+            Structural comparison of two privileged Steward traces.
+          </p>
+        </div>
+        <nav aria-label="Developer tools">
+          <a href="/playground" class="back-link">Playground</a>
+          <a href="/benchmarks" class="back-link">Benchmarks</a>
+          <a href="/certification" class="back-link">Certification</a>
+        </nav>
+      </header>
+
+      <p class="warning" role="note">
+        Developer-only. This tool compares actual JSON fields and does not
+        infer constitutional meaning.
+      </p>
+
+      <form id="compare-form">
+        <div class="trace-inputs">
+          <section class="input-card">
+            <label for="trace-a">Trace A pasted JSON</label>
+            <textarea
+              id="trace-a"
+              rows="16"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Paste privileged Trace A JSON"
+              required
+            ></textarea>
+            <p id="trace-a-error" class="input-error" aria-live="polite"></p>
+          </section>
+          <section class="input-card">
+            <label for="trace-b">Trace B pasted JSON</label>
+            <textarea
+              id="trace-b"
+              rows="16"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Paste privileged Trace B JSON"
+              required
+            ></textarea>
+            <p id="trace-b-error" class="input-error" aria-live="polite"></p>
+          </section>
+        </div>
+        <div class="compare-actions">
+          <span id="compare-status" role="status" aria-live="polite">Ready</span>
+          <button type="submit">Compare traces</button>
+        </div>
+      </form>
+
+      <section class="comparison-results" aria-labelledby="results-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Field comparison</p>
+          <h2 id="results-heading">Comparison result</h2>
+        </div>
+        <p id="comparison-summary" class="comparison-summary">
+          Paste two traces to begin.
+        </p>
+        <div id="section-results" class="section-results"></div>
+      </section>
+    </main>
+
+    <script type="module" src="/compare.js"></script>
+  </body>
+</html>

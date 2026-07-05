@@ -50,4 +50,145 @@ describe("browser learner-safe boundary", () => {
     expect(app).toContain("const transcript = []");
     expect(app).not.toContain("inspection");
   });
+
+  it("keeps the Playground stateless and free of alternate constitutional logic", async () => {
+    const [html, app, trace] = await Promise.all([
+      readFile(
+        new URL("../../src/client/playground.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/playground.js", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/playground-trace.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+    const client = `${html}\n${app}\n${trace}`;
+
+    expect(html).not.toContain('action="/api/playground"');
+    expect(app).toContain('fetch("/api/playground"');
+    expect(html).toContain("Local developer inspection only.");
+    expect(html).toContain("Copy Trace JSON");
+    expect(app).toContain("navigator.clipboard.writeText");
+    expect(app).toContain('document.execCommand("copy")');
+    expect(app).toContain("serializePlaygroundTrace(latestResult)");
+    expect(client).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|analytics|telemetry|history\s*=|transcript\s*=/i,
+    );
+    expect(app).not.toMatch(
+      /CS-\d{3}|selectConversationStrategies|planFromStrategySelection|validateProviderResult|rejectAssignedPurpose/,
+    );
+  });
+
+  it("keeps the Benchmark Runner stateless and free of evaluation logic", async () => {
+    const [html, app] = await Promise.all([
+      readFile(
+        new URL("../../src/client/benchmarks.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/benchmarks.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+    const client = `${html}\n${app}`;
+
+    expect(html).toContain("Human evaluation remains manual.");
+    expect(html).toContain("Show privileged summaries");
+    expect(app).toContain('fetch("/api/benchmarks"');
+    expect(app).toContain('fetch("/api/benchmarks/run"');
+    expect(client).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|analytics|telemetry|history\s*=|transcript\s*=/i,
+    );
+    expect(app).not.toMatch(
+      /runConstitutionalConversation|runEvaluationSet|runEvaluationCertification|selectConversationStrategies|validateProviderResult/,
+    );
+    expect(app).not.toMatch(/status\s*=\s*["']PASS["']/);
+  });
+
+  it("keeps certification execution canonical, manual, and safe by default", async () => {
+    const [html, app] = await Promise.all([
+      readFile(
+        new URL("../../src/client/certification.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/certification.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+    const client = `${html}\n${app}`;
+
+    expect(html).toContain(
+      "Certification execution collects outputs. Human scoring is still",
+    );
+    expect(html).toContain("required under EVAL-000.");
+    expect(html).toContain("Show privileged summaries");
+    expect(app).toContain('fetch("/api/benchmarks"');
+    expect(app).toContain('fetch("/api/benchmarks/run"');
+    expect(app).toContain('scope: "all"');
+    expect(client).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|analytics|telemetry|history\s*=|transcript\s*=/i,
+    );
+    expect(app).not.toMatch(
+      /runConstitutionalConversation|runEvaluationCertification|selectConversationStrategies|validateProviderResult/,
+    );
+    expect(app).not.toMatch(/status\s*=\s*["']PASS["']/);
+    expect(app).not.toMatch(/status\s*=\s*["']FAIL["']/);
+  });
+
+  it("keeps Trace Comparison local, structural, and developer-only", async () => {
+    const [html, app, comparison] = await Promise.all([
+      readFile(
+        new URL("../../src/client/compare.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/compare.js", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/trace-comparison.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+    const client = `${html}\n${app}\n${comparison}`;
+
+    expect(html).toContain("Developer-only.");
+    expect(html).toContain("does not");
+    expect(html).toContain("infer constitutional meaning");
+    expect(app).not.toContain("fetch(");
+    expect(client).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|analytics|telemetry/,
+    );
+    expect(client).not.toMatch(
+      /runConstitutionalConversation|selectConversationStrategies|planFromStrategySelection|validateProviderResult/,
+    );
+  });
+
+  it("keeps DevTools Home separate from learner UI behavior", async () => {
+    const [devtools, learnerHtml, learnerApp] = await Promise.all([
+      readFile(
+        new URL("../../src/client/devtools.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/index.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/app.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+
+    expect(devtools).not.toContain("<script");
+    expect(devtools).not.toContain("/api/message");
+    expect(learnerHtml).not.toContain("privileged pipeline information");
+    expect(learnerApp).not.toContain("/devtools");
+    expect(learnerApp).not.toContain("inspection");
+  });
 });

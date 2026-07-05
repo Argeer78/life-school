@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Steward DevTools v1</title>
+    <link rel="stylesheet" href="/devtools.css" />
+  </head>
+  <body>
+    <main class="devtools-shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Steward developer tools</p>
+          <h1>DevTools <span>v1</span></h1>
+          <p class="subtitle">
+            Local inspection and evaluation tools for the certified Steward
+            Foundation pipeline.
+          </p>
+        </div>
+        <a href="/" class="learner-link">Learner UI</a>
+      </header>
+
+      <p class="warning" role="note">
+        Developer-only. May expose privileged pipeline information.
+      </p>
+
+      <section class="foundation" aria-labelledby="foundation-title">
+        <div>
+          <p class="eyebrow">Certified baseline</p>
+          <h2 id="foundation-title">Foundation v1.0 Certified</h2>
+        </div>
+        <dl>
+          <div>
+            <dt>Certification</dt>
+            <dd>EVAL-001</dd>
+          </div>
+          <div>
+            <dt>Evaluation sets</dt>
+            <dd>12/12</dd>
+          </div>
+          <div>
+            <dt>Benchmark conversations</dt>
+            <dd>72/72</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="tool-section" aria-labelledby="tools-title">
+        <div class="section-heading">
+          <p class="eyebrow">Available tools</p>
+          <h2 id="tools-title">Choose a developer workflow</h2>
+        </div>
+
+        <div class="tool-grid">
+          <a class="tool-card" href="/playground">
+            <span class="tool-index">01</span>
+            <h3>Playground</h3>
+            <p>Inspect one production pipeline run.</p>
+            <span class="route">/playground</span>
+          </a>
+
+          <a class="tool-card" href="/benchmarks">
+            <span class="tool-index">02</span>
+            <h3>Benchmarks</h3>
+            <p>Execute individual evaluation suites.</p>
+            <span class="route">/benchmarks</span>
+          </a>
+
+          <a class="tool-card" href="/certification">
+            <span class="tool-index">03</span>
+            <h3>Certification</h3>
+            <p>
+              Execute Foundation certification outputs for human review.
+            </p>
+            <span class="route">/certification</span>
+          </a>
+
+          <a class="tool-card" href="/compare">
+            <span class="tool-index">04</span>
+            <h3>Trace Comparison</h3>
+            <p>Compare two privileged traces.</p>
+            <span class="route">/compare</span>
+          </a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

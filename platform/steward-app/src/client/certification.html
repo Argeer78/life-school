@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Steward Certification Dashboard v1</title>
+    <link rel="stylesheet" href="/benchmarks.css" />
+    <link rel="stylesheet" href="/certification.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Developer tool</p>
+        <h1>Steward Certification Dashboard <span>v1</span></h1>
+        <p>
+          Execute the complete Foundation benchmark suite through the canonical
+          evaluation runner.
+        </p>
+      </div>
+      <nav aria-label="Developer tools">
+        <a href="/benchmarks">Benchmarks</a>
+        <a href="/playground">Playground</a>
+        <a href="/">Learner UI</a>
+      </nav>
+    </header>
+
+    <p class="warning certification-notice" role="note">
+      Certification execution collects outputs. Human scoring is still
+      required under EVAL-000.
+    </p>
+
+    <main class="certification-shell">
+      <section class="certification-controls" aria-labelledby="suite-title">
+        <div>
+          <p class="eyebrow">Foundation suite</p>
+          <h2 id="suite-title">Foundation Certification</h2>
+          <p id="suite-count">Loading canonical evaluation fixtures...</p>
+        </div>
+        <div class="control-stack">
+          <label class="developer-toggle">
+            <input id="developer-mode" type="checkbox" />
+            Show privileged summaries
+          </label>
+          <button id="run-certification" type="button" disabled>
+            Run Foundation Certification
+          </button>
+        </div>
+      </section>
+
+      <dl id="certification-summary" class="certification-summary">
+        <div><dt>Total sets</dt><dd>-</dd></div>
+        <div><dt>Total conversations</dt><dd>-</dd></div>
+        <div><dt>Executed conversations</dt><dd>0</dd></div>
+        <div><dt>Provider</dt><dd>-</dd></div>
+        <div><dt>Model</dt><dd>-</dd></div>
+        <div><dt>Duration</dt><dd>-</dd></div>
+        <div><dt>Scoring status</dt><dd>HUMAN REVIEW REQUIRED</dd></div>
+      </dl>
+
+      <div id="run-status" class="run-status" role="status" aria-live="polite">
+        Loading
+      </div>
+
+      <section class="suite-catalog" aria-labelledby="included-title">
+        <h2 id="included-title">Included evaluation sets</h2>
+        <div id="suite-list" class="certification-suite-list">
+          <p>Loading...</p>
+        </div>
+      </section>
+
+      <section id="certification-results" class="results" aria-label="Certification results">
+        <p class="empty-state">No certification execution yet.</p>
+      </section>
+    </main>
+
+    <script type="module" src="/certification.js"></script>
+  </body>
+</html>

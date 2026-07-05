@@ -1,0 +1,151 @@
+.compare-shell {
+  width: min(1400px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 36px 0 64px;
+}
+
+.page-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.trace-inputs,
+.raw-sides {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.trace-inputs .input-card {
+  margin-top: 0;
+}
+
+.trace-inputs textarea {
+  min-height: 20rem;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+.input-error {
+  min-height: 1.4rem;
+  margin: 0.5rem 0 0;
+  color: #efaaaa;
+  font-size: 0.85rem;
+}
+
+.compare-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#compare-status {
+  color: #91a69a;
+}
+
+.comparison-results {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #29372f;
+  border-radius: 12px;
+  background: rgba(24, 32, 27, 0.94);
+}
+
+.comparison-summary {
+  margin: 0.75rem 0;
+  color: #cbd8d0;
+}
+
+.section-results {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.comparison-section {
+  overflow: hidden;
+  border: 1px solid #29372f;
+  border-radius: 9px;
+  background: #0d120f;
+}
+
+.comparison-section.changed {
+  border-color: #725a34;
+}
+
+.comparison-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.comparison-header h3,
+.comparison-header p {
+  margin: 0;
+}
+
+.comparison-header p {
+  margin-top: 0.25rem;
+  color: #91a69a;
+  font-size: 0.84rem;
+}
+
+.comparison-state {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  color: #b8dfc4;
+  background: #183322;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.changed .comparison-state {
+  color: #f0d5a2;
+  background: #3b2b16;
+}
+
+.raw-sides {
+  padding: 0 1rem 1rem;
+}
+
+.raw-sides details {
+  min-width: 0;
+  border: 1px solid #29372f;
+  border-radius: 7px;
+}
+
+.raw-sides summary {
+  padding: 0.7rem;
+}
+
+.raw-sides pre {
+  max-height: 24rem;
+  padding: 0.8rem;
+}
+
+@media (max-width: 760px) {
+  .compare-shell {
+    width: min(100% - 20px, 1400px);
+    padding-top: 22px;
+  }
+
+  .trace-inputs,
+  .raw-sides {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    display: block;
+  }
+
+  .page-header nav {
+    margin-top: 1rem;
+  }
+}

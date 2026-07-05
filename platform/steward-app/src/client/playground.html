@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Steward Playground v1.1</title>
+    <link rel="stylesheet" href="/playground.css" />
+  </head>
+  <body>
+    <main class="playground-shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Developer tool</p>
+          <h1>Steward Playground <span>v1.1</span></h1>
+          <p class="subtitle">
+            Privileged inspection of the production constitutional pipeline.
+          </p>
+        </div>
+        <a href="/" class="back-link">Learner UI</a>
+      </header>
+
+      <p class="warning" role="note">
+        Local developer inspection only. This page exposes privileged pipeline
+        data and must not be used as a learner-facing interface.
+      </p>
+
+      <form id="playground-form" class="input-card">
+        <label for="learner-input">Learner input</label>
+        <textarea
+          id="learner-input"
+          name="message"
+          rows="6"
+          maxlength="4000"
+          autocomplete="off"
+          placeholder="Enter one learner message..."
+          required
+        ></textarea>
+        <div class="form-actions">
+          <span id="run-status" role="status" aria-live="polite">Ready</span>
+          <button id="run-steward" type="submit">Run Steward</button>
+        </div>
+      </form>
+
+      <section class="response-card" aria-labelledby="response-title">
+        <div class="section-heading">
+          <p class="eyebrow">Learner-safe output</p>
+          <h2 id="response-title">Final learner response</h2>
+        </div>
+        <p id="final-response" class="final-response">No run yet.</p>
+      </section>
+
+      <section class="metadata-card" aria-labelledby="metadata-title">
+        <div class="section-heading">
+          <p class="eyebrow">Run summary</p>
+          <h2 id="metadata-title">Metadata</h2>
+        </div>
+        <dl id="metadata" class="metadata-grid">
+          <div><dt>Provider</dt><dd>-</dd></div>
+          <div><dt>Model</dt><dd>-</dd></div>
+          <div><dt>Duration</dt><dd>-</dd></div>
+          <div><dt>Revisions</dt><dd>-</dd></div>
+          <div><dt>Fallback</dt><dd>-</dd></div>
+          <div><dt>Review</dt><dd>-</dd></div>
+          <div><dt>Tokens</dt><dd>Unavailable</dd></div>
+        </dl>
+      </section>
+
+      <section class="inspection" aria-labelledby="inspection-title">
+        <div class="inspection-heading">
+          <div class="section-heading">
+            <p class="eyebrow">Privileged trace</p>
+            <h2 id="inspection-title">Pipeline inspection</h2>
+          </div>
+          <button id="copy-trace" class="secondary" type="button" disabled>
+            Copy Trace JSON
+          </button>
+        </div>
+
+        <details open>
+          <summary>EN-001 Strategy Selection</summary>
+          <div class="trace-panel">
+            <p class="trace-label">EN-001 Strategy Selection</p>
+            <pre id="stage-strategy">No run yet.</pre>
+          </div>
+        </details>
+        <details>
+          <summary>EN-002 Behavior Plan / Generation Request</summary>
+          <div class="trace-panel">
+            <p class="trace-label">
+              EN-002 Behavior Plan / Generation Request
+            </p>
+            <pre id="stage-plan-request">No run yet.</pre>
+          </div>
+        </details>
+        <details>
+          <summary>Provider Response</summary>
+          <div class="trace-panel">
+            <p class="trace-label">Provider Response</p>
+            <pre id="stage-provider-response">No run yet.</pre>
+          </div>
+        </details>
+        <details>
+          <summary>PB Validation</summary>
+          <div class="trace-panel">
+            <p class="trace-label">PB Validation</p>
+            <pre id="stage-validation">No run yet.</pre>
+          </div>
+        </details>
+        <details>
+          <summary>EN-003 Constitutional Review</summary>
+          <div class="trace-panel">
+            <p class="trace-label">EN-003 Constitutional Review</p>
+            <pre id="stage-review">No run yet.</pre>
+          </div>
+        </details>
+        <details>
+          <summary>EN-004 Revision</summary>
+          <div class="trace-panel">
+            <p class="trace-label">EN-004 Revision</p>
+            <pre id="stage-revision">No run yet.</pre>
+          </div>
+        </details>
+        <details>
+          <summary>EN-005 Fallback</summary>
+          <div class="trace-panel">
+            <p class="trace-label">EN-005 Fallback</p>
+            <pre id="stage-fallback">No run yet.</pre>
+          </div>
+        </details>
+      </section>
+    </main>
+    <script type="module" src="/playground.js"></script>
+  </body>
+</html>

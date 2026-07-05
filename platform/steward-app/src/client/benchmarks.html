@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Steward Benchmark Runner v1</title>
+    <link rel="stylesheet" href="/benchmarks.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Developer tool</p>
+        <h1>Steward Benchmark Runner <span>v1</span></h1>
+        <p>
+          Execute the canonical EW fixtures through the production Steward
+          pipeline. Human evaluation remains manual.
+        </p>
+      </div>
+      <nav aria-label="Developer tools">
+        <a href="/playground">Playground</a>
+        <a href="/">Learner UI</a>
+      </nav>
+    </header>
+
+    <p class="warning" role="note">
+      Local developer tool. Results are unscored until a human reviewer applies
+      EVAL-000.
+    </p>
+
+    <main class="runner-layout">
+      <aside class="suite-sidebar" aria-labelledby="suite-heading">
+        <h2 id="suite-heading">Evaluation suites</h2>
+        <div id="suite-list" class="suite-list" role="listbox">
+          <p>Loading canonical fixtures…</p>
+        </div>
+      </aside>
+
+      <section class="main-panel" aria-labelledby="selected-title">
+        <div class="selected-heading">
+          <div>
+            <p class="eyebrow">Selected benchmark</p>
+            <h2 id="selected-title">Loading…</h2>
+            <p id="selected-description"></p>
+            <p id="selected-count"></p>
+          </div>
+          <div class="run-controls">
+            <label class="developer-toggle">
+              <input id="developer-mode" type="checkbox" />
+              Show privileged summaries
+            </label>
+            <div>
+              <button id="run-selected" type="button" disabled>
+                Run Selected
+              </button>
+              <button id="run-all" class="secondary" type="button" disabled>
+                Run All
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="run-status" class="run-status" role="status" aria-live="polite">
+          Ready
+        </div>
+
+        <section id="results" class="results" aria-label="Benchmark results">
+          <p class="empty-state">No benchmark run yet.</p>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/benchmarks.js"></script>
+  </body>
+</html>

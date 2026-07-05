@@ -1,5 +1,33 @@
 # Changelog
 
+## Steward DevTools v1
+
+Release date: 2026-07-05
+
+### Added
+
+- `/devtools` — developer landing page and Foundation status;
+- `/playground` — privileged inspection of one production pipeline run;
+- `/benchmarks` — execution of individual evaluation suites;
+- `/certification` — complete Foundation certification-output execution for
+  human review;
+- `/compare` — structural comparison of two privileged Steward traces;
+- canonical evaluation runner with Markdown-backed typed fixtures, safe
+  results by default, and explicit developer summaries.
+
+### Verification
+
+- TypeScript typecheck passes.
+- 432 automated tests pass.
+- Developer tooling remains separate from learner-safe output.
+- No learner behavior, constitutional behavior, provider behavior, evaluation
+  scoring semantics, or runner contracts changed.
+
+See [RELEASE_DEVTOOLS_V1.md](RELEASE_DEVTOOLS_V1.md) for scope, exclusions, and
+recommended next work.
+
+---
+
 ## Foundation v1.0 Certified
 
 Release date: 2026-07-04
