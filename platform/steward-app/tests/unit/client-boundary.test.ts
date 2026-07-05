@@ -191,4 +191,34 @@ describe("browser learner-safe boundary", () => {
     expect(learnerApp).not.toContain("/devtools");
     expect(learnerApp).not.toContain("inspection");
   });
+
+  it("keeps /learn learner-safe, ephemeral, and separate from DevTools", async () => {
+    const [html, app, transcript] = await Promise.all([
+      readFile(
+        new URL("../../src/client/learn.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/learn.js", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/learn-transcript.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+    const learnerProduct = `${html}\n${app}\n${transcript}`;
+
+    expect(app).toContain('fetch("/api/message"');
+    expect(app).toContain("projectLearnerResponse");
+    expect(learnerProduct).not.toMatch(
+      /developerTrace|inspection|strategySelection|reviewResult|principleResults|providerRequest|providerResponse/,
+    );
+    expect(learnerProduct).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|analytics|telemetry|accountId|profileId/,
+    );
+    expect(html).not.toMatch(
+      /\/devtools|\/playground|\/benchmarks|\/certification|\/compare/,
+    );
+  });
 });

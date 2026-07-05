@@ -1,5 +1,31 @@
 # Changelog
 
+## Learner Product v1
+
+Release date: 2026-07-05
+
+### Added
+
+- `/learn` — calm, mobile-friendly learner chat using the production
+  learner-safe API;
+- browser-memory-only transcript with Clear conversation control;
+- [LX-001 Learner Experience Principles](docs/learner-experience/LX-001-learner-experience-principles.md);
+- [LX-EVAL-001 Learner Experience Evaluation](docs/learner-experience/LX-EVAL-001-learner-experience-evaluation.md).
+
+### Validation
+
+- LX-EVAL-001 result: PASS.
+- Six learner-experience smoke conversations reviewed.
+- TypeScript typecheck passes.
+- 444 automated tests pass.
+- No accounts, memory service, persistence, analytics, personalization, or
+  privileged trace exposure.
+
+See [RELEASE_LEARNER_V1.md](RELEASE_LEARNER_V1.md) for validated scope,
+intentional exclusions, known limitations, and recommended next work.
+
+---
+
 ## Steward DevTools v1
 
 Release date: 2026-07-05

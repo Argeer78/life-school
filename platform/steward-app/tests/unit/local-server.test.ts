@@ -200,4 +200,48 @@ describe("local HTTP server", () => {
     expect(html).toContain('href="/certification"');
     expect(html).toContain('href="/compare"');
   });
+
+  it("serves /learn and returns only learner-safe responses to it", async () => {
+    const origin = await startServer();
+    const pageResponse = await fetch(`${origin}/learn`);
+    const html = await pageResponse.text();
+    const messageResponse = await fetch(`${origin}/api/message`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "What should I examine first?" }),
+    });
+    const message = (await messageResponse.json()) as Record<string, unknown>;
+
+    expect(pageResponse.status).toBe(200);
+    expect(html).toContain("Steward helps you examine questions honestly");
+    expect(html).toContain("Clear conversation");
+    expect(html).toContain("/learn.js");
+    expect(messageResponse.status).toBe(200);
+    expect(Object.keys(message).sort()).toEqual(["kind", "revisions", "text"]);
+    expect(JSON.stringify(message)).not.toMatch(
+      /inspection|strategySelection|reviewResult|provider|metadata/,
+    );
+  });
+
+  it("keeps every DevTools route available after adding /learn", async () => {
+    const origin = await startServer();
+    const routes = [
+      "/devtools",
+      "/playground",
+      "/benchmarks",
+      "/certification",
+      "/compare",
+    ];
+    const responses = await Promise.all(
+      routes.map((route) => fetch(`${origin}${route}`)),
+    );
+
+    expect(responses.map(({ status }) => status)).toEqual([
+      200,
+      200,
+      200,
+      200,
+      200,
+    ]);
+  });
 });

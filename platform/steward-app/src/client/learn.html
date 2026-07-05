@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Steward</title>
+    <link rel="stylesheet" href="/learn.css" />
+  </head>
+  <body>
+    <main class="learn-shell">
+      <header class="learn-header">
+        <div>
+          <p class="eyebrow">Life School</p>
+          <h1>Steward</h1>
+          <p class="identity">
+            Steward helps you examine questions honestly without replacing
+            your judgment.
+          </p>
+        </div>
+        <button id="clear-conversation" class="clear-button" type="button">
+          Clear conversation
+        </button>
+      </header>
+
+      <p class="slogan">No lies. No shortcuts. Think for yourself.</p>
+
+      <p class="limitation" role="note">
+        Steward is not a therapist, emergency service, or final authority.
+      </p>
+
+      <section
+        id="learn-transcript"
+        class="transcript"
+        aria-label="Conversation"
+        aria-live="polite"
+      >
+        <div class="empty-state">
+          <p>What would you like to examine?</p>
+          <span>Your conversation stays only in this browser tab.</span>
+        </div>
+      </section>
+
+      <form id="learn-form" class="composer">
+        <label for="learn-message">Your message</label>
+        <textarea
+          id="learn-message"
+          name="message"
+          rows="3"
+          maxlength="4000"
+          autocomplete="off"
+          placeholder="Write a question or describe what you are considering..."
+          required
+        ></textarea>
+        <div class="composer-footer">
+          <p id="learn-status" role="status" aria-live="polite">
+            Conversation is held in browser memory only.
+          </p>
+          <button id="send-message" type="submit">Send</button>
+        </div>
+      </form>
+    </main>
+
+    <script type="module" src="/learn.js"></script>
+  </body>
+</html>

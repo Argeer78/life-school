@@ -127,6 +127,29 @@ const staticFiles = new Map([
     "/devtools.css",
     { file: "devtools.css", contentType: "text/css; charset=utf-8" },
   ],
+  [
+    "/learn",
+    { file: "learn.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/learn/",
+    { file: "learn.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/learn.css",
+    { file: "learn.css", contentType: "text/css; charset=utf-8" },
+  ],
+  [
+    "/learn.js",
+    { file: "learn.js", contentType: "text/javascript; charset=utf-8" },
+  ],
+  [
+    "/learn-transcript.js",
+    {
+      file: "learn-transcript.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
 ]);
 
 function securityHeaders(response: ServerResponse): void {

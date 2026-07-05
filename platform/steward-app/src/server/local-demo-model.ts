@@ -194,6 +194,24 @@ function responseFor(request: GenerationRequest): string {
         "Responsibility for the judgment remains human, and you remain free to accept, reject, or stop this line of examination.",
       ].join(" ");
     case "CS-009":
+      if (
+        request.learnerMessage.trim().toLowerCase() ===
+        "i can't say no to people."
+      ) {
+        return [
+          "Difficulty saying no can mean your limits get lost when someone asks for help.",
+          'Practice one boundary sentence: "I can\'t do that today; I can tell you what I am able to offer."',
+        ].join(" ");
+      }
+      if (
+        request.learnerMessage.trim().toLowerCase() ===
+        "i want to express myself but can't find the words."
+      ) {
+        return [
+          "Not finding the words can happen when the thought and the sentence are being solved at the same time.",
+          "Separate them: write the thought in plain fragments first, then turn one fragment into a sentence.",
+        ].join(" ");
+      }
       return [
         "Curiosity gives us a useful starting point, and a useful distinction is between the question, its assumptions, and possible explanations.",
         "Some details may remain uncertain, so you could continue by testing one explanation at a time.",
