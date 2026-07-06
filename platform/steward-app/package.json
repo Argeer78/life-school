@@ -3,8 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "main": "dist/server/production-server.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "tsx --env-file=.env.local src/server/local-server.ts",
+    "build": "node scripts/build.mjs",
+    "start": "node dist/server/production-server.js",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

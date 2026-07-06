@@ -320,6 +320,11 @@ export function createLocalStewardServer(
   return createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", `http://${host}`);
 
+    if (request.method === "GET" && url.pathname === "/health") {
+      sendJson(response, 200, { status: "ok" });
+      return;
+    }
+
     if (request.method === "GET" && url.pathname === "/api/benchmarks") {
       try {
         const fixtures = await loadEvaluationFixtures();

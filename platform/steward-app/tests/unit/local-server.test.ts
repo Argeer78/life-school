@@ -24,6 +24,15 @@ async function startServer() {
 }
 
 describe("local HTTP server", () => {
+  it("exposes a minimal production health endpoint", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/health`);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(await response.json()).toEqual({ status: "ok" });
+  });
+
   it("returns exactly the learner-safe response over HTTP", async () => {
     const origin = await startServer();
     const response = await fetch(`${origin}/api/message`, {
