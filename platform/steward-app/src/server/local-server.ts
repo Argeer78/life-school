@@ -38,6 +38,28 @@ const staticFiles = new Map([
     { file: "learner-response.js", contentType: "text/javascript; charset=utf-8" },
   ],
   [
+    "/i18n.js",
+    { file: "i18n.js", contentType: "text/javascript; charset=utf-8" },
+  ],
+  [
+    "/i18n-entry.js",
+    { file: "i18n-entry.js", contentType: "text/javascript; charset=utf-8" },
+  ],
+  [
+    "/i18n/locales/en.json",
+    {
+      file: "../i18n/locales/en.json",
+      contentType: "application/json; charset=utf-8",
+    },
+  ],
+  [
+    "/i18n/locales/el.json",
+    {
+      file: "../i18n/locales/el.json",
+      contentType: "application/json; charset=utf-8",
+    },
+  ],
+  [
     "/playground",
     { file: "playground.html", contentType: "text/html; charset=utf-8" },
   ],
@@ -147,6 +169,74 @@ const staticFiles = new Map([
     "/learn-transcript.js",
     {
       file: "learn-transcript.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/courses",
+    { file: "courses.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/courses/",
+    { file: "courses.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/courses/thinking-clearly",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/thinking-clearly/",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses.css",
+    { file: "courses.css", contentType: "text/css; charset=utf-8" },
+  ],
+  [
+    "/lesson-page.js",
+    {
+      file: "lesson-page.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/lesson-model.js",
+    {
+      file: "lesson-model.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/course-session.js",
+    {
+      file: "course-session.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/lesson-renderer.js",
+    {
+      file: "lesson-renderer.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/thinking-clearly-lessons.js",
+    {
+      file: "thinking-clearly-lessons.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/thinking-clearly-lessons-el.js",
+    {
+      file: "thinking-clearly-lessons-el.js",
       contentType: "text/javascript; charset=utf-8",
     },
   ],
@@ -319,7 +409,11 @@ export function createLocalStewardServer(
       return;
     }
 
-    const asset = staticFiles.get(url.pathname);
+    const asset =
+      staticFiles.get(url.pathname) ??
+      (/^\/courses\/thinking-clearly\/lesson-\d+\/?$/.test(url.pathname)
+        ? { file: "lesson.html", contentType: "text/html; charset=utf-8" }
+        : undefined);
     if (request.method !== "GET" || asset === undefined) {
       sendJson(response, 404, { error: { code: "NOT_FOUND" } });
       return;

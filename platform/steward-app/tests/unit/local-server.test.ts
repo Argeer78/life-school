@@ -223,6 +223,29 @@ describe("local HTTP server", () => {
     );
   });
 
+  it("serves English and Greek learner UI locale catalogs", async () => {
+    const origin = await startServer();
+    const [englishResponse, greekResponse, greekLessonsResponse] =
+      await Promise.all([
+      fetch(`${origin}/i18n/locales/en.json`),
+      fetch(`${origin}/i18n/locales/el.json`),
+      fetch(`${origin}/thinking-clearly-lessons-el.js`),
+    ]);
+    const [english, greek] = await Promise.all([
+      englishResponse.json() as Promise<Record<string, string>>,
+      greekResponse.json() as Promise<Record<string, string>>,
+    ]);
+    const greekLessons = await greekLessonsResponse.text();
+
+    expect(englishResponse.status).toBe(200);
+    expect(greekResponse.status).toBe(200);
+    expect(greekLessonsResponse.status).toBe(200);
+    expect(english["learn.clear"]).toBe("Clear conversation");
+    expect(greek["learn.clear"]).toBe("Καθάρισε τη συνομιλία");
+    expect(greek["courses.moduleTitle"]).toBe("Καθαρή σκέψη");
+    expect(greekLessons).toContain("Τι συνέβη και τι σημαίνει");
+  });
+
   it("keeps every DevTools route available after adding /learn", async () => {
     const origin = await startServer();
     const routes = [
@@ -243,5 +266,99 @@ describe("local HTTP server", () => {
       200,
       200,
     ]);
+  });
+
+  it("serves the curriculum home and all six Thinking Clearly lessons", async () => {
+    const origin = await startServer();
+    const [
+      homeResponse,
+      lessonResponse,
+      lessonTwoResponse,
+      lessonDataResponse,
+      lessonPageResponse,
+      rendererResponse,
+    ] = await Promise.all([
+      fetch(`${origin}/courses`),
+      fetch(`${origin}/courses/thinking-clearly`),
+      fetch(`${origin}/courses/thinking-clearly/lesson-2`),
+      fetch(`${origin}/thinking-clearly-lessons.js`),
+      fetch(`${origin}/lesson-page.js`),
+      fetch(`${origin}/lesson-renderer.js`),
+    ]);
+    const [home, lesson, lessonTwo, lessonData, lessonPage, renderer] =
+      await Promise.all([
+        homeResponse.text(),
+        lessonResponse.text(),
+        lessonTwoResponse.text(),
+        lessonDataResponse.text(),
+        lessonPageResponse.text(),
+        rendererResponse.text(),
+      ]);
+
+    expect(homeResponse.status).toBe(200);
+    expect(home).toContain("Learning Home");
+    expect(home).toContain("Thinking Clearly");
+    expect(home).toContain("Lesson 6");
+    for (const lessonNumber of [2, 3, 4, 5, 6]) {
+      expect(home).toContain(
+        `href="/courses/thinking-clearly/lesson-${lessonNumber}"`,
+      );
+    }
+    expect(lessonResponse.status).toBe(200);
+    expect(lesson).toContain('id="lesson-root"');
+    expect(lesson).toContain("/lesson-page.js");
+    expect(lessonTwoResponse.status).toBe(200);
+    expect(lessonTwo).toBe(lesson);
+    const remainingLessonResponses = await Promise.all(
+      [3, 4, 5, 6].map((lessonNumber) =>
+        fetch(`${origin}/courses/thinking-clearly/lesson-${lessonNumber}`),
+      ),
+    );
+    const remainingLessonShells = await Promise.all(
+      remainingLessonResponses.map((response) => response.text()),
+    );
+    expect(remainingLessonResponses.map(({ status }) => status)).toEqual([
+      200, 200, 200, 200,
+    ]);
+    expect(remainingLessonShells.every((shell) => shell === lesson)).toBe(true);
+    expect(lessonDataResponse.status).toBe(200);
+    expect(lessonData).toContain('id: "CUR-001-LESSON-1"');
+    expect(lessonData).toContain('title: "What happened vs. what it means"');
+    expect(lessonData).toContain(
+      "Feelings are real, but not always final evidence",
+    );
+    expect(lessonData).toContain("Assumptions and missing information");
+    expect(lessonData).toContain("Better questions create better thinking");
+    expect(lessonData).toContain(
+      "Evidence, alternatives, and consequences",
+    );
+    expect(lessonData).toContain("From reaction to examination");
+    expect(lessonData).toContain(
+      "/courses/thinking-clearly/lesson-2",
+    );
+    expect(lessonPageResponse.status).toBe(200);
+    expect(lessonPage).toContain('fetch("/api/message"');
+    expect(rendererResponse.status).toBe(200);
+    expect(renderer).toContain("renderWhyThisMatters");
+    expect(renderer).toContain("renderPracticeWithSteward");
+  });
+
+  it("keeps curriculum Steward practice on the learner-safe API", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/api/message`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message:
+          "Help me separate the observation from my interpretation: my friend looked at their phone while I was speaking.",
+      }),
+    });
+    const body = (await response.json()) as Record<string, unknown>;
+
+    expect(response.status).toBe(200);
+    expect(Object.keys(body).sort()).toEqual(["kind", "revisions", "text"]);
+    expect(JSON.stringify(body)).not.toMatch(
+      /inspection|strategySelection|reviewResult|provider|metadata/,
+    );
   });
 });

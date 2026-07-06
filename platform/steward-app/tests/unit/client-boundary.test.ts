@@ -221,4 +221,54 @@ describe("browser learner-safe boundary", () => {
       /\/devtools|\/playground|\/benchmarks|\/certification|\/compare/,
     );
   });
+
+  it("keeps curriculum practice learner-safe and separate from DevTools", async () => {
+    const [home, shell, app, model, renderer, lessons, session] =
+      await Promise.all([
+      readFile(
+        new URL("../../src/client/courses.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/lesson.html", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/lesson-page.js", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/lesson-model.js", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/lesson-renderer.js", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL(
+          "../../src/client/thinking-clearly-lessons.js",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+      readFile(
+        new URL("../../src/client/course-session.js", import.meta.url),
+        "utf8",
+      ),
+    ]);
+    const curriculum = `${home}\n${shell}\n${app}\n${model}\n${renderer}\n${lessons}\n${session}`;
+
+    expect(app).toContain('fetch("/api/message"');
+    expect(app).toContain("projectLearnerResponse");
+    expect(curriculum).not.toMatch(
+      /developerTrace|inspection|strategySelection|reviewResult|principleResults|providerRequest|providerResponse/,
+    );
+    expect(curriculum).not.toMatch(
+      /localStorage|sessionStorage|indexedDB|analytics|telemetry|accountId|profileId/,
+    );
+    expect(curriculum).not.toMatch(
+      /\/devtools|\/playground|\/benchmarks|\/certification|\/compare/,
+    );
+  });
 });

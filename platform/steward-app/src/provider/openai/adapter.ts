@@ -13,6 +13,7 @@ import type {
 } from "../contract.js";
 import { ProviderBoundaryError } from "../failure.js";
 import { buildProviderInput } from "../prompt-builder.js";
+import { resolveResponseLanguage } from "../response-language.js";
 import { openAIProviderResultSchema } from "./schema.js";
 
 export const defaultOpenAIModel = "gpt-5.4-mini";
@@ -93,6 +94,11 @@ async function withTimeout<T>(
 }
 
 function instructionsFor(request: GenerationRequest): string {
+  const responseLanguage = resolveResponseLanguage(request.learnerMessage);
+  const responseLanguageGuidance =
+    responseLanguage === "el"
+      ? " Write the learner-facing response in natural Greek. Keep the same concise Steward voice: direct, clean, useful, and without extra emotional padding. Language changes; constitutional behavior does not. Keep JSON field names and schema values unchanged."
+      : " Write the learner-facing response in natural English. Keep the same concise Steward voice: direct, clean, useful, and without extra emotional padding. Language changes; constitutional behavior does not. Keep JSON field names and schema values unchanged.";
   const selectedStrategies = [
     request.strategySelection.primary,
     ...request.strategySelection.secondary,
@@ -154,7 +160,7 @@ function instructionsFor(request: GenerationRequest): string {
   const ew009001Guidance = isEw009001
     ? " For this identity-change prompt, give one concrete side-by-side comparison step that names both what has changed and what has remained stable. Do not examine change alone."
     : "";
-  return `Express only the supplied strategy selection, behavior plan, and constitutional constraints. Use one context-specific acknowledgment rather than a generic apology. Avoid stock phrases such as \"I can help\" and \"If you want\"; express support in language specific to the learner's request. Normally offer either one focused examination question or one concrete next step, not both and not multiple reflective questions. Keep the learner-facing response to 2 through 4 concise sentences.${selfWorthGuidance}${decisionGuidance}${relationshipGuidance}${ethicalBoundaryGuidance}${meaningPurposeGuidance}${humanAuthorityGuidance}${ew002006Guidance}${ew006005Guidance}${ew012003Guidance}${ew007006Guidance}${ew009001Guidance} Return no chain-of-thought or internal reasoning. Return only the required JSON object.`;
+  return `Express only the supplied strategy selection, behavior plan, and constitutional constraints.${responseLanguageGuidance} Use one context-specific acknowledgment rather than a generic apology. Avoid stock phrases such as \"I can help\" and \"If you want\"; express support in language specific to the learner's request. Normally offer either one focused examination question or one concrete next step, not both and not multiple reflective questions. Keep the learner-facing response to 2 through 4 concise sentences.${selfWorthGuidance}${decisionGuidance}${relationshipGuidance}${ethicalBoundaryGuidance}${meaningPurposeGuidance}${humanAuthorityGuidance}${ew002006Guidance}${ew006005Guidance}${ew012003Guidance}${ew007006Guidance}${ew009001Guidance} Return no chain-of-thought or internal reasoning. Return only the required JSON object.`;
 }
 
 export class OpenAIGenerationProvider implements GenerationProvider {

@@ -11,21 +11,53 @@
     <main class="learn-shell">
       <header class="learn-header">
         <div>
-          <p class="eyebrow">Life School</p>
+          <p class="eyebrow">Lifeschool</p>
           <h1>Steward</h1>
-          <p class="identity">
+          <p class="identity" data-i18n="learn.identity">
             Steward helps you examine questions honestly without replacing
             your judgment.
           </p>
         </div>
-        <button id="clear-conversation" class="clear-button" type="button">
-          Clear conversation
-        </button>
+        <div class="header-actions">
+          <div
+            class="language-switcher"
+            role="group"
+            aria-label="Language"
+            data-i18n-aria-label="common.language"
+          >
+            <button
+              class="locale-button"
+              type="button"
+              data-locale="en"
+              data-i18n="common.english"
+            >
+              English
+            </button>
+            <button
+              class="locale-button"
+              type="button"
+              data-locale="el"
+              data-i18n="common.greek"
+            >
+              Ελληνικά
+            </button>
+          </div>
+          <button
+            id="clear-conversation"
+            class="clear-button"
+            type="button"
+            data-i18n="learn.clear"
+          >
+            Clear conversation
+          </button>
+        </div>
       </header>
 
-      <p class="slogan">No lies. No shortcuts. Think for yourself.</p>
+      <p class="slogan" data-i18n="common.slogan">
+        No lies. No shortcuts. Think for yourself.
+      </p>
 
-      <p class="limitation" role="note">
+      <p class="limitation" role="note" data-i18n="learn.limitation">
         Steward is not a therapist, emergency service, or final authority.
       </p>
 
@@ -33,16 +65,23 @@
         id="learn-transcript"
         class="transcript"
         aria-label="Conversation"
+        data-i18n-aria-label="learn.conversation"
         aria-live="polite"
       >
         <div class="empty-state">
-          <p>What would you like to examine?</p>
-          <span>Your conversation stays only in this browser tab.</span>
+          <p data-i18n="learn.emptyPrompt">
+            What would you like to examine?
+          </p>
+          <span data-i18n="learn.emptyPrivacy">
+            Your conversation stays only in this browser tab.
+          </span>
         </div>
       </section>
 
       <form id="learn-form" class="composer">
-        <label for="learn-message">Your message</label>
+        <label for="learn-message" data-i18n="learn.messageLabel">
+          Your message
+        </label>
         <textarea
           id="learn-message"
           name="message"
@@ -50,13 +89,21 @@
           maxlength="4000"
           autocomplete="off"
           placeholder="Write a question or describe what you are considering..."
+          data-i18n-placeholder="learn.messagePlaceholder"
           required
         ></textarea>
         <div class="composer-footer">
-          <p id="learn-status" role="status" aria-live="polite">
+          <p
+            id="learn-status"
+            role="status"
+            aria-live="polite"
+            data-i18n="learn.memoryNotice"
+          >
             Conversation is held in browser memory only.
           </p>
-          <button id="send-message" type="submit">Send</button>
+          <button id="send-message" type="submit" data-i18n="learn.send">
+            Send
+          </button>
         </div>
       </form>
     </main>

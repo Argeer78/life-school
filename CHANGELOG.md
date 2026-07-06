@@ -1,5 +1,74 @@
 # Changelog
 
+## Greek Localization v1
+
+Release date: 2026-07-06
+
+Status: Release checkpoint
+
+### Completed
+
+- English and Greek learner-facing UI;
+- browser-local language switcher;
+- English/Greek response-language detection and provider guidance;
+- complete Greek localization of CUR-001 Thinking Clearly;
+- [Greek Localization Style Guide](docs/i18n/EL-STYLE-GUIDE.md);
+- [I18N-000 Multilingual Plan](docs/i18n/I18N-000-multilingual-plan.md);
+- [EL-EW-000 Greek Mini Evaluation](docs/evaluation/el/EL-EW-000-greek-mini-evaluation.md);
+- 478 automated tests passing.
+
+### Validation
+
+- Greek browser smoke test: PASS.
+- No English curriculum leakage when Greek is selected.
+- No constitutional changes.
+- No provider contract, routing, or constitutional behavior changes.
+- No learner constitutional behavior changes; only language presentation
+  changed.
+
+### Limitations
+
+- English and Greek are the only supported languages.
+- CUR-001 is the only localized curriculum module.
+- Greek constitutional certification is not yet complete.
+- Curriculum modules beyond CUR-001 remain English.
+
+See [RELEASE_I18N_V1.md](RELEASE_I18N_V1.md) for scope, validation, known
+limitations, and the recommended next phase.
+
+---
+
+## CUR-001 Release Candidate 1
+
+Release date: 2026-07-05
+
+Status: Release candidate
+
+### Added
+
+- [CUR-000 Curriculum Architecture](docs/curriculum/CUR-000-curriculum-architecture.md);
+- [CUR-001 Thinking Clearly](docs/curriculum/CUR-001-thinking-clearly.md);
+- reusable Lifeschool Lesson Framework;
+- six Thinking Clearly lessons;
+- exercise-to-Steward learner-safe handoffs;
+- session-only learning and completion state;
+- mobile-friendly curriculum experience;
+- direct access to every Thinking Clearly lesson.
+
+### Validation
+
+- CUR-001 end-to-end review: PASS.
+- Learner Experience validation: PASS.
+- TypeScript typecheck passes.
+- 458 automated tests pass.
+- No accounts, persistence, analytics, privileged trace exposure, or changes
+  to constitutional behavior.
+
+See [RELEASE_CURRICULUM_RC1.md](RELEASE_CURRICULUM_RC1.md) for completed
+scope, known limitations, and the recommended next phase.
+
+---
+
 ## Learner Product v1
 
 Release date: 2026-07-05

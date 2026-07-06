@@ -1,5 +1,8 @@
 import { projectLearnerResponse } from "./learner-response.js";
 import { createMemoryTranscript } from "./learn-transcript.js";
+import { initializeI18n } from "./i18n.js";
+
+const i18n = await initializeI18n();
 
 const transcriptElement = document.querySelector("#learn-transcript");
 const form = document.querySelector("#learn-form");
@@ -32,8 +35,8 @@ function emptyState() {
   const prompt = document.createElement("p");
   const privacy = document.createElement("span");
   container.className = "empty-state";
-  prompt.textContent = "What would you like to examine?";
-  privacy.textContent = "Your conversation stays only in this browser tab.";
+  prompt.textContent = i18n.translate("learn.emptyPrompt");
+  privacy.textContent = i18n.translate("learn.emptyPrivacy");
   container.append(prompt, privacy);
   return container;
 }
@@ -52,13 +55,20 @@ function render() {
     const text = document.createElement("p");
     article.className = `message ${entry.role}`;
     label.className = "message-label";
-    label.textContent = entry.role === "learner" ? "You" : "Steward";
+    label.textContent =
+      entry.role === "learner" ? i18n.translate("learn.you") : "Steward";
     text.className = "message-text";
     text.textContent = entry.text;
     article.append(label, text);
     transcriptView.append(article);
   }
   transcriptView.scrollTop = transcriptView.scrollHeight;
+}
+
+/** @param {string} key */
+function setStatus(key) {
+  statusView.dataset.i18n = key;
+  statusView.textContent = i18n.translate(key);
 }
 
 formView.addEventListener("submit", async (event) => {
@@ -70,7 +80,7 @@ formView.addEventListener("submit", async (event) => {
   transcript.add("learner", message);
   inputView.value = "";
   sendButtonView.disabled = true;
-  statusView.textContent = "Steward is responding...";
+  setStatus("learn.responding");
   render();
 
   try {
@@ -83,15 +93,15 @@ formView.addEventListener("submit", async (event) => {
     const learnerResponse = projectLearnerResponse(await response.json());
     if (requestVersion === transcript.version()) {
       transcript.add("steward", learnerResponse.text);
-      statusView.textContent = "Response complete.";
+      setStatus("learn.responseComplete");
     }
   } catch {
     if (requestVersion === transcript.version()) {
       transcript.add(
         "steward",
-        "I am not able to respond reliably right now. You may try again or stop here.",
+        i18n.translate("learn.clientUnavailable"),
       );
-      statusView.textContent = "Response unavailable.";
+      setStatus("learn.responseUnavailable");
     }
   } finally {
     sendButtonView.disabled = false;
@@ -102,7 +112,9 @@ formView.addEventListener("submit", async (event) => {
 
 clearButtonView.addEventListener("click", () => {
   transcript.clear();
-  statusView.textContent = "Conversation cleared.";
+  setStatus("learn.conversationCleared");
   render();
   inputView.focus();
 });
+
+window.addEventListener("lifeschool:locale-change", render);

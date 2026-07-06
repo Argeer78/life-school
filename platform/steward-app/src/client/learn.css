@@ -49,6 +49,30 @@ textarea {
   gap: 2rem;
 }
 
+.header-actions {
+  display: grid;
+  justify-items: end;
+  gap: 0.65rem;
+}
+
+.language-switcher {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.locale-button {
+  padding: 0.35rem 0.55rem;
+  border-color: var(--border);
+  color: var(--forest);
+  background: transparent;
+  font-size: 0.78rem;
+}
+
+.locale-button[aria-pressed="true"] {
+  border-color: var(--forest);
+  background: var(--forest-soft);
+}
+
 .eyebrow,
 .identity,
 .slogan,
@@ -233,8 +257,21 @@ button:disabled {
     display: block;
   }
 
-  .clear-button {
+  .header-actions {
+    justify-items: stretch;
     margin-top: 1rem;
+  }
+
+  .language-switcher {
+    justify-content: flex-start;
+  }
+
+  .locale-button {
+    width: auto;
+  }
+
+  .clear-button {
+    margin-top: 0;
   }
 
   .transcript {

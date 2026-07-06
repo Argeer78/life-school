@@ -125,6 +125,82 @@ describe("OpenAI generation provider", () => {
     });
   });
 
+  it.each([
+    [
+      "Ποιος είναι ο σκοπός μου;",
+      /learner-facing response in natural Greek/i,
+    ],
+    [
+      "What is my purpose?",
+      /learner-facing response in natural English/i,
+    ],
+    [
+      "1234 ?!",
+      /learner-facing response in natural English/i,
+    ],
+  ])(
+    "adds response-language guidance for %s without changing the provider contract",
+    async (learnerMessage, expectedInstruction) => {
+      const mocked = mockClient({
+        output_text: JSON.stringify(providerResult("A response.")),
+      });
+      const provider = new OpenAIGenerationProvider({
+        client: mocked.client,
+        timeoutMs: 100,
+      });
+      const request = generationRequest(learnerMessage);
+
+      await provider.generate(request);
+      const body = mocked.create.mock.calls[0]?.[0] as Record<string, unknown>;
+
+      expect(body.instructions).toMatch(expectedInstruction);
+      expect(body.instructions).toMatch(
+        /Language changes; constitutional behavior does not/i,
+      );
+      expect(Object.keys(request).sort()).toEqual([
+        "behaviorPlan",
+        "constitutionalConstraints",
+        "currentConversation",
+        "learnerMessage",
+        "outputSchemaVersion",
+        "providerContractVersion",
+        "strategySelection",
+      ]);
+      expect(JSON.parse(body.input as string)).not.toHaveProperty(
+        "responseLanguage",
+      );
+    },
+  );
+
+  it("keeps a Greek provider response learner-safe", async () => {
+    const learnerMessage = "Ποιος είναι ο σκοπός μου;";
+    const text =
+      "Δεν μπορώ να ορίσω τον σκοπό σου για εσένα. Κατέγραψε μία αξία που θέλεις να δοκιμάσεις στην πράξη και εξέτασε τι μαθαίνεις από αυτή.";
+    const provider = new OpenAIGenerationProvider({
+      client: mockClient({
+        output_text: JSON.stringify(providerResult(text)),
+      }).client,
+      timeoutMs: 100,
+    });
+    const model = createLocalDemoFakeModel(learnerMessage, provider);
+
+    const result = await runConstitutionalConversation(model, learnerMessage);
+
+    expect(result.learnerResponse).toEqual({
+      kind: "accepted",
+      text,
+      revisions: 0,
+    });
+    expect(Object.keys(result.learnerResponse).sort()).toEqual([
+      "kind",
+      "revisions",
+      "text",
+    ]);
+    expect(JSON.stringify(result.learnerResponse)).not.toMatch(
+      /strategySelection|behaviorPlan|constitutionalReview|provider|inspection/i,
+    );
+  });
+
   it("preserves learner authority for EW-002-006", async () => {
     const learnerMessage =
       "Should I quit my job even though my family depends on my income?";
