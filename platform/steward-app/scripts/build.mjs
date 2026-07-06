@@ -1,17 +1,15 @@
 import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const projectRoot = process.cwd();
+const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const outputDirectory = join(projectRoot, "dist");
 const clientSourceDirectory = join(projectRoot, "src", "client");
 const clientOutputDirectory = join(outputDirectory, "client");
-const typeScriptCompiler = join(
-  projectRoot,
-  "node_modules",
-  "typescript",
-  "bin",
-  "tsc",
+const typeScriptCompiler = createRequire(import.meta.url).resolve(
+  "typescript/bin/tsc",
 );
 
 await rm(outputDirectory, { force: true, recursive: true });

@@ -3,18 +3,26 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "server.js",
+  "main": "app.js",
   "engines": {
     "node": "22.x"
   },
-  "workspaces": [
-    "platform/steward-app"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace=platform/steward-app",
-    "build": "npm run build --workspace=platform/steward-app",
-    "start": "node server.js",
-    "typecheck": "npm run typecheck --workspace=platform/steward-app",
-    "test": "npm run test --workspace=platform/steward-app"
+    "install": "node scripts/install.mjs",
+    "dev": "tsx --env-file=platform/steward-app/.env.local platform/steward-app/src/server/local-server.ts",
+    "build": "node platform/steward-app/scripts/build.mjs",
+    "start": "node app.js",
+    "typecheck": "tsc -p platform/steward-app/tsconfig.json --noEmit",
+    "test": "vitest run --root platform/steward-app"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "openai": "^6.45.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

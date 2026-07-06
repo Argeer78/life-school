@@ -8,25 +8,23 @@
 | Branch | `main` |
 | Repository root | repository checkout root |
 | Deployment root | repository root (`.`) |
-| Framework preset | `Other` |
+| Framework preset | `Express.js` |
 | Node.js version | `22.x` |
 | Package manager | `npm` |
 | Install command | `npm install` |
 | Build command | `npm run build` |
 | Start command | `npm start` |
 | Build output directory | `platform/steward-app/dist` |
-| Entry file | `server.js` |
+| Entry file | `app.js` |
 | Health endpoint | `/health` |
 
-The application remains in `platform/steward-app`. A minimal npm workspace
-manifest at the repository root makes the Git repository detectable by
-Hostinger. It forwards build and verification commands to the application and
-starts the compiled production entry directly, without moving or duplicating
-the application.
+The application remains in `platform/steward-app`. The repository root is a
+conventional Express.js deployment wrapper with direct dependency metadata,
+install/build/start scripts, a lockfile, and a committed `app.js`.
 
-The committed root `server.js` is the deployment entrypoint Hostinger can
-validate before the build exists. After `npm run build`, it imports the
-compiled production server from `platform/steward-app/dist`.
+`app.js` delegates every request to the unchanged Steward production HTTP
+handler. Express exists only at the hosting boundary so Hostinger can recognize
+the repository as a supported backend framework.
 
 Use the repository root in Hostinger. Initial Git detection happens before
 Hostinger exposes all advanced build settings, so relying only on the nested
@@ -84,15 +82,14 @@ including credentials.
 2. In hPanel, choose **Add Website → Node.js Apps → Import Git Repository**.
 3. Select `Argeer78/life-school` and branch `main`.
 4. Keep the root directory at the repository root (`.`).
-5. Select the `Other` framework preset if Hostinger does not identify one
-   automatically.
+5. Confirm Hostinger detects the **Express.js** framework preset.
 6. Select Node.js `22.x`.
 7. Confirm the package manager is `npm`.
 8. Set the install command to `npm install`.
 9. Set the build command to `npm run build`.
 10. Set the start command to `npm start`.
 11. If requested, set the output directory to
-    `platform/steward-app/dist` and entry file to `server.js`.
+    `platform/steward-app/dist` and entry file to `app.js`.
 12. Add the production environment variables in hPanel.
 13. Deploy and inspect the build log for successful install, build, and start.
 14. Open `https://<deployment-domain>/health` and confirm:

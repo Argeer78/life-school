@@ -10,6 +10,7 @@ interface PackageMetadata {
   readonly main?: string;
   readonly engines?: { readonly node?: string };
   readonly scripts?: Readonly<Record<string, string>>;
+  readonly dependencies?: Readonly<Record<string, string>>;
 }
 
 describe("production deployment metadata", () => {
@@ -31,25 +32,26 @@ describe("production deployment metadata", () => {
     expect(packageJson.scripts?.start).not.toMatch(/tsx|local-server\.ts/);
   });
 
-  it("exposes the nested application through the Git repository root", async () => {
+  it("exposes the nested application as a conventional root Node app", async () => {
     const rootPackage = JSON.parse(
       await readFile(
         new URL("../../../../package.json", import.meta.url),
         "utf8",
       ),
-    ) as PackageMetadata & { readonly workspaces?: readonly string[] };
+    ) as PackageMetadata;
 
     expect(rootPackage.private).toBe(true);
     expect(rootPackage.engines?.node).toBe("22.x");
-    expect(rootPackage.workspaces).toEqual(["platform/steward-app"]);
-    expect(rootPackage.main).toBe("server.js");
+    expect(rootPackage.main).toBe("app.js");
     expect(rootPackage.scripts).toMatchObject({
-      build: "npm run build --workspace=platform/steward-app",
-      start: "node server.js",
+      install: "node scripts/install.mjs",
+      build: "node platform/steward-app/scripts/build.mjs",
+      start: "node app.js",
     });
+    expect(rootPackage.dependencies).toHaveProperty("express");
     await expect(
       access(
-        fileURLToPath(new URL("../../../../server.js", import.meta.url)),
+        fileURLToPath(new URL("../../../../app.js", import.meta.url)),
       ),
     ).resolves.toBeUndefined();
   });
