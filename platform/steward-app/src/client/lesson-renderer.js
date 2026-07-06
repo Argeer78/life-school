@@ -268,6 +268,11 @@ export function renderLessonPage(lesson) {
         >Lesson ${lesson.lessonNumber}</span>`;
 
   return `<main class="learning-shell lesson-shell">
+    <nav class="learner-nav" aria-label="Main navigation">
+      <a href="/" data-i18n="common.navHome">Home</a>
+      <a href="/courses" aria-current="page" data-i18n="common.navCourses">Courses</a>
+      <a href="/learn" data-i18n="common.navSteward">Steward</a>
+    </nav>
     <div class="lesson-tools">
       <div
         class="language-switcher"

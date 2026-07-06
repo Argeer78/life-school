@@ -34,21 +34,24 @@ describe("browser learner-safe boundary", () => {
     expect(() => projectLearnerResponse(value)).toThrow(TypeError);
   });
 
-  it("contains the required limitation and no persistence or engagement APIs", async () => {
-    const [html, app] = await Promise.all([
-      readFile(new URL("../../src/client/index.html", import.meta.url), "utf8"),
-      readFile(new URL("../../src/client/app.js", import.meta.url), "utf8"),
-    ]);
-
-    expect(html).toContain(
-      "Steward may be mistaken and is not a final authority.",
+  it("keeps the homepage learner-safe and separate from the chat interface", async () => {
+    const html = await readFile(
+      new URL("../../src/client/index.html", import.meta.url),
+      "utf8",
     );
-    expect(html).toContain('id="clear"');
-    expect(`${html}\n${app}`).not.toMatch(
+
+    expect(html).toContain("<h1>Lifeschool</h1>");
+    expect(html).toContain("No lies. No shortcuts. Think for yourself.");
+    expect(html).toContain('href="/courses"');
+    expect(html).toContain('href="/learn"');
+    expect(html).not.toContain('id="message-form"');
+    expect(html).not.toContain('id="transcript"');
+    expect(html).not.toMatch(
       /localStorage|sessionStorage|indexedDB|analytics|telemetry|notification|streak|reward/i,
     );
-    expect(app).toContain("const transcript = []");
-    expect(app).not.toContain("inspection");
+    expect(html).not.toMatch(
+      /developerTrace|inspection|strategySelection|reviewResult|providerRequest/,
+    );
   });
 
   it("keeps the Playground stateless and free of alternate constitutional logic", async () => {

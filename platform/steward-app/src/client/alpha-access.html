@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Private alpha · Lifeschool</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="alpha-shell">
+      <section class="alpha-card" aria-labelledby="alpha-title">
+        <p class="eyebrow">Private alpha</p>
+        <h1 id="alpha-title">Lifeschool</h1>
+        <p>
+          Enter the private alpha access code to continue. Access lasts only
+          for this browser session.
+        </p>
+        <form id="alpha-access-form" class="alpha-form">
+          <label for="alpha-access-code">Access code</label>
+          <input
+            id="alpha-access-code"
+            name="access-code"
+            type="password"
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Enter Lifeschool</button>
+          <p id="alpha-access-error" class="alpha-error" role="alert"></p>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="/alpha-access.js"></script>
+  </body>
+</html>

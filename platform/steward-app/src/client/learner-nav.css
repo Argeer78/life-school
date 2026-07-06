@@ -1,0 +1,33 @@
+.learner-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #d5d2c9;
+}
+
+.learner-nav a {
+  color: #315743;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.learner-nav a:hover,
+.learner-nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3rem;
+}
+
+.learner-nav a:focus-visible {
+  outline: 3px solid rgba(49, 87, 67, 0.23);
+  outline-offset: 3px;
+}
+
+@media (max-width: 420px) {
+  .learner-nav {
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+}

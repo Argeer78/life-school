@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
@@ -29,9 +30,26 @@ const host = "127.0.0.1";
 const defaultPort = 4173;
 const clientDirectory = join(dirname(fileURLToPath(import.meta.url)), "../client");
 
-const staticFiles = new Map([
+interface StaticAsset {
+  readonly file: string;
+  readonly contentType: string;
+}
+
+const staticFiles = new Map<string, StaticAsset>([
   ["/", { file: "index.html", contentType: "text/html; charset=utf-8" }],
   ["/styles.css", { file: "styles.css", contentType: "text/css; charset=utf-8" }],
+  [
+    "/learner-nav.css",
+    { file: "learner-nav.css", contentType: "text/css; charset=utf-8" },
+  ],
+  [
+    "/homepage.js",
+    { file: "homepage.js", contentType: "text/javascript; charset=utf-8" },
+  ],
+  [
+    "/alpha-access.js",
+    { file: "alpha-access.js", contentType: "text/javascript; charset=utf-8" },
+  ],
   ["/app.js", { file: "app.js", contentType: "text/javascript; charset=utf-8" }],
   [
     "/learner-response.js",
@@ -242,6 +260,55 @@ const staticFiles = new Map([
   ],
 ]);
 
+const lessonAsset: StaticAsset = {
+  file: "lesson.html",
+  contentType: "text/html; charset=utf-8",
+};
+
+function learnerPageAsset(pathname: string): StaticAsset | undefined {
+  if (
+    pathname === "/" ||
+    pathname === "/learn" ||
+    pathname === "/learn/" ||
+    pathname === "/courses" ||
+    pathname === "/courses/" ||
+    pathname === "/courses/thinking-clearly" ||
+    pathname === "/courses/thinking-clearly/"
+  ) {
+    return staticFiles.get(pathname);
+  }
+  return /^\/courses\/thinking-clearly\/lesson-[1-6]\/?$/.test(pathname)
+    ? lessonAsset
+    : undefined;
+}
+
+function isAlphaProtectedPath(pathname: string): boolean {
+  return (
+    pathname === "/" ||
+    pathname === "/learn" ||
+    pathname === "/learn/" ||
+    pathname === "/courses" ||
+    pathname === "/courses/" ||
+    pathname === "/courses/thinking-clearly" ||
+    pathname.startsWith("/courses/thinking-clearly/")
+  );
+}
+
+function alphaProof(accessCode: string): string {
+  return createHmac("sha256", accessCode)
+    .update("lifeschool-private-alpha")
+    .digest("hex");
+}
+
+function equalSecret(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+  return (
+    leftBuffer.length === rightBuffer.length &&
+    timingSafeEqual(leftBuffer, rightBuffer)
+  );
+}
+
 function securityHeaders(response: ServerResponse): void {
   response.setHeader("Cache-Control", "no-store");
   response.setHeader(
@@ -261,6 +328,25 @@ function sendJson(
   response.statusCode = status;
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.end(JSON.stringify(value));
+}
+
+async function sendClientAsset(
+  response: ServerResponse,
+  asset: StaticAsset,
+  status = 200,
+  revealAlphaNote = false,
+): Promise<void> {
+  const content = await readFile(join(clientDirectory, asset.file));
+  const body =
+    revealAlphaNote && asset.file === "index.html"
+      ? content
+          .toString("utf8")
+          .replace(" data-alpha-note hidden", " data-alpha-note")
+      : content;
+  securityHeaders(response);
+  response.statusCode = status;
+  response.setHeader("Content-Type", asset.contentType);
+  response.end(body);
 }
 
 async function readJson(request: IncomingMessage): Promise<unknown> {
@@ -292,6 +378,8 @@ export function createLocalStewardServer(
   options: LocalStewardServerOptions = {},
 ) {
   const environment = options.environment ?? process.env;
+  const alphaAccessCode = environment.ALPHA_ACCESS_CODE?.trim() ?? "";
+  const alphaAccessEnabled = alphaAccessCode.length > 0;
   const configuredProvider =
     "generationProvider" in options
       ? (options.generationProvider ?? null)
@@ -322,6 +410,59 @@ export function createLocalStewardServer(
 
     if (request.method === "GET" && url.pathname === "/health") {
       sendJson(response, 200, { status: "ok" });
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/alpha-access") {
+      try {
+        const body = await readJson(request);
+        const record =
+          typeof body === "object" && body !== null
+            ? (body as Record<string, unknown>)
+            : {};
+        const pathname =
+          typeof record.path === "string" ? record.path : "";
+        if (!alphaAccessEnabled || !isAlphaProtectedPath(pathname)) {
+          sendJson(response, 404, { error: { code: "NOT_FOUND" } });
+          return;
+        }
+        const asset = learnerPageAsset(pathname) ?? {
+          file: "404.html",
+          contentType: "text/html; charset=utf-8",
+        };
+
+        const suppliedCode =
+          typeof record.code === "string" ? record.code : "";
+        const suppliedProof =
+          typeof record.proof === "string" ? record.proof : "";
+        const expectedProof = alphaProof(alphaAccessCode);
+        const granted =
+          equalSecret(suppliedCode, alphaAccessCode) ||
+          equalSecret(suppliedProof, expectedProof);
+        if (!granted) {
+          sendJson(response, 401, {
+            error: { code: "ALPHA_ACCESS_DENIED" },
+          });
+          return;
+        }
+
+        const content = await readFile(join(clientDirectory, asset.file), "utf8");
+        const html =
+          asset.file === "index.html"
+            ? content.replace(" data-alpha-note hidden", " data-alpha-note")
+            : content;
+        sendJson(response, 200, {
+          granted: true,
+          proof: expectedProof,
+          html,
+        });
+      } catch (error) {
+        if (error instanceof InvalidMessageRequest) {
+          sendJson(response, 400, { error: { code: error.code } });
+        } else {
+          sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
+        }
+      }
       return;
     }
 
@@ -416,20 +557,52 @@ export function createLocalStewardServer(
 
     const asset =
       staticFiles.get(url.pathname) ??
-      (/^\/courses\/thinking-clearly\/lesson-\d+\/?$/.test(url.pathname)
-        ? { file: "lesson.html", contentType: "text/html; charset=utf-8" }
+      (/^\/courses\/thinking-clearly\/lesson-[1-6]\/?$/.test(url.pathname)
+        ? lessonAsset
         : undefined);
+    if (
+      request.method === "GET" &&
+      alphaAccessEnabled &&
+      isAlphaProtectedPath(url.pathname)
+    ) {
+      try {
+        await sendClientAsset(response, {
+          file: "alpha-access.html",
+          contentType: "text/html; charset=utf-8",
+        });
+      } catch {
+        sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
+      }
+      return;
+    }
+    if (request.method === "GET" && asset === undefined) {
+      if (url.pathname.startsWith("/api/")) {
+        sendJson(response, 404, { error: { code: "NOT_FOUND" } });
+        return;
+      }
+      try {
+        await sendClientAsset(
+          response,
+          { file: "404.html", contentType: "text/html; charset=utf-8" },
+          404,
+        );
+      } catch {
+        sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
+      }
+      return;
+    }
     if (request.method !== "GET" || asset === undefined) {
       sendJson(response, 404, { error: { code: "NOT_FOUND" } });
       return;
     }
 
     try {
-      const content = await readFile(join(clientDirectory, asset.file));
-      securityHeaders(response);
-      response.statusCode = 200;
-      response.setHeader("Content-Type", asset.contentType);
-      response.end(content);
+      await sendClientAsset(
+        response,
+        asset,
+        200,
+        alphaAccessEnabled && url.pathname === "/",
+      );
     } catch {
       sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
     }

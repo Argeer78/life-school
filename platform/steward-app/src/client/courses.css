@@ -52,6 +52,10 @@ textarea {
   gap: 1.5rem;
 }
 
+.learning-header {
+  padding-top: 1.5rem;
+}
+
 .learning-header-actions {
   display: grid;
   justify-items: end;

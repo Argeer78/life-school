@@ -4,50 +4,72 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
-    <title>Steward — Private Local Prototype</title>
+    <title>Lifeschool</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/learner-nav.css" />
   </head>
   <body>
-    <main class="shell">
-      <header class="header">
-        <div>
-          <p class="eyebrow">Life School</p>
-          <h1>Steward</h1>
-          <p class="subtitle">Private local conversation prototype</p>
+    <main class="home-shell">
+      <nav class="learner-nav" aria-label="Main navigation">
+        <a href="/" aria-current="page" data-i18n="common.navHome">Home</a>
+        <a href="/courses" data-i18n="common.navCourses">Courses</a>
+        <a href="/learn" data-i18n="common.navSteward">Steward</a>
+      </nav>
+
+      <header class="home-hero">
+        <div
+          class="language-switcher"
+          role="group"
+          aria-label="Language"
+          data-i18n-aria-label="common.language"
+        >
+          <button
+            class="locale-button"
+            type="button"
+            data-locale="en"
+            data-i18n="common.english"
+          >English</button>
+          <button
+            class="locale-button"
+            type="button"
+            data-locale="el"
+            data-i18n="common.greek"
+          >Ελληνικά</button>
         </div>
-        <button id="clear" class="secondary" type="button">Clear</button>
+        <p class="eyebrow">Lifeschool</p>
+        <h1>Lifeschool</h1>
+        <p class="slogan" data-i18n="common.slogan">
+          No lies. No shortcuts. Think for yourself.
+        </p>
+        <p class="home-introduction" data-i18n="home.introduction">
+          Lifeschool is a learning platform where Steward helps you practice
+          clearer thinking without replacing your judgment.
+        </p>
+        <p class="alpha-note" data-alpha-note hidden>Private alpha</p>
+        <div class="home-actions">
+          <a class="primary-link" href="/courses" data-i18n="home.startLearning">
+            Start Learning
+          </a>
+          <a class="secondary-link" href="/learn" data-i18n="home.talkSteward">
+            Talk with Steward
+          </a>
+        </div>
       </header>
 
-      <p class="limitation" role="note">
-        Steward may be mistaken and is not a final authority. Your judgment and
-        responsibility remain your own.
-      </p>
-
-      <section
-        id="transcript"
-        class="transcript"
-        aria-label="Conversation"
-        aria-live="polite"
-      >
-        <p class="empty">No messages yet.</p>
+      <section class="module-preview" aria-labelledby="module-preview-title">
+        <p class="eyebrow" data-i18n="home.moduleEyebrow">First module</p>
+        <h2 id="module-preview-title" data-i18n="courses.moduleTitle">
+          Thinking Clearly
+        </h2>
+        <p data-i18n="courses.moduleDescription">
+          Learn to slow down thought, examine claims, and separate facts,
+          feelings, assumptions, interpretations, and conclusions.
+        </p>
+        <a href="/courses/thinking-clearly" data-i18n="home.viewModule">
+          View module
+        </a>
       </section>
-
-      <form id="message-form" class="composer">
-        <label for="message">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="3"
-          maxlength="4000"
-          autocomplete="off"
-          required
-        ></textarea>
-        <div class="composer-actions">
-          <p class="privacy">This transcript exists only in this browser tab.</p>
-          <button id="send" type="submit">Send</button>
-        </div>
-      </form>
     </main>
-    <script type="module" src="/app.js"></script>
+    <script type="module" src="/homepage.js"></script>
   </body>
 </html>

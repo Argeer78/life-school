@@ -173,6 +173,7 @@ STEWARD_PROVIDER=openai
 OPENAI_API_KEY=replace_with_the_production_key
 OPENAI_MODEL=gpt-5.4-mini
 OPENAI_TIMEOUT_MS=30000
+ALPHA_ACCESS_CODE=replace_with_the_private_alpha_code
 ```
 
 Never commit `.env` or print the API key. The repository root server reads
