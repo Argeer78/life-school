@@ -15,7 +15,7 @@
 | Build command | `npm run build` |
 | Start command | `npm start` |
 | Build output directory | `platform/steward-app/dist` |
-| Entry file | `platform/steward-app/dist/server/production-server.js` |
+| Entry file | `server.js` |
 | Health endpoint | `/health` |
 
 The application remains in `platform/steward-app`. A minimal npm workspace
@@ -23,6 +23,10 @@ manifest at the repository root makes the Git repository detectable by
 Hostinger. It forwards build and verification commands to the application and
 starts the compiled production entry directly, without moving or duplicating
 the application.
+
+The committed root `server.js` is the deployment entrypoint Hostinger can
+validate before the build exists. After `npm run build`, it imports the
+compiled production server from `platform/steward-app/dist`.
 
 Use the repository root in Hostinger. Initial Git detection happens before
 Hostinger exposes all advanced build settings, so relying only on the nested
@@ -88,8 +92,7 @@ including credentials.
 9. Set the build command to `npm run build`.
 10. Set the start command to `npm start`.
 11. If requested, set the output directory to
-    `platform/steward-app/dist` and entry file to
-    `platform/steward-app/dist/server/production-server.js`.
+    `platform/steward-app/dist` and entry file to `server.js`.
 12. Add the production environment variables in hPanel.
 13. Deploy and inspect the build log for successful install, build, and start.
 14. Open `https://<deployment-domain>/health` and confirm:

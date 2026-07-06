@@ -42,14 +42,16 @@ describe("production deployment metadata", () => {
     expect(rootPackage.private).toBe(true);
     expect(rootPackage.engines?.node).toBe("22.x");
     expect(rootPackage.workspaces).toEqual(["platform/steward-app"]);
-    expect(rootPackage.main).toBe(
-      "platform/steward-app/dist/server/production-server.js",
-    );
+    expect(rootPackage.main).toBe("server.js");
     expect(rootPackage.scripts).toMatchObject({
       build: "npm run build --workspace=platform/steward-app",
-      start:
-        "node platform/steward-app/dist/server/production-server.js",
+      start: "node server.js",
     });
+    await expect(
+      access(
+        fileURLToPath(new URL("../../../../server.js", import.meta.url)),
+      ),
+    ).resolves.toBeUndefined();
   });
 
   it("documents every production environment variable without secrets", async () => {
