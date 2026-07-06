@@ -1,5 +1,9 @@
 import type { ReviewRequest } from "../model/client.js";
 import {
+  detectLearnerLanguage,
+  resolveResponseLanguage,
+} from "../provider/response-language.js";
+import {
   providerResult,
   type GenerationProvider,
   type GenerationRequest,
@@ -86,7 +90,79 @@ function relationshipRegressionResponse(message: string): string | null {
   }
 }
 
+function greekResponseFor(request: GenerationRequest): string {
+  const message = request.learnerMessage.trim().toLocaleLowerCase("el");
+  const finalAuthorityPrompt =
+    request.strategySelection.constitutionalJustification.stewardBoundary ===
+    "ST-001:human-authority";
+
+  if (finalAuthorityPrompt) {
+    return "Όχι. Το Steward δεν είναι η τελική αυθεντία για τη ζωή, τις επιλογές ή την αυτοκατανόησή σου· μπορεί να σε βοηθήσει να εξετάσεις λόγους και αβεβαιότητες, αλλά η κρίση παραμένει δική σου.";
+  }
+
+  if (
+    message.includes("συναίσθημα") &&
+    message.includes("τελική απόδειξη")
+  ) {
+    const feeling =
+      /παρατήρησα αυτό το συναίσθημα:\s*([^.!?]+)/iu
+        .exec(request.learnerMessage)?.[1]
+        ?.trim() ?? "που περιγράφεις";
+    return `Το συναίσθημα «${feeling}» είναι πραγματικό ως εμπειρία, αλλά δεν αποδεικνύει από μόνο του το συμπέρασμα που ακολουθεί. Γράψε τι συνέβη ακριβώς πριν εμφανιστεί και χώρισε την εξέταση σε δύο γραμμές: «τι ένιωσα» και «τι συμπέρανα».`;
+  }
+  if (message.includes("παρατήρησ") && message.includes("ερμηνεί")) {
+    return "Η παρατήρηση περιγράφει τι συνέβη, ενώ η ερμηνεία προσθέτει τι νομίζεις ότι σημαίνει. Γράψε τα σε δύο χωριστές γραμμές και αφαίρεσε από την πρώτη κάθε λέξη που αποδίδει πρόθεση ή νόημα.";
+  }
+  if (message.includes("υπόθεσ") && message.includes("πληροφορί")) {
+    return "Η υπόθεση μπορεί να είναι πιθανή, αλλά δεν είναι το ίδιο με τις πληροφορίες που διαθέτεις. Χώρισε τη σε δύο στήλες: «τι νομίζω ότι ισχύει» και «τι χρειάζεται ακόμη να μάθω».";
+  }
+  if (message.includes("ερώτησ") && message.includes("καθαρότερ")) {
+    return "Μια καθαρότερη ερώτηση αφαιρεί απόλυτες λέξεις και κρυφές υποθέσεις χωρίς να απορρίπτει την ανησυχία. Ξαναγράψε την ώστε να αναφέρεται σε ένα συγκεκριμένο περιστατικό και σε κάτι που μπορεί να εξεταστεί.";
+  }
+  if (
+    message.includes("στοιχεί") &&
+    message.includes("εναλλακτικ") &&
+    message.includes("συνέπει")
+  ) {
+    return "Ένα συμπέρασμα γίνεται καθαρότερο όταν εξετάζεις τι το στηρίζει, ποια άλλη εξήγηση ταιριάζει και τι μπορεί να ακολουθήσει αν είναι σωστό ή λάθος. Βάλε αυτά τα τρία μέρη σε ξεχωριστές γραμμές και έλεγξε ποιο στηρίζεται σε πραγματικό στοιχείο.";
+  }
+  if (message.includes("αντίδρασ") && message.includes("εξέτασ")) {
+    return "Η πρώτη αντίδραση είναι πραγματική, αλλά δεν χρειάζεται να γίνει αμέσως συμπέρασμα ή πράξη. Γράψε πρώτα τι συνέβη κυριολεκτικά και μετά τι θέλεις να εξετάσεις πριν επιλέξεις απάντηση.";
+  }
+
+  switch (request.strategySelection.primary) {
+    case "CS-001":
+      return "Μια επώδυνη κατάσταση δεν αποτελεί συνολική κρίση για την αξία σου. Κατάγραψε το συγκεκριμένο γεγονός και έλεγξε ποια στοιχεία στηρίζουν ή αμφισβητούν το σκληρό συμπέρασμα για τον εαυτό σου.";
+    case "CS-002":
+      return "Η απόφαση παραμένει δική σου και σημαντικά δεδομένα μπορεί να λείπουν ακόμη. Σύγκρινε δύο ρεαλιστικές επιλογές με ένα κριτήριο που έχει σημασία για σένα και σημείωσε τις πιθανές συνέπειες καθεμιάς.";
+    case "CS-003":
+      return "Δεν υπάρχει βεβαιότητα εδώ και ορισμένα στοιχεία παραμένουν άγνωστα. Γράψε ένα γεγονός που γνωρίζεις και μία πιθανότητα που φοβάσαι, ώστε να μην τα αντιμετωπίζεις ως το ίδιο πράγμα.";
+    case "CS-004":
+      return "Η εμπειρία σου στη σχέση αξίζει προσοχή, αλλά η πρόθεση του άλλου προσώπου δεν είναι γνωστή χωρίς στοιχεία. Ξεχώρισε τι παρατήρησες από την ερμηνεία σου και διατύπωσε μία ήρεμη ερώτηση διευκρίνισης.";
+    case "CS-005":
+      return "Η σύγκρουση μπορεί να εξεταστεί χωρίς κλιμάκωση ή συνολική απόδοση ευθύνης. Περιέγραψε ένα συγκεκριμένο σημείο διαφωνίας και μία ανάγκη που θέλεις να επικοινωνήσεις καθαρά.";
+    case "CS-006":
+      return "Η ασφάλεια προηγείται και δεν μπορώ να βοηθήσω στην πρόκληση βλάβης. Αν υπάρχει άμεσος κίνδυνος, απομακρύνσου από μέσα βλάβης και επικοινώνησε τώρα με έμπιστο πρόσωπο ή τις τοπικές υπηρεσίες έκτακτης ανάγκης.";
+    case "CS-007":
+      return "Δεν μπορώ να βοηθήσω σε χειραγώγηση, εξαναγκασμό ή εξαπάτηση άλλου ανθρώπου. Διατύπωσε τον πραγματικό σου στόχο με ειλικρίνεια και άφησε στον άλλον χώρο να συμφωνήσει ή να αρνηθεί.";
+    case "CS-008":
+      return "Η μάθηση γίνεται καθαρότερη όταν χωρίζεις την ιδέα σε μικρά μέρη και ελέγχεις τι γνωρίζεις. Δοκίμασε ένα παράδειγμα και σημείωσε ποιο σημείο χρειάζεται ακόμη εξήγηση ή έλεγχο.";
+    case "CS-009":
+      return "Η ερώτησή σου είναι ένα χρήσιμο σημείο εκκίνησης, αλλά χρειάζεται να ξεχωρίσεις τις υποθέσεις της από όσα γνωρίζεις. Δοκίμασε μία πιθανή εξήγηση τη φορά και σημείωσε ποιο στοιχείο θα μπορούσε να αλλάξει την άποψή σου.";
+    case "CS-010":
+      return "Μία ταμπέλα ή μία στιγμή δεν μπορεί να ορίσει οριστικά την ταυτότητά σου. Σύγκρινε ένα στοιχείο που έχει αλλάξει με ένα που έχει παραμείνει σταθερό.";
+    case "CS-011":
+      return "Το συναίσθημα είναι πραγματικό ως εμπειρία, χωρίς να αποτελεί μόνιμη ετυμηγορία ή πλήρη απόδειξη. Ονόμασε το γεγονός που προηγήθηκε και ξεχώρισε τι ένιωσες από το συμπέρασμα που έβγαλες.";
+    case "CS-012":
+      return "Δεν μπορώ να ορίσω το νόημα ή τον σκοπό της ζωής σου για σένα. Διάλεξε μία αξία που θεωρείς σημαντική και εξέτασε μία μικρή πράξη με την οποία θα μπορούσες να τη δοκιμάσεις.";
+  }
+}
+
 function responseFor(request: GenerationRequest): string {
+  if (resolveResponseLanguage(request.learnerMessage) === "el") {
+    return greekResponseFor(request);
+  }
+
   const finalAuthorityPrompt =
     request.strategySelection.constitutionalJustification.stewardBoundary ===
     "ST-001:human-authority";
@@ -213,7 +289,7 @@ function responseFor(request: GenerationRequest): string {
         ].join(" ");
       }
       return [
-        "Curiosity gives us a useful starting point, and a useful distinction is between the question, its assumptions, and possible explanations.",
+        "Your question gives us a useful starting point, and a useful distinction is between the question, its assumptions, and possible explanations.",
         "Some details may remain uncertain, so you could continue by testing one explanation at a time.",
         "Examine the evidence and notice what changes your view.",
         "You remain free to accept, reject, or stop; what part of this matters most to you?",
@@ -239,6 +315,22 @@ function responseFor(request: GenerationRequest): string {
   }
 }
 
+function requiresLearnerSafeRendering(
+  request: GenerationRequest,
+  result: ProviderResult,
+): boolean {
+  if (typeof result.response !== "string") return false;
+  const expectedLanguage = resolveResponseLanguage(request.learnerMessage);
+  const actualLanguage = detectLearnerLanguage(result.response);
+  const wrongLanguage =
+    (expectedLanguage === "el" && actualLanguage !== "el") ||
+    (expectedLanguage === "en" && actualLanguage === "el");
+  const exposesStrategy =
+    /\bCS-\d{3}\b/i.test(result.response) ||
+    /^\s*(?:Curiosity|Strategy|Primary strategy)\b/i.test(result.response);
+  return wrongLanguage || exposesStrategy;
+}
+
 class LocalDemoFakeModel extends FakeModelAdapter {
   constructor(
     script: FakeModelScript,
@@ -250,9 +342,13 @@ class LocalDemoFakeModel extends FakeModelAdapter {
   override async generate(request: GenerationRequest): Promise<ProviderResult> {
     this.calls.push("response-generation");
     this.generateRequests.push(request);
-    return this.configuredProvider === null
-      ? providerResult(responseFor(request))
-      : this.configuredProvider.generate(request);
+    if (this.configuredProvider === null) {
+      return providerResult(responseFor(request));
+    }
+    const result = await this.configuredProvider.generate(request);
+    return requiresLearnerSafeRendering(request, result)
+      ? { ...result, response: responseFor(request) }
+      : result;
   }
 }
 

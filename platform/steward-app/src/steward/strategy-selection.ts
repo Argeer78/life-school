@@ -331,7 +331,11 @@ function scoreMessage(message: string): StrategyScores {
     ) ||
     matches(text, /\b(grief|grieving|since my .* died)\b/) ||
     isEmotionalMeaninglessnessPrompt(text) ||
-    (!decisionSignal && matches(text, /\b(overwhelmed|exhausted)\b/));
+    (!decisionSignal && matches(text, /\b(overwhelmed|exhausted)\b/)) ||
+    matches(
+      text,
+      /(συναίσθημα|συναισθήματα|νιώθω|αισθάνομαι|θυμός|θυμωμένα|φόβος|μίσος|αντίδραση)/u,
+    );
   if (emotionSignal) add("CS-011", 3);
 
   if (
@@ -341,6 +345,12 @@ function scoreMessage(message: string): StrategyScores {
     ) ||
     isPrimaryUncertaintyPrompt(text) ||
     isImpossibleGuaranteePrompt(text) ||
+    matches(
+      text,
+      /(αβεβαιότητα|αβέβαιο|δεν γνωρίζω|δεν ξέρω|υπόθεση|υποθέσεις|πληροφορίες που λείπουν|πρόβλεψη|εναλλακτική εξήγηση|εναλλακτικές εξηγήσεις)/u,
+    ) ||
+    (matches(text, /\bστοιχεία\b/u) &&
+      matches(text, /\b(εναλλακτικ|συνέπει)/u)) ||
     (finalAuthorityPrompt &&
       matches(text, /\byou (?:know|understand) what(?:'s| is) best for me\b/))
   ) {
@@ -360,6 +370,10 @@ function scoreMessage(message: string): StrategyScores {
     matches(
       text,
       /\b(friend|partner|relationship|parent|parents|family|brother|sister|colleague|coworker|employee|boss|someone i love|people leave me)\b/,
+    )
+    || matches(
+      text,
+      /(φίλος|φίλη|σύντροφος|σχέση|γονείς|οικογένεια|αδελφός|αδελφή|συνάδελφος|προϊστάμενος)/u,
     )
   ) {
     add("CS-004", 3);
@@ -386,6 +400,8 @@ function scoreMessage(message: string): StrategyScores {
       text,
       /^(why|what if|could)\b|\b(explore|curious|wonder|possibilities|perspectives|think more deeply)\b/,
     )
+    || (!meaningPurposeSignal &&
+      matches(text, /(ερώτηση|ερωτήσεις|εξετάσω|εξετάσεις|διερευνήσω)/u))
   ) {
     add("CS-009", 2);
   }

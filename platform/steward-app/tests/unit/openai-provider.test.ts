@@ -131,6 +131,10 @@ describe("OpenAI generation provider", () => {
       /learner-facing response in natural Greek/i,
     ],
     [
+      "Παρατήρησα αυτό το συναίσθημα: μίσος. Νομίζω ότι μπορεί να μου δείχνει: ότι μισώ κάποιον. Μπορείς να με βοηθήσεις να το εξετάσω χωρίς να το θεωρήσω τελική απόδειξη;",
+      /learner-facing response in natural Greek/i,
+    ],
+    [
       "What is my purpose?",
       /learner-facing response in natural English/i,
     ],
@@ -156,6 +160,9 @@ describe("OpenAI generation provider", () => {
       expect(body.instructions).toMatch(expectedInstruction);
       expect(body.instructions).toMatch(
         /Language changes; constitutional behavior does not/i,
+      );
+      expect(body.instructions).toMatch(
+        /do not append another reflective question unless immediate safety requires it/i,
       );
       expect(Object.keys(request).sort()).toEqual([
         "behaviorPlan",
