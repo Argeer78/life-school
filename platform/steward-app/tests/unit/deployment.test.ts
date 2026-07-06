@@ -31,6 +31,27 @@ describe("production deployment metadata", () => {
     expect(packageJson.scripts?.start).not.toMatch(/tsx|local-server\.ts/);
   });
 
+  it("exposes the nested application through the Git repository root", async () => {
+    const rootPackage = JSON.parse(
+      await readFile(
+        new URL("../../../../package.json", import.meta.url),
+        "utf8",
+      ),
+    ) as PackageMetadata & { readonly workspaces?: readonly string[] };
+
+    expect(rootPackage.private).toBe(true);
+    expect(rootPackage.engines?.node).toBe("22.x");
+    expect(rootPackage.workspaces).toEqual(["platform/steward-app"]);
+    expect(rootPackage.main).toBe(
+      "platform/steward-app/dist/server/production-server.js",
+    );
+    expect(rootPackage.scripts).toMatchObject({
+      build: "npm run build --workspace=platform/steward-app",
+      start:
+        "node platform/steward-app/dist/server/production-server.js",
+    });
+  });
+
   it("documents every production environment variable without secrets", async () => {
     const example = await readFile(
       new URL("../../.env.example", import.meta.url),

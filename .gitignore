@@ -1,0 +1,6 @@
+node_modules/
+platform/steward-app/dist/
+.env
+.env.*
+!.env.example
+npm-debug.log*

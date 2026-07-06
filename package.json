@@ -1,0 +1,20 @@
+{
+  "name": "lifeschool",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "platform/steward-app/dist/server/production-server.js",
+  "engines": {
+    "node": "22.x"
+  },
+  "workspaces": [
+    "platform/steward-app"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=platform/steward-app",
+    "build": "npm run build --workspace=platform/steward-app",
+    "start": "node platform/steward-app/dist/server/production-server.js",
+    "typecheck": "npm run typecheck --workspace=platform/steward-app",
+    "test": "npm run test --workspace=platform/steward-app"
+  }
+}
