@@ -11,6 +11,17 @@ const clientOutputDirectory = join(outputDirectory, "client");
 const typeScriptCompiler = createRequire(import.meta.url).resolve(
   "typescript/bin/tsc",
 );
+const copiedClientExtensions = new Set([
+  ".html",
+  ".css",
+  ".svg",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".webp",
+  ".gif",
+  ".ico",
+]);
 
 await rm(outputDirectory, { force: true, recursive: true });
 
@@ -28,10 +39,11 @@ const clientAssets = await readdir(clientSourceDirectory, {
   withFileTypes: true,
 });
 for (const asset of clientAssets) {
-  if (
-    asset.isFile() &&
-    (asset.name.endsWith(".html") || asset.name.endsWith(".css"))
-  ) {
+  if (asset.isFile()) {
+    const extensionIndex = asset.name.lastIndexOf(".");
+    const extension =
+      extensionIndex === -1 ? "" : asset.name.slice(extensionIndex).toLowerCase();
+    if (!copiedClientExtensions.has(extension)) continue;
     await copyFile(
       join(clientSourceDirectory, asset.name),
       join(clientOutputDirectory, asset.name),

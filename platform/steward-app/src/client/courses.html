@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>Lifeschool Learning</title>
     <link rel="stylesheet" href="/courses.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
+    <script type="module" src="/theme.js"></script>
   </head>
   <body>
     <main class="learning-shell">
@@ -18,7 +19,22 @@
         <a href="/learn" data-i18n="common.navSteward">Steward</a>
       </nav>
       <header class="learning-header">
+        <button
+          class="theme-button"
+          type="button"
+          data-theme-toggle
+          aria-pressed="false"
+        >
+          Dark mode
+        </button>
         <div>
+          <div class="brand-row" aria-label="Lifeschool brand">
+            <img src="/lifeschool-logo.svg" alt="Lifeschool" width="58" height="58" />
+            <div>
+              <p class="eyebrow">Lifeschool</p>
+              <p class="brand-tagline">Learn to think. Live with clarity.</p>
+            </div>
+          </div>
           <p class="eyebrow" data-i18n="courses.eyebrow">
             Lifeschool Curriculum
           </p>
@@ -193,6 +209,13 @@
         Learning remains an invitation. Your judgment and responsibility
         remain your own.
       </p>
+
+      <footer class="site-footer-links" aria-label="Site links">
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/contact">Contact</a>
+      </footer>
     </main>
     <script type="module" src="/i18n-entry.js"></script>
   </body>
