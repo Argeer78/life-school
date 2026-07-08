@@ -34,6 +34,24 @@ export interface OpenAIProviderOptions {
   readonly timeoutMs?: number;
 }
 
+function errorDetails(error: unknown): Record<string, unknown> {
+  if (!(error instanceof Error)) {
+    return { type: typeof error, value: String(error) };
+  }
+  const record = error as Error & {
+    status?: number;
+    code?: string;
+    type?: string;
+  };
+  return {
+    name: record.name,
+    message: record.message,
+    status: record.status ?? null,
+    code: record.code ?? null,
+    type: record.type ?? null,
+  };
+}
+
 function containsRefusal(value: unknown): boolean {
   if (Array.isArray(value)) return value.some(containsRefusal);
   if (typeof value !== "object" || value === null) return false;
@@ -222,6 +240,11 @@ export class OpenAIGenerationProvider implements GenerationProvider {
         );
       }
     } catch (error) {
+      console.error("[provider:openai:generate:error]", {
+        model: this.model,
+        timeoutMs: this.timeoutMs,
+        error: errorDetails(error),
+      });
       throw mapOpenAIError(error);
     }
   }
@@ -231,17 +254,31 @@ export function createOpenAIProviderFromEnvironment(
   environment: NodeJS.ProcessEnv = process.env,
 ): OpenAIGenerationProvider {
   const apiKey = environment.OPENAI_API_KEY?.trim();
-  if (!apiKey) {
-    throw new ProviderBoundaryError(
-      "PB-FAIL-006",
-      "OPENAI_API_KEY_MISSING",
-    );
-  }
+  const model = environment.OPENAI_MODEL;
   const timeoutValue = environment.OPENAI_TIMEOUT_MS?.trim();
   const timeoutMs =
     timeoutValue === undefined || timeoutValue === ""
       ? defaultOpenAITimeoutMs
       : Number(timeoutValue);
+
+  console.info("[provider:openai:init]", {
+    stewardProvider: environment.STEWARD_PROVIDER?.trim() || "",
+    model: model?.trim() || defaultOpenAIModel,
+    timeoutMs,
+    hasApiKey: Boolean(apiKey),
+  });
+
+  if (!apiKey) {
+    console.error("[provider:openai:init:error]", {
+      reason: "OPENAI_API_KEY_MISSING",
+      model: model?.trim() || defaultOpenAIModel,
+      timeoutMs,
+    });
+    throw new ProviderBoundaryError(
+      "PB-FAIL-006",
+      "OPENAI_API_KEY_MISSING",
+    );
+  }
   const client = new OpenAI({
     apiKey,
     timeout: timeoutMs,
@@ -249,11 +286,16 @@ export function createOpenAIProviderFromEnvironment(
     logLevel: "off",
   });
 
+  console.info("[provider:openai:init:success]", {
+    model: model?.trim() || defaultOpenAIModel,
+    timeoutMs,
+  });
+
   return new OpenAIGenerationProvider({
     client: client.responses as unknown as OpenAIResponsesClient,
     timeoutMs,
-    ...(environment.OPENAI_MODEL === undefined
+    ...(model === undefined
       ? {}
-      : { model: environment.OPENAI_MODEL }),
+      : { model }),
   });
 }

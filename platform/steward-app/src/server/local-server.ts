@@ -380,22 +380,35 @@ export function createLocalStewardServer(
   const environment = options.environment ?? process.env;
   const alphaAccessCode = environment.ALPHA_ACCESS_CODE?.trim() ?? "";
   const alphaAccessEnabled = alphaAccessCode.length > 0;
+  const configuredProviderInOptions = "generationProvider" in options;
+  const resolvedProviderMode = configuredProviderInOptions
+    ? options.generationProvider === null
+      ? "fake"
+      : "injected"
+    : configuredProviderMode(environment);
   const configuredProvider =
-    "generationProvider" in options
+    configuredProviderInOptions
       ? (options.generationProvider ?? null)
-      : createConfiguredGenerationProvider(environment);
-  const providerMode =
-    "generationProvider" in options
-      ? configuredProvider === null
-        ? "fake"
-        : "injected"
-      : configuredProviderMode(environment);
+      : resolvedProviderMode === "openai"
+        ? createConfiguredGenerationProvider(environment)
+        : null;
+  const providerMode = resolvedProviderMode;
   const providerModel =
     providerMode === "openai"
       ? environment.OPENAI_MODEL?.trim() || defaultOpenAIModel
       : providerMode === "fake"
         ? "local-demo"
         : "configured-provider";
+
+  console.info("[server:provider:boot]", {
+    providerMode,
+    providerModel,
+    configuredProviderInjected: configuredProviderInOptions,
+    stewardProviderRaw: environment.STEWARD_PROVIDER?.trim() || "",
+    openAIModelRaw: environment.OPENAI_MODEL?.trim() || "",
+    hasOpenAIApiKey: Boolean(environment.OPENAI_API_KEY?.trim()),
+  });
+
   const evaluationRuntime: EvaluationRuntime = {
     provider: providerMode,
     model: providerModel,

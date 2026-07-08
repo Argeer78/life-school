@@ -13,6 +13,14 @@ if (existsSync(productionEnvPath)) {
   loadEnvFile(productionEnvPath);
 }
 
+console.info("[production:env:init]", {
+  envFilePath: productionEnvPath,
+  envFileExists: existsSync(productionEnvPath),
+  stewardProvider: process.env.STEWARD_PROVIDER?.trim() || "",
+  openAIModel: process.env.OPENAI_MODEL?.trim() || "",
+  hasOpenAIApiKey: Boolean(process.env.OPENAI_API_KEY?.trim()),
+});
+
 const defaultHost = "0.0.0.0";
 const defaultPort = 3000;
 const portValue = process.env.PORT?.trim();

@@ -1,6 +1,10 @@
 import type { AddressInfo } from "node:net";
-import { afterEach, describe, expect, it } from "vitest";
-import { createLocalStewardServer } from "../../src/server/local-server.js";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  createLocalStewardServer,
+  type LocalStewardServerOptions,
+} from "../../src/server/local-server.js";
+import { OpenAIGenerationProvider } from "../../src/provider/openai/adapter.js";
 
 const servers: ReturnType<typeof createLocalStewardServer>[] = [];
 
@@ -15,8 +19,8 @@ afterEach(async () => {
   );
 });
 
-async function startServer() {
-  const server = createLocalStewardServer();
+async function startServer(options: LocalStewardServerOptions = {}) {
+  const server = createLocalStewardServer(options);
   servers.push(server);
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const { port } = server.address() as AddressInfo;
@@ -369,5 +373,55 @@ describe("local HTTP server", () => {
     expect(JSON.stringify(body)).not.toMatch(
       /inspection|strategySelection|reviewResult|provider|metadata/,
     );
+  });
+
+  it("logs provider error details server-side while returning learner-safe fallback", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const failingProvider = new OpenAIGenerationProvider({
+      client: {
+        create: async () => {
+          const error = Object.assign(new Error("quota exceeded"), {
+            status: 429,
+            code: "insufficient_quota",
+            type: "insufficient_quota",
+          });
+          throw error;
+        },
+      },
+      model: "gpt-5.4-mini",
+      timeoutMs: 1_000,
+    });
+
+    try {
+      const origin = await startServer({ generationProvider: failingProvider });
+      const response = await fetch(`${origin}/api/message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Can you answer in Greek?" }),
+      });
+      const body = (await response.json()) as Record<string, unknown>;
+
+      expect(response.status).toBe(200);
+      expect(Object.keys(body).sort()).toEqual(["kind", "revisions", "text"]);
+      expect(body.kind).toBe("fallback");
+      expect(String(body.text)).toContain("technical limitation");
+      expect(String(body.text)).not.toContain("insufficient_quota");
+      expect(String(body.text)).not.toContain("429");
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        "[provider:openai:generate:error]",
+        expect.objectContaining({
+          model: "gpt-5.4-mini",
+          timeoutMs: 1_000,
+          error: expect.objectContaining({
+            status: 429,
+            code: "insufficient_quota",
+            type: "insufficient_quota",
+          }),
+        }),
+      );
+    } finally {
+      errorSpy.mockRestore();
+    }
   });
 });
