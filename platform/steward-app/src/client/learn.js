@@ -10,6 +10,9 @@ const input = document.querySelector("#learn-message");
 const sendButton = document.querySelector("#send-message");
 const clearButton = document.querySelector("#clear-conversation");
 const status = document.querySelector("#learn-status");
+const takeawayCard = document.querySelector("#takeaway-card");
+const takeawayText = document.querySelector("#takeaway-text");
+const askNextLesson = document.querySelector("#ask-next-lesson");
 
 if (
   !(transcriptElement instanceof HTMLElement) ||
@@ -17,7 +20,10 @@ if (
   !(input instanceof HTMLTextAreaElement) ||
   !(sendButton instanceof HTMLButtonElement) ||
   !(clearButton instanceof HTMLButtonElement) ||
-  !(status instanceof HTMLElement)
+  !(status instanceof HTMLElement) ||
+  !(takeawayCard instanceof HTMLElement) ||
+  !(takeawayText instanceof HTMLElement) ||
+  !(askNextLesson instanceof HTMLButtonElement)
 ) {
   throw new Error("Required learner interface element is missing.");
 }
@@ -28,7 +34,31 @@ const inputView = /** @type {HTMLTextAreaElement} */ (input);
 const sendButtonView = /** @type {HTMLButtonElement} */ (sendButton);
 const clearButtonView = /** @type {HTMLButtonElement} */ (clearButton);
 const statusView = /** @type {HTMLElement} */ (status);
+const takeawayCardView = /** @type {HTMLElement} */ (takeawayCard);
+const takeawayTextView = /** @type {HTMLElement} */ (takeawayText);
+const askNextLessonView = /** @type {HTMLButtonElement} */ (askNextLesson);
 const transcript = createMemoryTranscript();
+
+/** @param {string} text */
+function takeawayFor(text) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  if (normalized.length === 0) return "";
+  const split = normalized.match(/^(.+?[.!?])(?:\s|$)/u);
+  const summary = split?.[1] ?? normalized;
+  return summary.length > 160 ? `${summary.slice(0, 157)}...` : summary;
+}
+
+/** @param {string} text */
+function showTakeaway(text) {
+  const takeaway = takeawayFor(text);
+  takeawayTextView.textContent = takeaway;
+  takeawayCardView.hidden = takeaway.length === 0;
+}
+
+function clearTakeaway() {
+  takeawayTextView.textContent = "";
+  takeawayCardView.hidden = true;
+}
 
 function emptyState() {
   const container = document.createElement("div");
@@ -94,6 +124,7 @@ formView.addEventListener("submit", async (event) => {
     if (requestVersion === transcript.version()) {
       transcript.add("steward", learnerResponse.text);
       setStatus("learn.responseComplete");
+      showTakeaway(learnerResponse.text);
     }
   } catch {
     if (requestVersion === transcript.version()) {
@@ -102,6 +133,7 @@ formView.addEventListener("submit", async (event) => {
         i18n.translate("learn.clientUnavailable"),
       );
       setStatus("learn.responseUnavailable");
+      showTakeaway(i18n.translate("learn.clientUnavailable"));
     }
   } finally {
     sendButtonView.disabled = false;
@@ -113,7 +145,14 @@ formView.addEventListener("submit", async (event) => {
 clearButtonView.addEventListener("click", () => {
   transcript.clear();
   setStatus("learn.conversationCleared");
+  clearTakeaway();
   render();
+  inputView.focus();
+});
+
+askNextLessonView.addEventListener("click", () => {
+  inputView.value =
+    "Give me one practical next lesson I should do now, and one question to test my thinking.";
   inputView.focus();
 });
 

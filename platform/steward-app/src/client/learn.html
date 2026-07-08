@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>Steward</title>
     <link rel="stylesheet" href="/learn.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
+    <script type="module" src="/theme.js"></script>
   </head>
   <body>
     <main class="learn-shell">
@@ -19,6 +20,14 @@
       </nav>
       <header class="learn-header">
         <div>
+          <button
+            class="theme-button"
+            type="button"
+            data-theme-toggle
+            aria-pressed="false"
+          >
+            Dark mode
+          </button>
           <p class="eyebrow">Lifeschool</p>
           <h1>Steward</h1>
           <p class="identity" data-i18n="learn.identity">
@@ -85,6 +94,12 @@
           </span>
         </div>
       </section>
+
+      <aside id="takeaway-card" class="takeaway-card" hidden>
+        <p class="takeaway-title">Today's takeaway</p>
+        <p id="takeaway-text"></p>
+        <button id="ask-next-lesson" type="button">Ask for the next lesson</button>
+      </aside>
 
       <form id="learn-form" class="composer">
         <label for="learn-message" data-i18n="learn.messageLabel">

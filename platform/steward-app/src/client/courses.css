@@ -394,6 +394,17 @@ a:focus-visible {
   background: var(--sand);
 }
 
+.practice-takeaway {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+.ask-next-lesson {
+  margin-top: 0.8rem;
+}
+
 .practice-label {
   display: block;
   margin-bottom: 0.2rem;

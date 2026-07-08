@@ -123,7 +123,17 @@ function renderPractice() {
     label.textContent =
       entry.role === "learner" ? i18n.translate("lesson.you") : "Steward";
     text.textContent = entry.text;
-    article.append(label, text);
+    if (entry.role === "steward") {
+      const takeaway = document.createElement("p");
+      takeaway.className = "practice-takeaway";
+      const normalized = entry.text.replace(/\s+/g, " ").trim();
+      const summary =
+        normalized.match(/^(.+?[.!?])(?:\s|$)/u)?.[1] ?? normalized;
+      takeaway.textContent = `Today's takeaway: ${summary.slice(0, 160)}`;
+      article.append(label, text, takeaway);
+    } else {
+      article.append(label, text);
+    }
     practiceTranscriptView.append(article);
   }
 }
@@ -215,3 +225,14 @@ window.addEventListener("lifeschool:locale-change", (event) => {
 });
 
 updateExerciseHandoff();
+
+const askNext = document.createElement("button");
+askNext.type = "button";
+askNext.className = "ask-next-lesson";
+askNext.textContent = "Ask for the next lesson";
+askNext.addEventListener("click", () => {
+  practicePromptView.value =
+    "Give me the next lesson-sized practice step based on my latest reflection.";
+  practicePromptView.focus();
+});
+practiceFormView.append(askNext);

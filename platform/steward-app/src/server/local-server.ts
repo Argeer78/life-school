@@ -37,7 +37,38 @@ interface StaticAsset {
 
 const staticFiles = new Map<string, StaticAsset>([
   ["/", { file: "index.html", contentType: "text/html; charset=utf-8" }],
+  ["/about", { file: "about.html", contentType: "text/html; charset=utf-8" }],
+  [
+    "/about/",
+    { file: "about.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/privacy",
+    { file: "privacy.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/privacy/",
+    { file: "privacy.html", contentType: "text/html; charset=utf-8" },
+  ],
+  ["/terms", { file: "terms.html", contentType: "text/html; charset=utf-8" }],
+  [
+    "/terms/",
+    { file: "terms.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/contact",
+    { file: "contact.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/contact/",
+    { file: "contact.html", contentType: "text/html; charset=utf-8" },
+  ],
   ["/styles.css", { file: "styles.css", contentType: "text/css; charset=utf-8" }],
+  ["/theme.js", { file: "theme.js", contentType: "text/javascript; charset=utf-8" }],
+  [
+    "/lifeschool-logo.svg",
+    { file: "lifeschool-logo.svg", contentType: "image/svg+xml" },
+  ],
   [
     "/learner-nav.css",
     { file: "learner-nav.css", contentType: "text/css; charset=utf-8" },

@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>Lifeschool</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
+    <script type="module" src="/theme.js"></script>
   </head>
   <body>
     <main class="home-shell">
@@ -17,6 +18,9 @@
       </nav>
 
       <header class="home-hero">
+        <button class="theme-button" type="button" data-theme-toggle aria-pressed="false">
+          Dark mode
+        </button>
         <div
           class="language-switcher"
           role="group"
@@ -35,6 +39,13 @@
             data-locale="el"
             data-i18n="common.greek"
           >Ελληνικά</button>
+        </div>
+        <div class="brand-row" aria-label="Lifeschool brand">
+          <img src="/lifeschool-logo.svg" alt="Lifeschool" width="70" height="70" />
+          <div>
+            <p class="eyebrow">Lifeschool</p>
+            <p class="brand-tagline">Learn to think. Live with clarity.</p>
+          </div>
         </div>
         <p class="eyebrow">Lifeschool</p>
         <h1>Lifeschool</h1>
@@ -56,6 +67,21 @@
         </div>
       </header>
 
+      <section class="principle-grid" aria-label="Core principles">
+        <article class="principle-card">
+          <h2>Think Clearly</h2>
+          <p>See what is real, not just what feels true.</p>
+        </article>
+        <article class="principle-card">
+          <h2>Understand Yourself</h2>
+          <p>Respect your feelings while staying curious.</p>
+        </article>
+        <article class="principle-card">
+          <h2>Live Intentionally</h2>
+          <p>Make choices that align with what matters.</p>
+        </article>
+      </section>
+
       <section class="module-preview" aria-labelledby="module-preview-title">
         <p class="eyebrow" data-i18n="home.moduleEyebrow">First module</p>
         <h2 id="module-preview-title" data-i18n="courses.moduleTitle">
@@ -69,6 +95,32 @@
           View module
         </a>
       </section>
+
+      <section class="value-grid" aria-label="Value highlights">
+        <article class="value-card">
+          <h2>Guided Learning</h2>
+          <p>Structured lessons that build understanding, not memorization.</p>
+        </article>
+        <article class="value-card">
+          <h2>Private and Safe</h2>
+          <p>Your conversations stay private. You control your journey.</p>
+        </article>
+        <article class="value-card">
+          <h2>Human-Centered AI</h2>
+          <p>Steward is here to help you think, not to replace your thinking.</p>
+        </article>
+        <article class="value-card">
+          <h2>Built on Integrity</h2>
+          <p>Designed with a clear philosophy: teach how to think, not what to think.</p>
+        </article>
+      </section>
+
+      <footer class="site-footer-links" aria-label="Site links">
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/contact">Contact</a>
+      </footer>
     </main>
     <script type="module" src="/homepage.js"></script>
   </body>
