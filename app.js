@@ -1,5 +1,17 @@
 import express from "express";
+import { loadEnvFile } from "node:process";
+import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createLocalStewardServer } from "./platform/steward-app/dist/server/local-server.js";
+
+const appRoot = dirname(fileURLToPath(import.meta.url));
+const productionEnvPath = resolve(appRoot, "platform/steward-app/.env");
+
+// Load production defaults without overriding environment variables from the host.
+if (existsSync(productionEnvPath)) {
+  loadEnvFile(productionEnvPath);
+}
 
 const defaultHost = "0.0.0.0";
 const defaultPort = 3000;
