@@ -38,6 +38,18 @@ describe("local HTTP server", () => {
     expect(await response.json()).toEqual({ status: "ok" });
   });
 
+  it("serves sitemap.xml for search engines", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/sitemap.xml`);
+    const xml = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("application/xml");
+    expect(xml).toContain("<urlset");
+    expect(xml).toContain("https://lifesh.app/");
+    expect(xml).toContain("https://lifesh.app/courses/thinking-clearly/lesson-6");
+  });
+
   it("returns exactly the learner-safe response over HTTP", async () => {
     const origin = await startServer();
     const response = await fetch(`${origin}/api/message`, {
