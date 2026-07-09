@@ -57,12 +57,11 @@ textarea {
 }
 
 .learn-header {
-  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 2rem;
-  padding-top: 1.5rem;
+  margin-top: 0.8rem;
 }
 
 .header-actions {
@@ -72,9 +71,8 @@ textarea {
 }
 
 .theme-button {
-  position: absolute;
-  top: -1.8rem;
-  left: 0;
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
@@ -323,11 +321,6 @@ button:disabled {
 
   .learn-header {
     display: block;
-  }
-
-  .theme-button {
-    top: -2.9rem;
-    left: 0;
   }
 
   .header-actions {

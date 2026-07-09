@@ -55,9 +55,8 @@ textarea {
 }
 
 .theme-button {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
@@ -114,14 +113,24 @@ textarea {
 }
 
 .learning-header {
-  position: relative;
-  padding-top: 1.5rem;
+  margin-top: 0.8rem;
 }
 
 .learning-header-actions {
   display: grid;
   justify-items: end;
   gap: 0.65rem;
+}
+
+@media (max-width: 760px) {
+  .learning-header {
+    display: block;
+  }
+
+  .learning-header-actions {
+    justify-items: stretch;
+    margin-top: 1rem;
+  }
 }
 
 .language-switcher {

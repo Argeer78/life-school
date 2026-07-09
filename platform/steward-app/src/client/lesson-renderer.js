@@ -274,6 +274,14 @@ export function renderLessonPage(lesson) {
       <a href="/learn" data-i18n="common.navSteward">Steward</a>
     </nav>
     <div class="lesson-tools">
+      <button
+        class="theme-button"
+        type="button"
+        data-theme-toggle
+        aria-pressed="false"
+      >
+        Dark mode
+      </button>
       <div
         class="language-switcher"
         role="group"
