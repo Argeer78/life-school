@@ -43,7 +43,6 @@ function expectLearnerNavigation(html: string) {
   expect(html).toContain('class="learner-nav"');
   expect(html).toContain('href="/"');
   expect(html).toContain('href="/courses"');
-  expect(html).toContain('href="/learn"');
 }
 
 describe("learner homepage, navigation, and private alpha access", () => {
@@ -54,13 +53,17 @@ describe("learner homepage, navigation, and private alpha access", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/html");
-    expect(html).toContain("<h1>Lifeschool</h1>");
     expect(html).toContain(
-      "Lifeschool is a learning platform where Steward helps you practice",
+      "Learn to think clearly. Understand yourself. Live intentionally.",
+    );
+    expect(html).toContain(
+      "Lifeschool helps you develop better thinking",
     );
     expect(html).toContain("Start Learning");
     expect(html).toContain("Talk with Steward");
     expect(html).toContain("Thinking Clearly");
+    expect(html).toContain('href="/about"');
+    expect(html).toContain('href="/contact"');
     expect(html).not.toContain('id="learn-form"');
     expect(html).not.toContain('id="message-form"');
     expect(html).toContain("data-alpha-note hidden");
@@ -76,8 +79,13 @@ describe("learner homepage, navigation, and private alpha access", () => {
     for (const page of pages) {
       expectLearnerNavigation(page);
     }
+    expect(pages[0]).toContain('href="/about"');
+    expect(pages[0]).toContain('href="/contact"');
+    expect(pages[1]).toContain('href="/learn"');
+    expect(pages[2]).toContain('href="/learn"');
     for (const lesson of curriculumLessons.en) {
       expectLearnerNavigation(renderLessonPage(lesson));
+      expect(renderLessonPage(lesson)).toContain('href="/learn"');
     }
   });
 
@@ -144,7 +152,7 @@ describe("learner homepage, navigation, and private alpha access", () => {
       fetch(`${origin}/courses/purpose-meaning/lesson-2`).then((response) => response.text()),
     ]);
 
-    expect(home).toContain("<h1>Lifeschool</h1>");
+    expect(home).toContain("Learn to think clearly. Understand yourself. Live intentionally.");
     expect(home).not.toContain("/alpha-access.js");
     expect(learn).toContain('id="learn-form"');
     expect(courses).toContain("Learning Home");

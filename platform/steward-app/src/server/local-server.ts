@@ -42,6 +42,7 @@ import {
 const host = "127.0.0.1";
 const defaultPort = 4173;
 const clientDirectory = join(dirname(fileURLToPath(import.meta.url)), "../client");
+const publicOrigin = "https://lifesh.app";
 
 interface StaticAsset {
   readonly file: string;
@@ -115,6 +116,10 @@ const staticFiles = new Map<string, StaticAsset>([
   [
     "/homepage.js",
     { file: "homepage.js", contentType: "text/javascript; charset=utf-8" },
+  ],
+  [
+    "/share-actions.js",
+    { file: "share-actions.js", contentType: "text/javascript; charset=utf-8" },
   ],
   [
     "/alpha-access.js",
@@ -502,6 +507,81 @@ function securityHeaders(response: ServerResponse): void {
   response.setHeader("X-Content-Type-Options", "nosniff");
 }
 
+function escapeMeta(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+interface SocialMetadata {
+  readonly title: string;
+  readonly description: string;
+  readonly canonical: string;
+}
+
+function moduleNameForSlug(slug: string): string {
+  switch (slug) {
+    case "thinking-clearly":
+      return "Thinking Clearly";
+    case "communicating-clearly":
+      return "Communicating Clearly";
+    case "making-decisions":
+      return "Making Decisions";
+    case "understanding-emotions":
+      return "Understanding Emotions";
+    case "relationships":
+      return "Relationships";
+    case "purpose-meaning":
+      return "Purpose & Meaning";
+    default:
+      return "Lifeschool";
+  }
+}
+
+function metadataForLessonPath(pathname: string): SocialMetadata | undefined {
+  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
+  const moduleMatch = normalizedPath.match(/^\/courses\/([a-z-]+)$/);
+  if (moduleMatch !== null) {
+    const slug = moduleMatch[1] ?? "";
+    const moduleName = moduleNameForSlug(slug);
+    return {
+      title: `${moduleName} | Lifeschool`,
+      description: `Explore the ${moduleName} module in Lifeschool and start learning one lesson at a time.`,
+      canonical: `${publicOrigin}${normalizedPath}`,
+    };
+  }
+
+  const lessonMatch = normalizedPath.match(/^\/courses\/([a-z-]+)\/lesson-([1-6])$/);
+  if (lessonMatch !== null) {
+    const slug = lessonMatch[1] ?? "";
+    const lessonNumber = Number(lessonMatch[2] ?? "1");
+    const moduleName = moduleNameForSlug(slug);
+    return {
+      title: `${moduleName} - Lesson ${lessonNumber} | Lifeschool`,
+      description: `Lesson ${lessonNumber} of ${moduleName} in Lifeschool. Practice clear thinking with guided learning and reflection.`,
+      canonical: `${publicOrigin}${normalizedPath}`,
+    };
+  }
+
+  return undefined;
+}
+
+function withLessonMetadata(html: string, pathname: string): string {
+  const metadata = metadataForLessonPath(pathname);
+  if (metadata === undefined) return html;
+  const title = escapeMeta(metadata.title);
+  const description = escapeMeta(metadata.description);
+  const canonical = escapeMeta(metadata.canonical);
+  const image = `${publicOrigin}/og-image.svg`;
+  return html
+    .replaceAll("__META_TITLE__", title)
+    .replaceAll("__META_DESCRIPTION__", description)
+    .replaceAll("__META_CANONICAL__", canonical)
+    .replaceAll("__META_IMAGE__", escapeMeta(image));
+}
+
 function sendJson(
   response: ServerResponse,
   status: number,
@@ -518,14 +598,19 @@ async function sendClientAsset(
   asset: StaticAsset,
   status = 200,
   revealAlphaNote = false,
+  pathname = "/",
 ): Promise<void> {
   const content = await readFile(join(clientDirectory, asset.file));
-  const body =
-    revealAlphaNote && asset.file === "index.html"
-      ? content
-          .toString("utf8")
-          .replace(" data-alpha-note hidden", " data-alpha-note")
-      : content;
+  let body = content;
+  if (asset.file === "lesson.html") {
+    body = Buffer.from(withLessonMetadata(content.toString("utf8"), pathname), "utf8");
+  }
+  if (revealAlphaNote && asset.file === "index.html") {
+    body = Buffer.from(
+      body.toString("utf8").replace(" data-alpha-note hidden", " data-alpha-note"),
+      "utf8",
+    );
+  }
   securityHeaders(response);
   response.statusCode = status;
   response.setHeader("Content-Type", asset.contentType);
@@ -844,6 +929,8 @@ export function createLocalStewardServer(
           response,
           { file: "404.html", contentType: "text/html; charset=utf-8" },
           404,
+          false,
+          url.pathname,
         );
       } catch {
         sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
@@ -861,6 +948,7 @@ export function createLocalStewardServer(
         asset,
         200,
         alphaAccessEnabled && url.pathname === "/",
+        url.pathname,
       );
     } catch {
       sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });

@@ -70,6 +70,23 @@ h2 {
   padding: clamp(2.2rem, 7vw, 4.2rem) 0 clamp(2rem, 5vw, 3rem);
 }
 
+.home-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.home-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .theme-button {
   position: absolute;
   top: 0.4rem;
@@ -84,12 +101,42 @@ h2 {
   font-weight: 700;
 }
 
+.home-theme-toggle {
+  position: static;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  padding: 0;
+  font-size: 0;
+  line-height: 0;
+}
+
+.home-theme-toggle::before {
+  content: "☀";
+  display: inline-grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1rem;
+  color: var(--brand);
+}
+
+:root[data-theme="dark"] .home-theme-toggle::before {
+  content: "☾";
+}
+
 .language-switcher {
   position: absolute;
   top: 2.65rem;
   right: 0;
   display: flex;
   gap: 0.35rem;
+}
+
+.home-language-switcher {
+  position: static;
+  top: auto;
+  right: auto;
 }
 
 .feedback-fab {
@@ -100,11 +147,11 @@ h2 {
   z-index: 30;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 0.55rem 0.9rem;
-  color: #fff;
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  padding: 0.46rem 0.78rem;
+  color: var(--brand);
+  background: color-mix(in srgb, var(--panel) 95%, transparent);
   box-shadow: var(--shadow);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -380,17 +427,22 @@ h2 {
 
 .locale-button {
   border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.72rem;
   color: var(--brand);
-  background: transparent;
+  background: color-mix(in srgb, var(--panel) 95%, transparent);
   cursor: pointer;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
+  transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
 }
 
 .locale-button[aria-pressed="true"] {
   border-color: var(--brand);
   background: color-mix(in srgb, var(--brand) 16%, var(--panel));
+}
+
+.locale-button:hover {
+  transform: translateY(-1px);
 }
 
 .brand-row {
@@ -425,8 +477,9 @@ h2 {
 
 h1 {
   margin: 0;
-  font-size: clamp(3rem, 10vw, 6rem);
-  line-height: 0.93;
+  max-width: 16ch;
+  font-size: clamp(2.6rem, 8vw, 5.3rem);
+  line-height: 1.02;
 }
 
 h2 {
@@ -434,19 +487,32 @@ h2 {
   font-size: clamp(1.25rem, 3.3vw, 2rem);
 }
 
-.slogan {
+h3 {
+  margin: 0;
+  font-family: "Alegreya", "Georgia", serif;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+}
+
+.home-subheading {
+  max-width: 52rem;
   margin: 1.2rem 0 0;
+  color: var(--ink);
+  font-size: clamp(1.02rem, 2.5vw, 1.24rem);
+}
+
+.slogan {
+  margin: 1rem 0 0;
   color: color-mix(in srgb, var(--brand) 70%, var(--brand-2));
   font-family: "Alegreya", "Georgia", serif;
-  font-size: clamp(1.1rem, 3vw, 1.45rem);
-  font-style: italic;
+  font-size: clamp(1rem, 2.6vw, 1.32rem);
 }
 
 .home-introduction {
   max-width: 44rem;
-  margin: 1.5rem 0 0;
+  margin: 1.1rem 0 0;
   color: var(--muted);
-  font-size: clamp(1rem, 2.6vw, 1.18rem);
+  font-size: clamp(0.95rem, 2.1vw, 1.05rem);
 }
 
 .alpha-note {
@@ -480,6 +546,7 @@ h2 {
   padding: 0.7rem 1.15rem;
   font-weight: 750;
   text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
 }
 
 .primary-link {
@@ -492,6 +559,57 @@ h2 {
   background: color-mix(in srgb, var(--panel) 96%, transparent);
 }
 
+.primary-link:hover,
+.secondary-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+}
+
+.how-grid,
+.why-lifeschool,
+.modules-overview {
+  margin-top: 1.4rem;
+  padding: clamp(1rem, 4vw, 1.8rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel) 95%, transparent);
+  box-shadow: var(--shadow);
+  animation: fade-up 420ms ease both;
+}
+
+.how-steps {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.how-step {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+}
+
+.how-step svg,
+.principle-card svg,
+.value-card svg,
+.module-card svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  color: var(--brand);
+}
+
+.how-step p,
+.module-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .principle-grid,
 .value-grid,
 .info-card-grid {
@@ -502,8 +620,12 @@ h2 {
 }
 
 .value-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+
+.value-grid > h2 {
+  grid-column: 1 / -1;
 }
 
 .principle-card,
@@ -515,6 +637,15 @@ h2 {
   background: color-mix(in srgb, var(--panel) 94%, transparent);
   box-shadow: var(--shadow);
   animation: fade-up 420ms ease both;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.principle-card:hover,
+.value-card:hover,
+.module-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+  box-shadow: 0 22px 42px rgba(15, 23, 42, 0.12);
 }
 
 .principle-card p,
@@ -522,6 +653,12 @@ h2 {
 .info-card p {
   margin: 0;
   color: var(--muted);
+}
+
+.principle-card,
+.value-card {
+  display: grid;
+  gap: 0.55rem;
 }
 
 .module-preview,
@@ -532,6 +669,41 @@ h2 {
   border-radius: 1rem;
   background: color-mix(in srgb, var(--panel) 96%, transparent);
   box-shadow: var(--shadow);
+}
+
+.module-spotlight .module-order {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.why-lifeschool p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.modules-overview-grid {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.95rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.module-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  box-shadow: var(--shadow);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.module-card a {
+  width: fit-content;
 }
 
 .module-preview p:not(.eyebrow),
@@ -576,6 +748,62 @@ h2 {
   margin-top: 1.4rem;
   padding-top: 0.9rem;
   border-top: 1px solid var(--line);
+}
+
+.site-share {
+  flex-basis: 100%;
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+}
+
+.site-share-title {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.site-share-actions button,
+.site-share-actions a {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.28rem 0.58rem;
+  color: var(--brand);
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 140ms ease, border-color 140ms ease;
+}
+
+.site-share-actions button {
+  cursor: pointer;
+}
+
+.site-share-actions button:hover,
+.site-share-actions a:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+}
+
+.site-share-status {
+  min-height: 1.1rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 .site-footer-attribution {
@@ -685,6 +913,11 @@ input:focus {
 }
 
 @media (max-width: 840px) {
+  .how-steps,
+  .modules-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .principle-grid,
   .info-card-grid {
     grid-template-columns: 1fr;
@@ -692,6 +925,10 @@ input:focus {
 
   .value-grid {
     grid-template-columns: 1fr;
+  }
+
+  .value-grid > h2 {
+    grid-column: 1;
   }
 
   .contact-grid {
@@ -708,16 +945,21 @@ input:focus {
   }
 
   .home-hero {
-    padding-top: 4.8rem;
+    padding-top: 1.8rem;
   }
 
-  .theme-button {
-    top: 0;
-    left: 0;
+  .home-topbar {
+    margin-bottom: 1.4rem;
   }
 
-  .language-switcher {
-    top: 2.2rem;
+  .home-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .how-steps,
+  .modules-overview-grid {
+    grid-template-columns: 1fr;
   }
 
   .home-actions a {
@@ -733,7 +975,7 @@ input:focus {
     right: 0.5rem;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
     max-width: calc(100vw - 1rem);
-    padding: 0.48rem 0.72rem;
+    padding: 0.42rem 0.7rem;
     font-size: 0.75rem;
     text-align: center;
     white-space: normal;

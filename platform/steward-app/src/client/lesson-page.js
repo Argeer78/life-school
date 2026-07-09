@@ -5,6 +5,7 @@ import { createMemoryTranscript } from "./learn-transcript.js";
 import { projectLearnerResponse } from "./learner-response.js";
 import { findCurriculumLesson } from "./curriculum-lessons.js";
 import { browserPreference, initializeI18n } from "./i18n.js";
+import { createShareLinks } from "./share-actions.js";
 
 /** @typedef {import("./lesson-model.js").LessonDefinition} LessonDefinition */
 /** @typedef {import("./lesson-model.js").LessonExerciseField} LessonExerciseField */
@@ -77,6 +78,7 @@ const completeLessonButton = completeLesson;
 const completionStatusView = completionStatus;
 const moduleReturnLink = moduleReturn;
 const nextLessonLink = nextLesson;
+const lessonShare = document.querySelector(".lesson-share");
 
 const courseSession = createCourseSession();
 const transcript = createMemoryTranscript();
@@ -135,12 +137,109 @@ function renderPractice() {
       const summary =
         normalized.match(/^(.+?[.!?])(?:\s|$)/u)?.[1] ?? normalized;
       takeaway.textContent = `${i18n.translate("lesson.takeawayPrefix")}: ${summary.slice(0, 160)}`;
-      article.append(label, text, takeaway);
+      const takeawayActions = document.createElement("div");
+      takeawayActions.className = "takeaway-actions";
+
+      const copyQuote = document.createElement("button");
+      copyQuote.type = "button";
+      copyQuote.className = "takeaway-copy";
+      copyQuote.textContent = i18n.translate("share.copyQuote");
+      copyQuote.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(summary.slice(0, 160));
+          setPracticeStatus("share.quoteCopied");
+        } catch {
+          setPracticeStatus("share.copyUnavailable");
+        }
+      });
+
+      const shareQuote = document.createElement("button");
+      shareQuote.type = "button";
+      shareQuote.className = "takeaway-share";
+      shareQuote.textContent = i18n.translate("share.shareQuote");
+      shareQuote.addEventListener("click", async () => {
+        const quote = summary.slice(0, 160);
+        const shareUrl = `${window.location.origin}${window.location.pathname}`;
+        try {
+          if (typeof navigator.share === "function") {
+            await navigator.share({
+              title: i18n.translate("home.documentTitle"),
+              text: quote,
+              url: shareUrl,
+            });
+          } else {
+            const links = createShareLinks(shareUrl, quote);
+            window.open(links.x, "_blank", "noopener,noreferrer");
+          }
+          setPracticeStatus("share.quoteShared");
+        } catch {
+          setPracticeStatus("share.shareUnavailable");
+        }
+      });
+
+      takeawayActions.append(copyQuote, shareQuote);
+      article.append(label, text, takeaway, takeawayActions);
     } else {
       article.append(label, text);
     }
     practiceTranscriptView.append(article);
   }
+}
+
+function configureLessonSharing() {
+  if (!(lessonShare instanceof HTMLElement)) return;
+  const status = lessonShare.querySelector("[data-share-status]");
+  const copyButton = lessonShare.querySelector("[data-share-copy]");
+  const shareButton = lessonShare.querySelector("[data-share-native]");
+  if (
+    !(status instanceof HTMLElement) ||
+    !(copyButton instanceof HTMLButtonElement) ||
+    !(shareButton instanceof HTMLButtonElement)
+  ) {
+    return;
+  }
+
+  const scope = lessonShare.dataset.shareScope === "module" ? "module" : "lesson";
+  const moduleTitle = lessonShare.dataset.moduleTitle ?? "Lifeschool";
+  const lessonTitle = lessonShare.dataset.lessonTitle ?? "Lesson";
+  const lessonNumber = Number(lessonShare.dataset.lessonNumber ?? "1");
+  const moduleRoute = lessonShare.dataset.moduleRoute ?? window.location.pathname;
+  const sharePath = scope === "module" ? moduleRoute : window.location.pathname;
+  const shareUrl = `${window.location.origin}${sharePath}`;
+  const shareText = scope === "module"
+    ? i18n.translate("share.moduleText", { module: moduleTitle })
+    : i18n.translate("share.lessonText", {
+      module: moduleTitle,
+      number: lessonNumber,
+      lesson: lessonTitle,
+    });
+  const shareLinks = createShareLinks(shareUrl, shareText);
+
+  copyButton.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      status.textContent = i18n.translate("share.linkCopied");
+    } catch {
+      status.textContent = i18n.translate("share.copyUnavailable");
+    }
+  };
+
+  shareButton.onclick = async () => {
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({
+          title: scope === "module" ? moduleTitle : `${moduleTitle} — ${lessonTitle}`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        window.open(shareLinks.x, "_blank", "noopener,noreferrer");
+      }
+      status.textContent = i18n.translate("share.shared");
+    } catch {
+      status.textContent = i18n.translate("share.shareUnavailable");
+    }
+  };
 }
 
 /** @param {string} key */
@@ -227,9 +326,11 @@ window.addEventListener("lifeschool:locale-change", (event) => {
   }
   updateExerciseHandoff();
   renderPractice();
+  configureLessonSharing();
 });
 
 updateExerciseHandoff();
+configureLessonSharing();
 
 const askNext = document.createElement("button");
 askNext.type = "button";

@@ -620,7 +620,9 @@ function applyTheme(theme) {
     if (!(toggle instanceof HTMLButtonElement)) continue;
     const isDark = theme === "dark";
     toggle.setAttribute("aria-pressed", String(isDark));
-    toggle.textContent = isDark ? copy.themeLight : copy.themeDark;
+    const nextThemeLabel = isDark ? copy.themeLight : copy.themeDark;
+    toggle.textContent = nextThemeLabel;
+    toggle.setAttribute("aria-label", nextThemeLabel);
   }
 }
 

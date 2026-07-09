@@ -254,6 +254,11 @@ export function renderContinue(lesson) {
 /** @param {import("./lesson-model.js").LessonDefinition} lesson */
 export function renderLessonPage(lesson) {
   const moduleRoot = lesson.route.replace(/\/lesson-\d+$/, "");
+  const moduleRootRoute = lesson.lessonNumber === 1 ? lesson.route : moduleRoot;
+  const shareContext = lesson.lessonNumber === 1 ? "module" : "lesson";
+  const shareLabelKey = shareContext === "module"
+    ? "share.moduleAction"
+    : "share.lessonAction";
   const breadcrumb =
     lesson.lessonNumber === 1
       ? `<a href="/courses" data-i18n="lesson.learningHome">Learning Home</a>
@@ -319,6 +324,21 @@ export function renderLessonPage(lesson) {
       </p>
       <h1>${escapeHtml(lesson.title)}</h1>
       <p class="intro">${escapeHtml(lesson.introduction)}</p>
+      <div
+        class="lesson-share"
+        data-share-scope="${shareContext}"
+        data-module-title="${escapeHtml(lesson.moduleTitle)}"
+        data-lesson-title="${escapeHtml(lesson.title)}"
+        data-lesson-number="${lesson.lessonNumber}"
+        data-module-route="${escapeHtml(moduleRootRoute)}"
+      >
+        <p class="lesson-share-label" data-i18n="${shareLabelKey}">${shareContext === "module" ? "Share this module" : "Share lesson"}</p>
+        <div class="lesson-share-actions">
+          <button type="button" data-share-copy data-i18n="share.copyLink">Copy Link</button>
+          <button type="button" data-share-native data-i18n="share.shareNow">Share</button>
+          <p class="lesson-share-status" data-share-status role="status" aria-live="polite"></p>
+        </div>
+      </div>
     </header>
     <article class="lesson-content">
       ${renderWhyThisMatters(lesson)}

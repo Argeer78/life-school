@@ -14,6 +14,7 @@
     <meta name="twitter:title" content="Lifeschool" />
     <meta name="twitter:description" content="Learn to think. Live with clarity." />
     <meta name="twitter:image" content="https://lifesh.app/og-image.svg" />
+    <link rel="canonical" href="https://lifesh.app/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Lifeschool</title>
     <link rel="stylesheet" href="/styles.css" />
@@ -22,50 +23,50 @@
   </head>
   <body>
     <main class="home-shell">
-      <nav class="learner-nav" aria-label="Main navigation">
-        <a href="/" aria-current="page" data-i18n="common.navHome">Home</a>
-        <a href="/courses" data-i18n="common.navCourses">Courses</a>
-        <a href="/learn" data-i18n="common.navSteward">Steward</a>
-      </nav>
-
       <header class="home-hero">
-        <button class="theme-button" type="button" data-theme-toggle aria-pressed="false">
-          Dark mode
-        </button>
-        <div
-          class="language-switcher"
-          role="group"
-          aria-label="Language"
-          data-i18n-aria-label="common.language"
-        >
-          <button
-            class="locale-button"
-            type="button"
-            data-locale="en"
-            data-i18n="common.english"
-          >English</button>
-          <button
-            class="locale-button"
-            type="button"
-            data-locale="el"
-            data-i18n="common.greek"
-          >Ελληνικά</button>
-        </div>
-        <div class="brand-row" aria-label="Lifeschool brand">
-          <img src="/lifeschool-logo.svg" alt="Lifeschool" width="70" height="70" />
-          <div>
-            <p class="eyebrow">Lifeschool</p>
-            <p class="brand-tagline" data-i18n="about.brandTagline">Learn to think. Live with clarity.</p>
+        <div class="home-topbar">
+          <nav class="learner-nav" aria-label="Main navigation">
+            <a href="/" aria-current="page" data-i18n="common.navHome">Home</a>
+            <a href="/courses" data-i18n="common.navCourses">Courses</a>
+            <a href="/about" data-i18n="common.navAbout">About</a>
+            <a href="/contact" data-i18n="common.navContact">Contact</a>
+          </nav>
+          <div class="home-controls">
+            <button class="theme-button home-theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Dark mode">
+              Dark mode
+            </button>
+            <div
+              class="language-switcher home-language-switcher"
+              role="group"
+              aria-label="Language"
+              data-i18n-aria-label="common.language"
+            >
+              <button
+                class="locale-button"
+                type="button"
+                data-locale="en"
+                data-i18n="home.languageEnglish"
+              >🌐 English</button>
+              <button
+                class="locale-button"
+                type="button"
+                data-locale="el"
+                data-i18n="home.languageGreek"
+              >🌐 Ελληνικά</button>
+            </div>
           </div>
         </div>
-        <p class="eyebrow">Lifeschool</p>
-        <h1>Lifeschool</h1>
+
+        <p class="eyebrow" data-i18n="home.heroEyebrow">Lifeschool</p>
+        <h1 data-i18n="home.heroHeadline">Learn to think clearly. Understand yourself. Live intentionally.</h1>
+        <p class="home-subheading" data-i18n="home.heroSubheading">
+          Lifeschool helps you develop better thinking, deeper self-understanding, clearer communication, wiser decisions, healthier relationships, and a more intentional life.
+        </p>
         <p class="slogan" data-i18n="common.slogan">
           No lies. No shortcuts. Think for yourself.
         </p>
-        <p class="home-introduction" data-i18n="home.introduction">
-          Lifeschool is a learning platform where Steward helps you practice
-          clearer thinking without replacing your judgment.
+        <p class="home-introduction" data-i18n="home.heroSupport">
+          Steward is a guide, not an authority. You stay responsible for your judgment.
         </p>
         <p class="alpha-note" data-alpha-note hidden data-i18n="home.privateAlpha">Private alpha</p>
         <div class="home-actions">
@@ -78,52 +79,174 @@
         </div>
       </header>
 
+      <section class="how-grid" aria-labelledby="home-how-title">
+        <h2 id="home-how-title" data-i18n="home.howTitle">How Lifeschool Works</h2>
+        <div class="how-steps">
+          <article class="how-step">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M4 6h16M4 12h10M4 18h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <p data-i18n="home.howStep1">Choose a module.</p>
+          </article>
+          <article class="how-step">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M5 5h14v14H5zM9 9h6M9 12h6M9 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <p data-i18n="home.howStep2">Learn one lesson at a time.</p>
+          </article>
+          <article class="how-step">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M4 12c0-4.4 3.6-8 8-8h8v8c0 4.4-3.6 8-8 8H4z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M8 12h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <p data-i18n="home.howStep3">Practice with Steward.</p>
+          </article>
+          <article class="how-step">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3v18M3 12h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <p data-i18n="home.howStep4">Apply it in everyday life.</p>
+          </article>
+        </div>
+      </section>
+
       <section class="principle-grid" aria-label="Core principles" data-i18n-aria-label="home.corePrinciplesAria">
         <article class="principle-card">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M12 3l7 4v10l-7 4-7-4V7z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M9 12h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
           <h2 data-i18n="home.principleThinkClearlyTitle">Think Clearly</h2>
           <p data-i18n="home.principleThinkClearlyBody">See what is real, not just what feels true.</p>
         </article>
         <article class="principle-card">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M12 3c3.9 0 7 3.1 7 7v1.8c0 1.3.5 2.6 1.4 3.5l.6.7H3l.6-.7c.9-.9 1.4-2.2 1.4-3.5V10c0-3.9 3.1-7 7-7z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          </svg>
           <h2 data-i18n="home.principleUnderstandYourselfTitle">Understand Yourself</h2>
           <p data-i18n="home.principleUnderstandYourselfBody">Respect your feelings while staying curious.</p>
         </article>
         <article class="principle-card">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M4 14l5-5 4 4 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 10V6h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <h2 data-i18n="home.principleLiveIntentionallyTitle">Live Intentionally</h2>
           <p data-i18n="home.principleLiveIntentionallyBody">Make choices that align with what matters.</p>
         </article>
       </section>
 
-      <section class="module-preview" aria-labelledby="module-preview-title">
-        <p class="eyebrow" data-i18n="home.moduleEyebrow">First module</p>
+      <section class="module-preview module-spotlight" aria-labelledby="module-preview-title">
+        <p class="eyebrow" data-i18n="home.beginJourney">Begin your journey</p>
+        <p class="module-order" data-i18n="home.moduleOneLabel">Module 1</p>
         <h2 id="module-preview-title" data-i18n="courses.moduleTitle">
           Thinking Clearly
         </h2>
-        <p data-i18n="courses.moduleDescription">
-          Learn to slow down thought, examine claims, and separate facts,
-          feelings, assumptions, interpretations, and conclusions.
+        <p data-i18n="home.moduleSpotlightBody">
+          Learn how to separate observation from interpretation, examine assumptions, and make better decisions.
         </p>
-        <a href="/courses/thinking-clearly" data-i18n="home.viewModule">
-          View module
+        <a class="primary-link" href="/courses/thinking-clearly" data-i18n="courses.startModule">
+          Start Module
         </a>
       </section>
 
+      <section class="why-lifeschool" aria-labelledby="home-why-title">
+        <h2 id="home-why-title" data-i18n="home.whyTitle">Why Lifeschool?</h2>
+        <p data-i18n="home.whyBodyOne">Lifeschool doesn't teach you what to think.</p>
+        <p data-i18n="home.whyBodyTwo">It helps you examine assumptions, understand emotions, communicate clearly, make thoughtful decisions, strengthen relationships, and live with greater intention.</p>
+        <p data-i18n="home.whyBodyThree">Steward is a guide, not an authority.</p>
+        <p data-i18n="home.whyBodyFour">The goal is not to replace your judgment. The goal is to help you develop it.</p>
+      </section>
+
       <section class="value-grid" aria-label="Value highlights" data-i18n-aria-label="home.valueHighlightsAria">
+        <h2 data-i18n="home.valuePillarsTitle">Value pillars</h2>
         <article class="value-card">
-          <h2 data-i18n="home.valueGuidedLearningTitle">Guided Learning</h2>
-          <p data-i18n="home.valueGuidedLearningBody">Structured lessons that build understanding, not memorization.</p>
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M4 12h16M12 4v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          <h3 data-i18n="home.principleThinkClearlyTitle">Think Clearly</h3>
+          <p data-i18n="home.principleThinkClearlyBody">See what is real, not just what feels true.</p>
         </article>
         <article class="value-card">
-          <h2 data-i18n="home.valuePrivateSafeTitle">Private and Safe</h2>
-          <p data-i18n="home.valuePrivateSafeBody">Your conversations stay private. You control your journey.</p>
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M6 12a6 6 0 1112 0 6 6 0 01-12 0z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 8v8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          <h3 data-i18n="home.principleUnderstandYourselfTitle">Understand Yourself</h3>
+          <p data-i18n="home.principleUnderstandYourselfBody">Respect your feelings while staying curious.</p>
         </article>
         <article class="value-card">
-          <h2 data-i18n="home.valueHumanCenteredTitle">Human-Centered AI</h2>
-          <p data-i18n="home.valueHumanCenteredBody">Steward is here to help you think, not to replace your thinking.</p>
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M4 16l4-4 3 3 9-9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3 data-i18n="home.principleLiveIntentionallyTitle">Live Intentionally</h3>
+          <p data-i18n="home.principleLiveIntentionallyBody">Make choices that align with what matters.</p>
         </article>
-        <article class="value-card">
-          <h2 data-i18n="home.valueIntegrityTitle">Built on Integrity</h2>
-          <p data-i18n="home.valueIntegrityBody">Designed with a clear philosophy: teach how to think, not what to think.</p>
-        </article>
+      </section>
+
+      <section class="modules-overview" aria-labelledby="home-modules-title">
+        <h2 id="home-modules-title" data-i18n="home.modulesTitle">Explore the six modules</h2>
+        <div class="modules-overview-grid">
+          <article class="module-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M4 5h16v14H4z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M8 10h8M8 14h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <h3 data-i18n="courses.moduleTitle">Thinking Clearly</h3>
+            <p data-i18n="courses.moduleDescription">Learn to slow down thought, examine claims, and separate facts, feelings, assumptions, interpretations, and conclusions.</p>
+            <p class="module-meta" data-i18n="courses.duration">90 minutes across 6 lessons</p>
+            <a href="/courses/thinking-clearly" data-i18n="courses.startModule">Start Module</a>
+          </article>
+          <article class="module-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M5 6h14v12H5z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M8 10h8M8 14h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <h3 data-i18n="courses.module2Title">Communicating Clearly</h3>
+            <p data-i18n="courses.module2Description">Practice clearer listening, requests, boundaries, and repair in difficult conversations.</p>
+            <p class="module-meta" data-i18n="courses.module2Duration">90 minutes across 6 lessons</p>
+            <a href="/courses/communicating-clearly" data-i18n="courses.startModule">Start Module</a>
+          </article>
+          <article class="module-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M4 12h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M12 4v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <h3 data-i18n="courses.module3Title">Making Decisions</h3>
+            <p data-i18n="courses.module3Description">Learn to define decisions, examine tradeoffs, and move from indecision to action.</p>
+            <p class="module-meta" data-i18n="courses.module3Duration">90 minutes across 6 lessons</p>
+            <a href="/courses/making-decisions" data-i18n="courses.startModule">Start Module</a>
+          </article>
+          <article class="module-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3a7 7 0 017 7v1.8c0 1.3.5 2.6 1.4 3.5l.6.7H3l.6-.7c.9-.9 1.4-2.2 1.4-3.5V10a7 7 0 017-7z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            <h3 data-i18n="courses.module4Title">Understanding Emotions</h3>
+            <p data-i18n="courses.module4Description">Understand emotional patterns without surrendering judgment or responsibility.</p>
+            <p class="module-meta" data-i18n="courses.module4Duration">90 minutes across 6 lessons</p>
+            <a href="/courses/understanding-emotions" data-i18n="courses.startModule">Start Module</a>
+          </article>
+          <article class="module-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M6 7h12v10H6z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M9 12h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <h3 data-i18n="courses.module5Title">Relationships</h3>
+            <p data-i18n="courses.module5Description">Strengthen trust, boundaries, repair, and collaboration in human relationships.</p>
+            <p class="module-meta" data-i18n="courses.module5Duration">90 minutes across 6 lessons</p>
+            <a href="/courses/relationships" data-i18n="courses.startModule">Start Module</a>
+          </article>
+          <article class="module-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M12 4l8 4v8l-8 4-8-4V8z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            <h3 data-i18n="courses.module6Title">Purpose &amp; Meaning</h3>
+            <p data-i18n="courses.module6Description">Build direction through values, contribution, and responsible long-horizon commitments.</p>
+            <p class="module-meta" data-i18n="courses.module6Duration">90 minutes across 6 lessons</p>
+            <a href="/courses/purpose-meaning" data-i18n="courses.startModule">Start Module</a>
+          </article>
+        </div>
       </section>
 
       <footer class="site-footer-links" aria-label="Site links">
@@ -131,6 +254,18 @@
         <a href="/privacy" data-i18n="common.navPrivacy">Privacy</a>
         <a href="/terms" data-i18n="common.navTerms">Terms</a>
         <a href="/contact" data-i18n="common.navContact">Contact</a>
+        <section class="site-share" aria-label="Share Lifeschool" data-i18n-aria-label="share.homeTitle">
+          <p class="site-share-title" data-i18n="share.homeTitle">Share Lifeschool</p>
+          <div class="site-share-actions" data-share-root>
+            <button type="button" data-share-copy data-i18n="share.copyLink">Copy Link</button>
+            <a href="#" target="_blank" rel="noopener noreferrer" data-share-link="x" data-i18n="share.x">X</a>
+            <a href="#" target="_blank" rel="noopener noreferrer" data-share-link="facebook" data-i18n="share.facebook">Facebook</a>
+            <a href="#" target="_blank" rel="noopener noreferrer" data-share-link="linkedin" data-i18n="share.linkedin">LinkedIn</a>
+            <a href="#" target="_blank" rel="noopener noreferrer" data-share-link="whatsapp" data-i18n="share.whatsapp">WhatsApp</a>
+            <a href="#" data-share-link="email" data-i18n="share.email">Email</a>
+          </div>
+          <p class="site-share-status" data-share-status role="status" aria-live="polite"></p>
+        </section>
         <p class="site-footer-attribution" data-i18n="common.footerRights">
           © 2026 Lifeschool. All rights reserved.
         </p>

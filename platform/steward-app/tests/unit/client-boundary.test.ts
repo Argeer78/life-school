@@ -40,9 +40,14 @@ describe("browser learner-safe boundary", () => {
       "utf8",
     );
 
-    expect(html).toContain("<h1>Lifeschool</h1>");
+    expect(html).toContain(
+      "Learn to think clearly. Understand yourself. Live intentionally.",
+    );
+    expect(html).toContain("Lifeschool helps you develop better thinking");
     expect(html).toContain("No lies. No shortcuts. Think for yourself.");
     expect(html).toContain('href="/courses"');
+    expect(html).toContain('href="/about"');
+    expect(html).toContain('href="/contact"');
     expect(html).toContain('href="/learn"');
     expect(html).not.toContain('id="message-form"');
     expect(html).not.toContain('id="transcript"');

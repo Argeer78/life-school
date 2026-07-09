@@ -323,7 +323,6 @@ describe("local HTTP server", () => {
     const routeBodies = await Promise.all(
       routeResponses.map((response) => response.text()),
     );
-    const expectedLessonShell = routeBodies[0];
 
     expect(homeResponse.status).toBe(200);
     expect(home).toContain("Learning Home");
@@ -334,10 +333,11 @@ describe("local HTTP server", () => {
     expect(home).toContain("Relationships");
     expect(home).toContain("Purpose & Meaning");
     expect(routeResponses.every(({ status }) => status === 200)).toBe(true);
-    for (const body of routeBodies) {
+    for (const [index, body] of routeBodies.entries()) {
       expect(body).toContain('id="lesson-root"');
       expect(body).toContain("/lesson-page.js");
-      expect(body).toBe(expectedLessonShell);
+      expect(body).toContain(`https://lifesh.app${lessonRoutes[index]}`);
+      expect(body).not.toContain("__META_TITLE__");
     }
     expect(lessonDataResponse.status).toBe(200);
     expect(lessonData).toContain('id: "CUR-001-LESSON-1"');
