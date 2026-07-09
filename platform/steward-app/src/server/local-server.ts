@@ -87,6 +87,7 @@ const staticFiles = new Map<string, StaticAsset>([
     "/offline.html",
     { file: "offline.html", contentType: "text/html; charset=utf-8" },
   ],
+  ["/robots.txt", { file: "robots.txt", contentType: "text/plain; charset=utf-8" }],
   ["/favicon.svg", { file: "favicon.svg", contentType: "image/svg+xml" }],
   [
     "/sitemap.xml",
