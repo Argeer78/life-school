@@ -159,6 +159,7 @@ Infrastructure
 | AR-001 | Constitutional Dependency Rules | Approved |
 | AR-002 | Repository Architecture | Approved |
 | AR-003 | Architecture Evolution & Versioning Policy | Approved |
+| AR-004 | Guest-First Optional Account Architecture | Draft |
 
 ---
 

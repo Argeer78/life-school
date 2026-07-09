@@ -108,6 +108,124 @@ h2 {
   text-decoration: none;
 }
 
+.cookie-banner {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  z-index: 35;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.pwa-install-banner,
+.pwa-update-banner {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  z-index: 34;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 0.75rem 0.9rem;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.pwa-install-banner {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 6.6rem);
+}
+
+.pwa-update-banner {
+  top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+}
+
+.pwa-banner-content {
+  min-width: min(24rem, 100%);
+  flex: 1 1 24rem;
+}
+
+.pwa-title {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 780;
+}
+
+.pwa-body {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.pwa-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pwa-banner-actions button {
+  border: 1px solid var(--brand);
+  border-radius: 0.5rem;
+  padding: 0.42rem 0.8rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  font-weight: 760;
+}
+
+.pwa-install-later {
+  color: var(--brand) !important;
+  background: color-mix(in srgb, var(--panel) 95%, transparent) !important;
+}
+
+.cookie-banner-content {
+  min-width: min(28rem, 100%);
+  flex: 1 1 28rem;
+}
+
+.cookie-banner-title {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.cookie-banner-body {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.cookie-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.cookie-banner-actions button {
+  border: 1px solid var(--brand);
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.8rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  font-weight: 750;
+}
+
+.cookie-banner-actions .secondary-cookie-action {
+  color: var(--brand);
+  background: color-mix(in srgb, var(--panel) 95%, transparent);
+}
+
 .locale-button {
   border: 1px solid var(--line);
   border-radius: 0.5rem;
@@ -390,6 +508,17 @@ input:focus {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media (max-width: 840px) {
   .principle-grid,
   .info-card-grid {
@@ -439,5 +568,47 @@ input:focus {
     font-size: 0.75rem;
     text-align: center;
     white-space: normal;
+  }
+
+  .cookie-banner {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+    padding: 0.65rem 0.7rem;
+  }
+
+  .cookie-banner-content {
+    min-width: 100%;
+  }
+
+  .cookie-banner-actions {
+    width: 100%;
+  }
+
+  .cookie-banner-actions button {
+    flex: 1 1 8rem;
+  }
+
+  .pwa-install-banner,
+  .pwa-update-banner {
+    left: 0.5rem;
+    right: 0.5rem;
+    padding: 0.64rem 0.68rem;
+  }
+
+  .pwa-install-banner {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5.9rem);
+  }
+
+  .pwa-banner-content {
+    min-width: 100%;
+  }
+
+  .pwa-banner-actions {
+    width: 100%;
+  }
+
+  .pwa-banner-actions button {
+    flex: 1 1 8rem;
   }
 }

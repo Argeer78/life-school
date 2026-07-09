@@ -1,0 +1,56 @@
+{
+  "packageId": "org.lifeschool.app",
+  "host": "lifesh.app",
+  "name": "Lifeschool",
+  "launcherName": "Lifeschool",
+  "display": "standalone",
+  "themeColor": "#1e3a8a",
+  "backgroundColor": "#f6f7fa",
+  "navigationColor": "#1e3a8a",
+  "navigationColorDark": "#08101f",
+  "navigationDividerColor": "#1e3a8a",
+  "navigationDividerColorDark": "#08101f",
+  "startUrl": "/",
+  "iconUrl": "https://lifesh.app/pwa/icon-512.png",
+  "maskableIconUrl": "https://lifesh.app/pwa/icon-maskable-512.png",
+  "monochromeIconUrl": "https://lifesh.app/pwa/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android-release-key.jks",
+    "alias": "lifeschool",
+    "keyStorePassword": "CHANGE_ME",
+    "keyPassword": "CHANGE_ME"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "enableNotifications": false,
+  "shortcuts": [
+    {
+      "name": "Start Learning",
+      "shortName": "Learning",
+      "url": "/courses",
+      "icons": [
+        {
+          "src": "https://lifesh.app/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Talk with Steward",
+      "shortName": "Steward",
+      "url": "/learn",
+      "icons": [
+        {
+          "src": "https://lifesh.app/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "fallbackType": "customtabs",
+  "features": {
+    "playBilling": false,
+    "locationDelegation": false
+  }
+}

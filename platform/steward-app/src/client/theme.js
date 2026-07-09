@@ -1,17 +1,294 @@
 const storageKey = "lifeschool-theme";
+const cookieChoiceKey = "lifeschool.cookie.choice";
+const pwaDismissKey = "lifeschool.pwa.dismissed";
+
+/**
+ * @typedef {Event & {
+ *   prompt: () => Promise<void>,
+ *   userChoice: Promise<{ outcome: "accepted" | "dismissed", platform: string }>
+ * }} LifeschoolBeforeInstallPromptEvent
+ */
 
 const uiCopy = {
   en: {
     themeDark: "Dark mode",
     themeLight: "Light mode",
     feedback: "Report an issue / Send feedback",
+    cookieTitle: "Cookie and storage choice",
+    cookieBody:
+      "Lifeschool uses storage for session continuity, language preference, and your cookie choice only. No analytics and no advertising cookies.",
+    cookieAccept: "Accept",
+    cookieDecline: "Decline",
+    pwaInstallTitle: "Install Lifeschool app",
+    pwaInstallBody: "Install for faster launch, offline lessons you have already visited, and a full-screen experience.",
+    pwaInstallNow: "Install",
+    pwaInstallLater: "Later",
+    pwaIosBody: "Add Lifeschool to your Home Screen from the browser Share menu for an app-like experience.",
+    pwaUpdateTitle: "Update available",
+    pwaUpdateBody: "A new Lifeschool version is ready.",
+    pwaUpdateNow: "Update now",
   },
   el: {
     themeDark: "Σκοτεινή λειτουργία",
     themeLight: "Φωτεινή λειτουργία",
     feedback: "Αναφορά προβλήματος / Σχόλια",
+    cookieTitle: "Επιλογή για cookies και αποθήκευση",
+    cookieBody:
+      "Το Lifeschool χρησιμοποιεί αποθήκευση μόνο για συνέχεια συνεδρίας, προτίμηση γλώσσας και την επιλογή σου για cookies. Χωρίς αναλυτικά και χωρίς διαφημιστικά cookies.",
+    cookieAccept: "Αποδοχή",
+    cookieDecline: "Απόρριψη",
+    pwaInstallTitle: "Εγκατάσταση εφαρμογής Lifeschool",
+    pwaInstallBody: "Εγκατάστησε την εφαρμογή για ταχύτερο άνοιγμα, πρόσβαση χωρίς δίκτυο σε μαθήματα που έχεις ήδη δει και εμπειρία πλήρους οθόνης.",
+    pwaInstallNow: "Εγκατάσταση",
+    pwaInstallLater: "Αργότερα",
+    pwaIosBody: "Πρόσθεσε το Lifeschool στην Αρχική οθόνη από το μενού Κοινοποίηση του προγράμματος για εμπειρία εφαρμογής.",
+    pwaUpdateTitle: "Διαθέσιμη ενημέρωση",
+    pwaUpdateBody: "Μια νέα έκδοση Lifeschool είναι έτοιμη.",
+    pwaUpdateNow: "Ενημέρωση τώρα",
   },
 };
+
+/** @type {LifeschoolBeforeInstallPromptEvent | null} */
+let deferredInstallPrompt = null;
+/** @type {ServiceWorkerRegistration | null} */
+let pwaRegistration = null;
+
+function isStandaloneMode() {
+  const standaloneNav = /** @type {Navigator & { standalone?: boolean }} */ (window.navigator);
+  return window.matchMedia("(display-mode: standalone)").matches ||
+    standaloneNav.standalone === true;
+}
+
+/** @param {string} name @param {string} value */
+function ensureNamedMeta(name, value) {
+  /** @type {HTMLMetaElement | null} */
+  let meta = /** @type {HTMLMetaElement | null} */ (
+    document.querySelector(`meta[name='${name}']`)
+  );
+  if (!(meta instanceof HTMLMetaElement)) {
+    meta = document.createElement("meta");
+    meta.name = name;
+    document.head.append(meta);
+  }
+  meta.content = value;
+}
+
+function ensurePwaHead() {
+  /** @type {HTMLLinkElement | null} */
+  let manifest = /** @type {HTMLLinkElement | null} */ (
+    document.querySelector("link[rel='manifest']")
+  );
+  if (!(manifest instanceof HTMLLinkElement)) {
+    manifest = document.createElement("link");
+    manifest.rel = "manifest";
+    document.head.append(manifest);
+  }
+  manifest.href = "/manifest.webmanifest";
+
+  /** @type {HTMLLinkElement | null} */
+  let appleIcon = /** @type {HTMLLinkElement | null} */ (
+    document.querySelector("link[rel='apple-touch-icon']")
+  );
+  if (!(appleIcon instanceof HTMLLinkElement)) {
+    appleIcon = document.createElement("link");
+    appleIcon.rel = "apple-touch-icon";
+    appleIcon.sizes = "180x180";
+    document.head.append(appleIcon);
+  }
+  appleIcon.href = "/pwa/apple-touch-icon-180.png";
+
+  /** @type {HTMLLinkElement | null} */
+  let splash = /** @type {HTMLLinkElement | null} */ (
+    document.querySelector("link[rel='apple-touch-startup-image']")
+  );
+  if (!(splash instanceof HTMLLinkElement)) {
+    splash = document.createElement("link");
+    splash.rel = "apple-touch-startup-image";
+    document.head.append(splash);
+  }
+  splash.href = "/pwa/apple-splash-2048x2732.png";
+
+  ensureNamedMeta("mobile-web-app-capable", "yes");
+  ensureNamedMeta("apple-mobile-web-app-capable", "yes");
+  ensureNamedMeta("apple-mobile-web-app-status-bar-style", "default");
+  ensureNamedMeta("apple-mobile-web-app-title", "Lifeschool");
+  ensureNamedMeta("msapplication-TileColor", "#1e3a8a");
+}
+
+/** @param {"light" | "dark"} theme */
+function applyThemeColor(theme) {
+  ensureNamedMeta("theme-color", theme === "dark" ? "#08101f" : "#f6f7fa");
+}
+
+function pwaDismissed() {
+  try {
+    return window.localStorage.getItem(pwaDismissKey) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberPwaDismissal() {
+  try {
+    window.localStorage.setItem(pwaDismissKey, "1");
+  } catch {
+    // Continue gracefully when storage is unavailable.
+  }
+}
+
+function removePwaInstallBanner() {
+  const banner = document.querySelector(".pwa-install-banner");
+  if (banner instanceof HTMLElement) {
+    banner.remove();
+  }
+}
+
+function removePwaUpdateBanner() {
+  const banner = document.querySelector(".pwa-update-banner");
+  if (banner instanceof HTMLElement) {
+    banner.remove();
+  }
+}
+
+function updatePwaBannerText() {
+  const copy = copyForLocale();
+  const install = document.querySelector(".pwa-install-banner");
+  if (install instanceof HTMLElement) {
+    const title = install.querySelector(".pwa-title");
+    const body = install.querySelector(".pwa-body");
+    const installButton = install.querySelector(".pwa-install-now");
+    const laterButton = install.querySelector(".pwa-install-later");
+    if (title instanceof HTMLElement) title.textContent = copy.pwaInstallTitle;
+    if (body instanceof HTMLElement) {
+      body.textContent = deferredInstallPrompt === null
+        ? copy.pwaIosBody
+        : copy.pwaInstallBody;
+    }
+    if (installButton instanceof HTMLButtonElement) {
+      installButton.textContent = deferredInstallPrompt === null
+        ? copy.pwaInstallLater
+        : copy.pwaInstallNow;
+    }
+    if (laterButton instanceof HTMLButtonElement) {
+      laterButton.textContent = copy.pwaInstallLater;
+    }
+  }
+
+  const update = document.querySelector(".pwa-update-banner");
+  if (update instanceof HTMLElement) {
+    const title = update.querySelector(".pwa-title");
+    const body = update.querySelector(".pwa-body");
+    const now = update.querySelector(".pwa-update-now");
+    if (title instanceof HTMLElement) title.textContent = copy.pwaUpdateTitle;
+    if (body instanceof HTMLElement) body.textContent = copy.pwaUpdateBody;
+    if (now instanceof HTMLButtonElement) now.textContent = copy.pwaUpdateNow;
+  }
+}
+
+function ensurePwaInstallBanner() {
+  if (isStandaloneMode() || pwaDismissed()) return;
+  if (document.querySelector(".pwa-install-banner") instanceof HTMLElement) return;
+  const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  if (deferredInstallPrompt === null && !isIos) return;
+
+  const copy = copyForLocale();
+  const banner = document.createElement("section");
+  banner.className = "pwa-install-banner";
+  banner.setAttribute("role", "status");
+  banner.setAttribute("aria-live", "polite");
+  banner.innerHTML = `<div class="pwa-banner-content">
+      <p class="pwa-title"></p>
+      <p class="pwa-body"></p>
+    </div>
+    <div class="pwa-banner-actions">
+      <button type="button" class="pwa-install-now"></button>
+      <button type="button" class="pwa-install-later"></button>
+    </div>`;
+
+  const installNow = banner.querySelector(".pwa-install-now");
+  const installLater = banner.querySelector(".pwa-install-later");
+
+  if (installNow instanceof HTMLButtonElement) {
+    installNow.addEventListener("click", async () => {
+      if (deferredInstallPrompt === null) {
+        rememberPwaDismissal();
+        removePwaInstallBanner();
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      rememberPwaDismissal();
+      removePwaInstallBanner();
+    });
+  }
+  if (installLater instanceof HTMLButtonElement) {
+    installLater.addEventListener("click", () => {
+      rememberPwaDismissal();
+      removePwaInstallBanner();
+    });
+  }
+
+  document.body.append(banner);
+  updatePwaBannerText();
+}
+
+function ensurePwaUpdateBanner() {
+  if (!(pwaRegistration?.waiting instanceof ServiceWorker)) return;
+  if (document.querySelector(".pwa-update-banner") instanceof HTMLElement) return;
+  const banner = document.createElement("section");
+  banner.className = "pwa-update-banner";
+  banner.setAttribute("role", "status");
+  banner.setAttribute("aria-live", "polite");
+  banner.innerHTML = `<div class="pwa-banner-content">
+      <p class="pwa-title"></p>
+      <p class="pwa-body"></p>
+    </div>
+    <div class="pwa-banner-actions">
+      <button type="button" class="pwa-update-now"></button>
+    </div>`;
+
+  const updateNow = banner.querySelector(".pwa-update-now");
+  if (updateNow instanceof HTMLButtonElement) {
+    updateNow.addEventListener("click", () => {
+      pwaRegistration?.waiting?.postMessage({ type: "SKIP_WAITING" });
+    });
+  }
+
+  document.body.append(banner);
+  updatePwaBannerText();
+}
+
+async function registerPwaRuntime() {
+  if (!("serviceWorker" in window.navigator)) return;
+  try {
+    pwaRegistration = await window.navigator.serviceWorker.register("/sw.js");
+    if (pwaRegistration.waiting instanceof ServiceWorker) {
+      ensurePwaUpdateBanner();
+    }
+    pwaRegistration.addEventListener("updatefound", () => {
+      const installing = pwaRegistration?.installing;
+      if (!(installing instanceof ServiceWorker)) return;
+      installing.addEventListener("statechange", () => {
+        if (
+          installing.state === "installed" &&
+          window.navigator.serviceWorker.controller instanceof ServiceWorker
+        ) {
+          ensurePwaUpdateBanner();
+        }
+      });
+    });
+
+    let refreshed = false;
+    window.navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (refreshed) return;
+      refreshed = true;
+      window.location.reload();
+    });
+  } catch {
+    // Continue with core web experience when PWA registration is unavailable.
+  }
+}
 
 function activeLocale() {
   return document.documentElement.lang === "el" ? "el" : "en";
@@ -40,6 +317,94 @@ function ensureFeedbackButton() {
   button.textContent = copyForLocale().feedback;
   button.setAttribute("aria-label", "Report an issue or send feedback");
   document.body.append(button);
+  moveFeedbackIntoLandmark();
+}
+
+function moveFeedbackIntoLandmark() {
+  const button = document.querySelector(".feedback-fab");
+  const landmark = document.querySelector("main");
+  if (!(button instanceof HTMLAnchorElement)) return;
+  if (!(landmark instanceof HTMLElement)) return;
+  if (button.parentElement === landmark) return;
+  landmark.append(button);
+}
+
+function cookieChoice() {
+  try {
+    const stored = window.localStorage.getItem(cookieChoiceKey);
+    return stored === "accepted" || stored === "declined" ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+/** @param {"accepted" | "declined"} value */
+function rememberCookieChoice(value) {
+  try {
+    window.localStorage.setItem(cookieChoiceKey, value);
+  } catch {
+    // If local storage is unavailable, banner remains present for the session.
+  }
+}
+
+function removeCookieBanner() {
+  const banner = document.querySelector(".cookie-banner");
+  if (banner instanceof HTMLElement) {
+    banner.remove();
+  }
+}
+
+function updateCookieBannerText() {
+  const banner = document.querySelector(".cookie-banner");
+  if (!(banner instanceof HTMLElement)) return;
+  const copy = copyForLocale();
+  const title = banner.querySelector(".cookie-banner-title");
+  const body = banner.querySelector(".cookie-banner-body");
+  const accept = banner.querySelector("[data-cookie-choice='accepted']");
+  const decline = banner.querySelector("[data-cookie-choice='declined']");
+  if (title instanceof HTMLElement) title.textContent = copy.cookieTitle;
+  if (body instanceof HTMLElement) body.textContent = copy.cookieBody;
+  if (accept instanceof HTMLButtonElement) accept.textContent = copy.cookieAccept;
+  if (decline instanceof HTMLButtonElement) decline.textContent = copy.cookieDecline;
+}
+
+function ensureCookieBanner() {
+  if (cookieChoice() !== null) return;
+  if (document.querySelector(".cookie-banner") instanceof HTMLElement) return;
+
+  const copy = copyForLocale();
+  const banner = document.createElement("section");
+  banner.className = "cookie-banner";
+  banner.setAttribute("role", "dialog");
+  banner.setAttribute("aria-modal", "false");
+  banner.setAttribute("aria-live", "polite");
+  banner.setAttribute("aria-label", copy.cookieTitle);
+  banner.innerHTML = `<div class="cookie-banner-content">
+      <p class="cookie-banner-title"></p>
+      <p class="cookie-banner-body"></p>
+    </div>
+    <div class="cookie-banner-actions">
+      <button type="button" data-cookie-choice="accepted"></button>
+      <button type="button" data-cookie-choice="declined" class="secondary-cookie-action"></button>
+    </div>`;
+
+  /** @param {"accepted" | "declined"} choice */
+  const applyChoice = (choice) => {
+    rememberCookieChoice(choice);
+    removeCookieBanner();
+  };
+
+  const accept = banner.querySelector("[data-cookie-choice='accepted']");
+  const decline = banner.querySelector("[data-cookie-choice='declined']");
+  if (accept instanceof HTMLButtonElement) {
+    accept.addEventListener("click", () => applyChoice("accepted"));
+  }
+  if (decline instanceof HTMLButtonElement) {
+    decline.addEventListener("click", () => applyChoice("declined"));
+  }
+
+  document.body.append(banner);
+  updateCookieBannerText();
 }
 
 function updateFeedbackButtonText() {
@@ -63,6 +428,7 @@ function applyTheme(theme) {
   const copy = copyForLocale();
   document.documentElement.dataset.theme = theme;
   window.localStorage.setItem(storageKey, theme);
+  applyThemeColor(theme);
   const toggles = document.querySelectorAll("[data-theme-toggle]");
   for (const toggle of toggles) {
     if (!(toggle instanceof HTMLButtonElement)) continue;
@@ -74,12 +440,30 @@ function applyTheme(theme) {
 
 const initialTheme = preferredTheme();
 ensureFavicon();
+ensurePwaHead();
 ensureFeedbackButton();
+moveFeedbackIntoLandmark();
+const feedbackObserver = new MutationObserver(() => moveFeedbackIntoLandmark());
+feedbackObserver.observe(document.body, { childList: true, subtree: true });
+ensureCookieBanner();
 updateFeedbackButtonText();
 applyTheme(initialTheme);
+void registerPwaRuntime();
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = /** @type {LifeschoolBeforeInstallPromptEvent} */ (event);
+  ensurePwaInstallBanner();
+});
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  removePwaInstallBanner();
+});
+ensurePwaInstallBanner();
 
 window.addEventListener("lifeschool:locale-change", () => {
   updateFeedbackButtonText();
+  updateCookieBannerText();
+  updatePwaBannerText();
   const currentTheme = document.documentElement.dataset.theme === "dark"
     ? "dark"
     : "light";

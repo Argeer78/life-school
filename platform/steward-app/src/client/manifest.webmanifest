@@ -1,0 +1,76 @@
+{
+  "id": "/",
+  "name": "Lifeschool",
+  "short_name": "Lifeschool",
+  "description": "Learn to think. Live with clarity.",
+  "lang": "en",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f7fa",
+  "theme_color": "#1e3a8a",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Learning",
+      "short_name": "Learning",
+      "description": "Open the curriculum home.",
+      "url": "/courses",
+      "icons": [
+        {
+          "src": "/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Talk with Steward",
+      "short_name": "Steward",
+      "description": "Open the learner conversation page.",
+      "url": "/learn",
+      "icons": [
+        {
+          "src": "/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Module 1",
+      "short_name": "Module 1",
+      "description": "Open Thinking Clearly module.",
+      "url": "/courses/thinking-clearly",
+      "icons": [
+        {
+          "src": "/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

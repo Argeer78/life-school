@@ -64,7 +64,30 @@ const staticFiles = new Map<string, StaticAsset>([
     { file: "contact.html", contentType: "text/html; charset=utf-8" },
   ],
   ["/styles.css", { file: "styles.css", contentType: "text/css; charset=utf-8" }],
+  [
+    "/manifest.webmanifest",
+    { file: "manifest.webmanifest", contentType: "application/manifest+json; charset=utf-8" },
+  ],
+  ["/sw.js", { file: "sw.js", contentType: "text/javascript; charset=utf-8" }],
+  [
+    "/offline.html",
+    { file: "offline.html", contentType: "text/html; charset=utf-8" },
+  ],
   ["/favicon.svg", { file: "favicon.svg", contentType: "image/svg+xml" }],
+  ["/pwa/icon-192.png", { file: "pwa/icon-192.png", contentType: "image/png" }],
+  ["/pwa/icon-512.png", { file: "pwa/icon-512.png", contentType: "image/png" }],
+  [
+    "/pwa/icon-maskable-512.png",
+    { file: "pwa/icon-maskable-512.png", contentType: "image/png" },
+  ],
+  [
+    "/pwa/apple-touch-icon-180.png",
+    { file: "pwa/apple-touch-icon-180.png", contentType: "image/png" },
+  ],
+  [
+    "/pwa/apple-splash-2048x2732.png",
+    { file: "pwa/apple-splash-2048x2732.png", contentType: "image/png" },
+  ],
   ["/og-image.svg", { file: "og-image.svg", contentType: "image/svg+xml" }],
   ["/theme.js", { file: "theme.js", contentType: "text/javascript; charset=utf-8" }],
   [
