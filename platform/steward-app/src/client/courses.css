@@ -368,7 +368,7 @@ blockquote {
 .distinction div {
   padding: 0.8rem;
   border-radius: 0.55rem;
-  background: #f7f5ef;
+  background: color-mix(in srgb, var(--sand) 88%, var(--paper));
 }
 
 dt {
@@ -401,11 +401,16 @@ textarea {
   display: block;
   width: 100%;
   resize: vertical;
-  border: 1px solid #aaa99f;
+  border: 1px solid var(--border);
   border-radius: 0.6rem;
   padding: 0.75rem;
   color: var(--ink);
-  background: #fff;
+  background: var(--paper);
+}
+
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.95;
 }
 
 textarea:focus,
@@ -446,8 +451,9 @@ a:focus-visible {
   min-height: 5.5rem;
   margin-top: 1rem;
   padding: 0.85rem;
+  border: 1px solid var(--border);
   border-radius: 0.65rem;
-  background: #f7f5ef;
+  background: color-mix(in srgb, var(--paper) 90%, var(--sand));
 }
 
 .empty-practice {
@@ -472,6 +478,7 @@ a:focus-visible {
   margin: 0;
   padding: 0.7rem 0.8rem;
   border-radius: 0.6rem;
+  color: var(--ink);
   background: var(--forest-soft);
   white-space: pre-wrap;
 }
