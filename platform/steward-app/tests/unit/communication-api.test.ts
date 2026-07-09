@@ -54,7 +54,7 @@ describe("communication API validation", () => {
     expect(submission.page).toBe("/courses/thinking-clearly");
   });
 
-  it("blocks spam payloads via honeypot or url burst", () => {
+  it("blocks spam payloads via url burst", () => {
     expect(() =>
       parseFeedbackSubmission({
         category: "General Feedback",
@@ -69,17 +69,6 @@ describe("communication API validation", () => {
       }),
     ).toThrowError(InvalidCommunicationRequest);
 
-    expect(() =>
-      parseContactSubmission({
-        name: "Learner",
-        email: "learner@example.com",
-        subject: "Hello",
-        category: "General Question",
-        message: "This is a valid message body with enough content.",
-        company: "bot-filled",
-        startedAt: Date.now() - 2_000,
-      }),
-    ).toThrowError(InvalidCommunicationRequest);
   });
 });
 

@@ -382,10 +382,6 @@ function ensureFeedbackDialog() {
         <span class="feedback-label feedback-email-label"></span>
         <input name="email" type="email" maxlength="320" autocomplete="email" />
       </label>
-      <label class="feedback-honeypot" aria-hidden="true">
-        Company
-        <input name="company" type="text" tabindex="-1" autocomplete="off" />
-      </label>
       <p class="feedback-status" role="status" aria-live="polite"></p>
       <div class="feedback-actions">
         <button type="submit" class="feedback-submit"></button>
@@ -405,7 +401,6 @@ function feedbackPayload(formData) {
     category: String(formData.get("category") ?? "").trim(),
     message: String(formData.get("message") ?? "").trim(),
     email: String(formData.get("email") ?? "").trim(),
-    company: String(formData.get("company") ?? "").trim(),
     page: window.location.pathname,
     language: document.documentElement.lang || "en",
     browser: window.navigator.userAgent,

@@ -60,7 +60,6 @@ function validate(formData) {
  * subject: string,
  * category: string,
  * message: string,
- * company: string,
  * startedAt: number,
  * }} payload */
 async function submitContact(payload) {
@@ -101,7 +100,6 @@ form.addEventListener("submit", (event) => {
     subject: textValue(formData, "subject"),
     category: textValue(formData, "category"),
     message: textValue(formData, "message"),
-    company: textValue(formData, "company"),
     startedAt,
   };
 

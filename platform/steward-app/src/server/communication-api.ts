@@ -51,14 +51,10 @@ function categoryAllowed(category: string, allowed: Set<string>): boolean {
 }
 
 interface AntiSpamMeta {
-  readonly honeypot: string;
   readonly startedAt: number;
 }
 
 function validateAntiSpam(meta: AntiSpamMeta): void {
-  if (meta.honeypot.length > 0) {
-    throw new InvalidCommunicationRequest("SPAM_DETECTED");
-  }
   if (!Number.isFinite(meta.startedAt)) {
     throw new InvalidCommunicationRequest("INVALID_COMMUNICATION_REQUEST");
   }
@@ -66,7 +62,6 @@ function validateAntiSpam(meta: AntiSpamMeta): void {
 
 function readAntiSpam(body: Record<string, unknown>): AntiSpamMeta {
   return {
-    honeypot: trimField(body.company),
     startedAt: Number(body.startedAt ?? 0),
   };
 }
@@ -138,7 +133,6 @@ export interface ContactSubmission {
   readonly subject: string;
   readonly category: string;
   readonly message: string;
-  readonly company: string;
   readonly startedAt: number;
 }
 
@@ -150,7 +144,6 @@ export interface FeedbackSubmission {
   readonly language: string;
   readonly browser: string;
   readonly viewport: string;
-  readonly company: string;
   readonly startedAt: number;
 }
 
@@ -164,7 +157,6 @@ export function parseContactSubmission(body: unknown): ContactSubmission {
   const subject = clean(trimField(body.subject));
   const category = clean(trimField(body.category));
   const message = trimField(body.message);
-  const company = trimField(body.company);
   const startedAt = Number(body.startedAt ?? 0);
 
   if (!ensureLength(name, maxNameLength)) {
@@ -183,7 +175,7 @@ export function parseContactSubmission(body: unknown): ContactSubmission {
     throw new InvalidCommunicationRequest("SPAM_DETECTED");
   }
 
-  validateAntiSpam(readAntiSpam({ company, startedAt }));
+  validateAntiSpam(readAntiSpam({ startedAt }));
 
   return {
     name,
@@ -191,7 +183,6 @@ export function parseContactSubmission(body: unknown): ContactSubmission {
     subject,
     category,
     message,
-    company,
     startedAt,
   };
 }
@@ -208,7 +199,6 @@ export function parseFeedbackSubmission(body: unknown): FeedbackSubmission {
   const language = clean(trimField(body.language));
   const browser = trimField(body.browser);
   const viewport = trimField(body.viewport);
-  const company = trimField(body.company);
   const startedAt = Number(body.startedAt ?? 0);
 
   if (!categoryAllowed(category, feedbackCategories)) {
@@ -233,7 +223,7 @@ export function parseFeedbackSubmission(body: unknown): FeedbackSubmission {
     throw new InvalidCommunicationRequest("INVALID_COMMUNICATION_REQUEST");
   }
 
-  validateAntiSpam(readAntiSpam({ company, startedAt }));
+  validateAntiSpam(readAntiSpam({ startedAt }));
 
   return {
     category,
@@ -243,7 +233,6 @@ export function parseFeedbackSubmission(body: unknown): FeedbackSubmission {
     language,
     browser,
     viewport,
-    company,
     startedAt,
   };
 }
