@@ -209,6 +209,20 @@ describe("learner homepage, navigation, and private alpha access", () => {
     expect(restored.status).toBe(200);
     expect(restoredResult.html).toContain("Learning Home");
 
+    const lessonRestored = await fetch(`${origin}/api/alpha-access`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        proof: result.proof,
+        path: "/courses/thinking-clearly/lesson-2",
+      }),
+    });
+    const lessonResult = (await lessonRestored.json()) as { html: string };
+    expect(lessonRestored.status).toBe(200);
+    expect(lessonResult.html).toContain("Thinking Clearly - Lesson 2 | Lifeschool");
+    expect(lessonResult.html).toContain("https://lifesh.app/courses/thinking-clearly/lesson-2");
+    expect(lessonResult.html).not.toContain("__META_TITLE__");
+
     const gateSource = await readFile(
       new URL("../../src/client/alpha-access.js", import.meta.url),
       "utf8",
@@ -236,5 +250,31 @@ describe("learner homepage, navigation, and private alpha access", () => {
     expect(serialized).not.toMatch(
       /developerTrace|inspection|strategySelection|reviewResult|principleResults|providerRequest|providerResponse|internalPrompt|rawError/,
     );
+  });
+
+  it("keeps sitemap and robots public while alpha gate is enabled", async () => {
+    const origin = await startServer({
+      environment: environment("private-alpha-code"),
+    });
+
+    const [sitemapResponse, robotsResponse] = await Promise.all([
+      fetch(`${origin}/sitemap.xml`),
+      fetch(`${origin}/robots.txt`),
+    ]);
+    const [sitemap, robots] = await Promise.all([
+      sitemapResponse.text(),
+      robotsResponse.text(),
+    ]);
+
+    expect(sitemapResponse.status).toBe(200);
+    expect(sitemapResponse.headers.get("content-type")).toBe("application/xml; charset=utf-8");
+    expect(sitemap).toContain("<urlset");
+    expect(sitemap).toContain("https://lifesh.app/learn");
+    expect(sitemap).not.toContain("Private alpha");
+
+    expect(robotsResponse.status).toBe(200);
+    expect(robotsResponse.headers.get("content-type")).toBe("text/plain; charset=utf-8");
+    expect(robots).toContain("Allow: /");
+    expect(robots).toContain("Sitemap: https://lifesh.app/sitemap.xml");
   });
 });

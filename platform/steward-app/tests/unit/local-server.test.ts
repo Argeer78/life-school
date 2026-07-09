@@ -42,12 +42,67 @@ describe("local HTTP server", () => {
     const origin = await startServer();
     const response = await fetch(`${origin}/sitemap.xml`);
     const xml = await response.text();
+    const locations = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+      (match) => match[1] ?? "",
+    );
+
+    const requiredPublicPages = [
+      "https://lifesh.app/",
+      "https://lifesh.app/about",
+      "https://lifesh.app/contact",
+      "https://lifesh.app/privacy",
+      "https://lifesh.app/terms",
+      "https://lifesh.app/courses",
+      "https://lifesh.app/learn",
+    ];
+    const moduleSlugs = [
+      "thinking-clearly",
+      "communicating-clearly",
+      "making-decisions",
+      "understanding-emotions",
+      "relationships",
+      "purpose-meaning",
+    ] as const;
+    const requiredModules = moduleSlugs.map(
+      (slug) => `https://lifesh.app/courses/${slug}`,
+    );
+    const requiredLessons = moduleSlugs.flatMap((slug) =>
+      [1, 2, 3, 4, 5, 6].map(
+        (lessonNumber) => `https://lifesh.app/courses/${slug}/lesson-${lessonNumber}`,
+      ),
+    );
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("application/xml");
+    expect(response.headers.get("content-type")).toBe("application/xml; charset=utf-8");
+    expect(xml).toContain("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     expect(xml).toContain("<urlset");
-    expect(xml).toContain("https://lifesh.app/");
-    expect(xml).toContain("https://lifesh.app/courses/thinking-clearly/lesson-6");
+    expect(xml.trim().endsWith("</urlset>")).toBe(true);
+
+    for (const url of [...requiredPublicPages, ...requiredModules, ...requiredLessons]) {
+      expect(locations).toContain(url);
+    }
+    expect(locations).toHaveLength(
+      requiredPublicPages.length + requiredModules.length + requiredLessons.length,
+    );
+    expect(locations.some((url) => url.includes("/api/"))).toBe(false);
+    expect(locations).not.toContain("https://lifesh.app/devtools");
+    expect(locations).not.toContain("https://lifesh.app/playground");
+    expect(locations).not.toContain("https://lifesh.app/benchmarks");
+    expect(locations).not.toContain("https://lifesh.app/certification");
+    expect(locations).not.toContain("https://lifesh.app/compare");
+    expect(locations.some((url) => /\.(css|js|png|svg|xml|txt)$/.test(url))).toBe(false);
+  });
+
+  it("serves robots.txt with sitemap reference", async () => {
+    const origin = await startServer();
+    const response = await fetch(`${origin}/robots.txt`);
+    const robots = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("text/plain; charset=utf-8");
+    expect(robots).toContain("User-agent: *");
+    expect(robots).toContain("Allow: /");
+    expect(robots).toContain("Sitemap: https://lifesh.app/sitemap.xml");
   });
 
   it("returns exactly the learner-safe response over HTTP", async () => {
@@ -515,6 +570,76 @@ describe("local HTTP server", () => {
         }),
       }),
     );
+  });
+
+  it("degrades contact and feedback responses when mail delivery fails", async () => {
+    const send = vi.fn<ContactMailTransport["send"]>(async () => {
+      throw new Error("smtp unavailable");
+    });
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    try {
+      const origin = await startServer({
+        contactMailTransport: { send },
+      });
+
+      const [contactResponse, feedbackResponse] = await Promise.all([
+        fetch(`${origin}/api/contact`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "Learner",
+            email: "learner@example.com",
+            subject: "Question about lessons",
+            category: "General Question",
+            message: "Could you add one more example to lesson 2?",
+            company: "",
+            startedAt: Date.now() - 2_000,
+          }),
+        }),
+        fetch(`${origin}/api/feedback`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            category: "General Feedback",
+            message: "The footer spacing is tight on mobile.",
+            email: "",
+            page: "/",
+            language: "en",
+            browser: "Mozilla/5.0 test",
+            viewport: "1280x720",
+            company: "",
+            startedAt: Date.now() - 2_000,
+          }),
+        }),
+      ]);
+
+      expect(contactResponse.status).toBe(202);
+      expect(await contactResponse.json()).toEqual({
+        ok: true,
+        destination: "contact@alphasynthai.com",
+        warning: "DELIVERY_DEGRADED",
+      });
+
+      expect(feedbackResponse.status).toBe(202);
+      expect(await feedbackResponse.json()).toEqual({
+        ok: true,
+        destination: "contact@alphasynthai.com",
+        warning: "DELIVERY_DEGRADED",
+      });
+
+      expect(send).toHaveBeenCalledTimes(2);
+      expect(warnSpy).toHaveBeenCalledWith(
+        "[contact:mail:delivery-degraded]",
+        expect.objectContaining({ endpoint: "/api/contact" }),
+      );
+      expect(warnSpy).toHaveBeenCalledWith(
+        "[contact:mail:delivery-degraded]",
+        expect.objectContaining({ endpoint: "/api/feedback" }),
+      );
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 
   it("returns safe success when SMTP env is missing in development", async () => {

@@ -15,6 +15,8 @@ const copiedClientExtensions = new Set([
   ".js",
   ".html",
   ".css",
+  ".xml",
+  ".txt",
   ".svg",
   ".png",
   ".jpg",

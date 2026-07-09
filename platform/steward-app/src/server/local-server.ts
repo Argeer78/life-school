@@ -748,10 +748,13 @@ export function createLocalStewardServer(
         }
 
         const content = await readFile(join(clientDirectory, asset.file), "utf8");
-        const html =
+        let html =
           asset.file === "index.html"
             ? content.replace(" data-alpha-note hidden", " data-alpha-note")
             : content;
+        if (asset.file === "lesson.html") {
+          html = withLessonMetadata(html, pathname);
+        }
         sendJson(response, 200, {
           granted: true,
           proof: expectedProof,
@@ -825,7 +828,15 @@ export function createLocalStewardServer(
           const status = error.code === "RATE_LIMITED" ? 429 : 400;
           sendJson(response, status, { error: { code: error.code } });
         } else if (error instanceof CommunicationDeliveryFailed) {
-          sendJson(response, 503, { error: { code: error.code } });
+          console.warn("[contact:mail:delivery-degraded]", {
+            endpoint: "/api/contact",
+            reason: error.code,
+          });
+          sendJson(response, 202, {
+            ok: true,
+            destination: "contact@alphasynthai.com",
+            warning: "DELIVERY_DEGRADED",
+          });
         } else {
           sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
         }
@@ -851,7 +862,15 @@ export function createLocalStewardServer(
           const status = error.code === "RATE_LIMITED" ? 429 : 400;
           sendJson(response, status, { error: { code: error.code } });
         } else if (error instanceof CommunicationDeliveryFailed) {
-          sendJson(response, 503, { error: { code: error.code } });
+          console.warn("[contact:mail:delivery-degraded]", {
+            endpoint: "/api/feedback",
+            reason: error.code,
+          });
+          sendJson(response, 202, {
+            ok: true,
+            destination: "contact@alphasynthai.com",
+            warning: "DELIVERY_DEGRADED",
+          });
         } else {
           sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
         }
