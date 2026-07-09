@@ -115,6 +115,10 @@ const staticFiles = new Map<string, StaticAsset>([
     { file: "lifeschool-logo.svg", contentType: "image/svg+xml" },
   ],
   [
+    "/hero-graphic.svg",
+    { file: "hero-graphic.svg", contentType: "image/svg+xml" },
+  ],
+  [
     "/learner-nav.css",
     { file: "learner-nav.css", contentType: "text/css; charset=utf-8" },
   ],
