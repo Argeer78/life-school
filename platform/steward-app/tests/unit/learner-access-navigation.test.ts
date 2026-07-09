@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
 import { renderLessonPage } from "../../src/client/lesson-renderer.js";
-import { thinkingClearlyLessons } from "../../src/client/thinking-clearly-lessons.js";
+import { curriculumLessons } from "../../src/client/curriculum-lessons.js";
 import {
   createLocalStewardServer,
   type LocalStewardServerOptions,
@@ -76,7 +76,7 @@ describe("learner homepage, navigation, and private alpha access", () => {
     for (const page of pages) {
       expectLearnerNavigation(page);
     }
-    for (const lesson of thinkingClearlyLessons) {
+    for (const lesson of curriculumLessons.en) {
       expectLearnerNavigation(renderLessonPage(lesson));
     }
   });
@@ -114,6 +114,11 @@ describe("learner homepage, navigation, and private alpha access", () => {
       "/courses",
       "/courses/thinking-clearly",
       "/courses/thinking-clearly/lesson-6",
+      "/courses/communicating-clearly",
+      "/courses/making-decisions/lesson-6",
+      "/courses/understanding-emotions/lesson-6",
+      "/courses/relationships/lesson-6",
+      "/courses/purpose-meaning/lesson-6",
     ];
     const responses = await Promise.all(
       routes.map((route) => fetch(`${origin}${route}`)),
@@ -136,9 +141,7 @@ describe("learner homepage, navigation, and private alpha access", () => {
       fetch(origin).then((response) => response.text()),
       fetch(`${origin}/learn`).then((response) => response.text()),
       fetch(`${origin}/courses`).then((response) => response.text()),
-      fetch(`${origin}/courses/thinking-clearly/lesson-2`).then((response) =>
-        response.text(),
-      ),
+      fetch(`${origin}/courses/purpose-meaning/lesson-2`).then((response) => response.text()),
     ]);
 
     expect(home).toContain("<h1>Lifeschool</h1>");
@@ -217,7 +220,7 @@ describe("learner homepage, navigation, and private alpha access", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         code: "private-alpha-code",
-        path: "/courses/thinking-clearly",
+        path: "/courses/relationships",
       }),
     });
     const serialized = JSON.stringify(await response.json());

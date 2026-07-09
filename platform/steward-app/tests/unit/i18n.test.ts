@@ -61,6 +61,8 @@ describe("Lifeschool multilingual foundation v1", () => {
     expect(courses).toContain('data-i18n="courses.homeTitle"');
     expect(courses).toContain('data-i18n="courses.moduleTitle"');
     expect(courses).toContain('data-i18n="courses.lesson6Title"');
+    expect(courses).toContain('data-i18n="courses.module2Title"');
+    expect(courses).toContain('data-i18n="courses.module6Lesson6Title"');
     expect(renderer).toContain('"lesson.practiceWithSteward"');
     expect(renderer).toContain('data-i18n="lesson.returnModule"');
   });

@@ -281,59 +281,63 @@ describe("local HTTP server", () => {
     ]);
   });
 
-  it("serves the curriculum home and all six Thinking Clearly lessons", async () => {
+  it("serves curriculum home, all six module routes, and all 36 lesson routes", async () => {
     const origin = await startServer();
+    const moduleSlugs = [
+      "thinking-clearly",
+      "communicating-clearly",
+      "making-decisions",
+      "understanding-emotions",
+      "relationships",
+      "purpose-meaning",
+    ] as const;
+    const lessonRoutes = moduleSlugs.flatMap((slug) => [
+      `/courses/${slug}`,
+      ...[2, 3, 4, 5, 6].map((lessonNumber) =>
+        `/courses/${slug}/lesson-${lessonNumber}`,
+      ),
+    ]);
     const [
       homeResponse,
-      lessonResponse,
-      lessonTwoResponse,
       lessonDataResponse,
       lessonPageResponse,
       rendererResponse,
     ] = await Promise.all([
       fetch(`${origin}/courses`),
-      fetch(`${origin}/courses/thinking-clearly`),
-      fetch(`${origin}/courses/thinking-clearly/lesson-2`),
       fetch(`${origin}/thinking-clearly-lessons.js`),
       fetch(`${origin}/lesson-page.js`),
       fetch(`${origin}/lesson-renderer.js`),
     ]);
-    const [home, lesson, lessonTwo, lessonData, lessonPage, renderer] =
+    const [home, lessonData, lessonPage, renderer] =
       await Promise.all([
         homeResponse.text(),
-        lessonResponse.text(),
-        lessonTwoResponse.text(),
         lessonDataResponse.text(),
         lessonPageResponse.text(),
         rendererResponse.text(),
       ]);
 
+    const routeResponses = await Promise.all(
+      lessonRoutes.map((route) => fetch(`${origin}${route}`)),
+    );
+    const routeBodies = await Promise.all(
+      routeResponses.map((response) => response.text()),
+    );
+    const expectedLessonShell = routeBodies[0];
+
     expect(homeResponse.status).toBe(200);
     expect(home).toContain("Learning Home");
     expect(home).toContain("Thinking Clearly");
-    expect(home).toContain("Lesson 6");
-    for (const lessonNumber of [2, 3, 4, 5, 6]) {
-      expect(home).toContain(
-        `href="/courses/thinking-clearly/lesson-${lessonNumber}"`,
-      );
+    expect(home).toContain("Communicating Clearly");
+    expect(home).toContain("Making Decisions");
+    expect(home).toContain("Understanding Emotions");
+    expect(home).toContain("Relationships");
+    expect(home).toContain("Purpose & Meaning");
+    expect(routeResponses.every(({ status }) => status === 200)).toBe(true);
+    for (const body of routeBodies) {
+      expect(body).toContain('id="lesson-root"');
+      expect(body).toContain("/lesson-page.js");
+      expect(body).toBe(expectedLessonShell);
     }
-    expect(lessonResponse.status).toBe(200);
-    expect(lesson).toContain('id="lesson-root"');
-    expect(lesson).toContain("/lesson-page.js");
-    expect(lessonTwoResponse.status).toBe(200);
-    expect(lessonTwo).toBe(lesson);
-    const remainingLessonResponses = await Promise.all(
-      [3, 4, 5, 6].map((lessonNumber) =>
-        fetch(`${origin}/courses/thinking-clearly/lesson-${lessonNumber}`),
-      ),
-    );
-    const remainingLessonShells = await Promise.all(
-      remainingLessonResponses.map((response) => response.text()),
-    );
-    expect(remainingLessonResponses.map(({ status }) => status)).toEqual([
-      200, 200, 200, 200,
-    ]);
-    expect(remainingLessonShells.every((shell) => shell === lesson)).toBe(true);
     expect(lessonDataResponse.status).toBe(200);
     expect(lessonData).toContain('id: "CUR-001-LESSON-1"');
     expect(lessonData).toContain('title: "What happened vs. what it means"');

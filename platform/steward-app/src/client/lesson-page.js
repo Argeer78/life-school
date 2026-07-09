@@ -3,11 +3,15 @@ import { buildLessonPracticeMessage } from "./lesson-model.js";
 import { renderLessonPage } from "./lesson-renderer.js";
 import { createMemoryTranscript } from "./learn-transcript.js";
 import { projectLearnerResponse } from "./learner-response.js";
-import { findThinkingClearlyLesson } from "./thinking-clearly-lessons.js";
+import { findCurriculumLesson } from "./curriculum-lessons.js";
 import { browserPreference, initializeI18n } from "./i18n.js";
 
-const initialLocale = browserPreference();
-const lesson = findThinkingClearlyLesson(
+/** @typedef {import("./lesson-model.js").LessonDefinition} LessonDefinition */
+/** @typedef {import("./lesson-model.js").LessonExerciseField} LessonExerciseField */
+
+/** @type {"en" | "el"} */
+const initialLocale = browserPreference() === "el" ? "el" : "en";
+const lesson = findCurriculumLesson(
   window.location.pathname,
   initialLocale,
 );
@@ -24,6 +28,7 @@ document.title = `${lesson.moduleTitle} — ${i18n.translate("lesson.number", {
   number: lesson.lessonNumber,
 })}`;
 
+/** @type {{ definition: LessonExerciseField, element: HTMLTextAreaElement }[]} */
 const exerciseFields = lesson.exercise.fields.map((field) => {
   const element = document.querySelector(`[data-exercise-field="${field.id}"]`);
   if (!(element instanceof HTMLTextAreaElement)) {

@@ -250,6 +250,76 @@ const staticFiles = new Map<string, StaticAsset>([
     },
   ],
   [
+    "/courses/communicating-clearly",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/communicating-clearly/",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/making-decisions",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/making-decisions/",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/understanding-emotions",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/understanding-emotions/",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/relationships",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/relationships/",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/purpose-meaning",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/courses/purpose-meaning/",
+    {
+      file: "lesson.html",
+      contentType: "text/html; charset=utf-8",
+    },
+  ],
+  [
     "/courses.css",
     { file: "courses.css", contentType: "text/css; charset=utf-8" },
   ],
@@ -295,12 +365,54 @@ const staticFiles = new Map<string, StaticAsset>([
       contentType: "text/javascript; charset=utf-8",
     },
   ],
+  [
+    "/additional-modules-lessons.js",
+    {
+      file: "additional-modules-lessons.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/additional-modules-lessons-el.js",
+    {
+      file: "additional-modules-lessons-el.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/curriculum-lessons.js",
+    {
+      file: "curriculum-lessons.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
 ]);
 
 const lessonAsset: StaticAsset = {
   file: "lesson.html",
   contentType: "text/html; charset=utf-8",
 };
+
+const curriculumModuleSlugs = [
+  "thinking-clearly",
+  "communicating-clearly",
+  "making-decisions",
+  "understanding-emotions",
+  "relationships",
+  "purpose-meaning",
+] as const;
+
+function isCurriculumLessonPath(pathname: string): boolean {
+  return curriculumModuleSlugs.some((slug) =>
+    new RegExp(`^/courses/${slug}/lesson-[1-6]/?$`).test(pathname),
+  );
+}
+
+function isCurriculumModuleRoot(pathname: string): boolean {
+  return curriculumModuleSlugs.some(
+    (slug) => pathname === `/courses/${slug}` || pathname === `/courses/${slug}/`,
+  );
+}
 
 function learnerPageAsset(pathname: string): StaticAsset | undefined {
   if (
@@ -309,14 +421,11 @@ function learnerPageAsset(pathname: string): StaticAsset | undefined {
     pathname === "/learn/" ||
     pathname === "/courses" ||
     pathname === "/courses/" ||
-    pathname === "/courses/thinking-clearly" ||
-    pathname === "/courses/thinking-clearly/"
+    isCurriculumModuleRoot(pathname)
   ) {
     return staticFiles.get(pathname);
   }
-  return /^\/courses\/thinking-clearly\/lesson-[1-6]\/?$/.test(pathname)
-    ? lessonAsset
-    : undefined;
+  return isCurriculumLessonPath(pathname) ? lessonAsset : undefined;
 }
 
 function isAlphaProtectedPath(pathname: string): boolean {
@@ -326,8 +435,8 @@ function isAlphaProtectedPath(pathname: string): boolean {
     pathname === "/learn/" ||
     pathname === "/courses" ||
     pathname === "/courses/" ||
-    pathname === "/courses/thinking-clearly" ||
-    pathname.startsWith("/courses/thinking-clearly/")
+    isCurriculumModuleRoot(pathname) ||
+    curriculumModuleSlugs.some((slug) => pathname.startsWith(`/courses/${slug}/`))
   );
 }
 
@@ -607,7 +716,7 @@ export function createLocalStewardServer(
 
     const asset =
       staticFiles.get(url.pathname) ??
-      (/^\/courses\/thinking-clearly\/lesson-[1-6]\/?$/.test(url.pathname)
+      (isCurriculumLessonPath(url.pathname)
         ? lessonAsset
         : undefined);
     if (
