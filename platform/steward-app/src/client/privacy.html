@@ -8,40 +8,54 @@
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
     <script type="module" src="/theme.js"></script>
+    <script type="module" src="/info-i18n.js"></script>
   </head>
-  <body>
+  <body data-title-key="privacy.documentTitle">
     <main class="home-shell">
       <nav class="learner-nav" aria-label="Main navigation">
-        <a href="/">Home</a>
-        <a href="/courses">Courses</a>
-        <a href="/learn">Steward</a>
+        <a href="/" data-i18n="common.navHome">Home</a>
+        <a href="/courses" data-i18n="common.navCourses">Courses</a>
+        <a href="/learn" data-i18n="common.navSteward">Steward</a>
       </nav>
       <header class="info-header">
         <button class="theme-button" type="button" data-theme-toggle aria-pressed="false">
           Dark mode
         </button>
+        <div
+          class="language-switcher"
+          role="group"
+          aria-label="Language"
+          data-i18n-aria-label="common.language"
+        >
+          <button class="locale-button" type="button" data-locale="en" data-i18n="common.english">
+            English
+          </button>
+          <button class="locale-button" type="button" data-locale="el" data-i18n="common.greek">
+            Ελληνικά
+          </button>
+        </div>
         <div class="brand-row" aria-label="Lifeschool brand">
           <img src="/lifeschool-logo.svg" alt="Lifeschool" width="70" height="70" />
           <div>
             <p class="eyebrow">Lifeschool</p>
-            <p class="brand-tagline">Learn to think. Live with clarity.</p>
+            <p class="brand-tagline" data-i18n="about.brandTagline">Learn to think. Live with clarity.</p>
           </div>
         </div>
-        <p class="eyebrow">Privacy Policy</p>
-        <h1 class="info-title">Your conversation is your space</h1>
+        <p class="eyebrow" data-i18n="privacy.eyebrow">Privacy Policy</p>
+        <h1 class="info-title" data-i18n="privacy.title">Your conversation is your space</h1>
       </header>
       <section class="legal-card">
-        <h2>What We Store</h2>
-        <p>By default, learner conversations remain in browser memory during the current tab session.</p>
-        <h2>What We Do Not Do</h2>
-        <p>We do not create learner accounts for this alpha and do not persist chat history in this browser UI.</p>
-        <h2>Service Logs</h2>
-        <p>Operational logs may include technical diagnostics needed for reliability and safety review.</p>
+        <h2 data-i18n="privacy.whatStoreTitle">What We Store</h2>
+        <p data-i18n="privacy.whatStoreBody">By default, learner conversations remain in browser memory during the current tab session.</p>
+        <h2 data-i18n="privacy.whatNotTitle">What We Do Not Do</h2>
+        <p data-i18n="privacy.whatNotBody">We do not create learner accounts for this alpha and do not persist chat history in this browser UI.</p>
+        <h2 data-i18n="privacy.logsTitle">Service Logs</h2>
+        <p data-i18n="privacy.logsBody">Operational logs may include technical diagnostics needed for reliability and safety review.</p>
       </section>
       <footer class="site-footer-links" aria-label="Site links">
-        <a href="/about">About</a>
-        <a href="/terms">Terms</a>
-        <a href="/contact">Contact</a>
+        <a href="/about" data-i18n="common.navAbout">About</a>
+        <a href="/terms" data-i18n="common.navTerms">Terms</a>
+        <a href="/contact" data-i18n="common.navContact">Contact</a>
       </footer>
     </main>
   </body>

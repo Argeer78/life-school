@@ -151,8 +151,7 @@ clearButtonView.addEventListener("click", () => {
 });
 
 askNextLessonView.addEventListener("click", () => {
-  inputView.value =
-    "Give me one practical next lesson I should do now, and one question to test my thinking.";
+  inputView.value = i18n.translate("learn.quickPromptNextLesson");
   inputView.focus();
 });
 

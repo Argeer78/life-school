@@ -8,40 +8,54 @@
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
     <script type="module" src="/theme.js"></script>
+    <script type="module" src="/info-i18n.js"></script>
   </head>
-  <body>
+  <body data-title-key="terms.documentTitle">
     <main class="home-shell">
       <nav class="learner-nav" aria-label="Main navigation">
-        <a href="/">Home</a>
-        <a href="/courses">Courses</a>
-        <a href="/learn">Steward</a>
+        <a href="/" data-i18n="common.navHome">Home</a>
+        <a href="/courses" data-i18n="common.navCourses">Courses</a>
+        <a href="/learn" data-i18n="common.navSteward">Steward</a>
       </nav>
       <header class="info-header">
         <button class="theme-button" type="button" data-theme-toggle aria-pressed="false">
           Dark mode
         </button>
+        <div
+          class="language-switcher"
+          role="group"
+          aria-label="Language"
+          data-i18n-aria-label="common.language"
+        >
+          <button class="locale-button" type="button" data-locale="en" data-i18n="common.english">
+            English
+          </button>
+          <button class="locale-button" type="button" data-locale="el" data-i18n="common.greek">
+            Ελληνικά
+          </button>
+        </div>
         <div class="brand-row" aria-label="Lifeschool brand">
           <img src="/lifeschool-logo.svg" alt="Lifeschool" width="70" height="70" />
           <div>
             <p class="eyebrow">Lifeschool</p>
-            <p class="brand-tagline">Learn to think. Live with clarity.</p>
+            <p class="brand-tagline" data-i18n="about.brandTagline">Learn to think. Live with clarity.</p>
           </div>
         </div>
-        <p class="eyebrow">Terms of Service</p>
-        <h1 class="info-title">Use with care and responsibility</h1>
+        <p class="eyebrow" data-i18n="terms.eyebrow">Terms of Service</p>
+        <h1 class="info-title" data-i18n="terms.title">Use with care and responsibility</h1>
       </header>
       <section class="legal-card">
-        <h2>Steward Limitation</h2>
-        <p>Steward is an educational assistant. It is not a therapist, emergency service, or final authority.</p>
-        <h2>Learner Responsibility</h2>
-        <p>You remain responsible for your decisions, actions, and interpretation of outputs.</p>
-        <h2>Availability</h2>
-        <p>This private alpha is experimental and may change, pause, or become unavailable without notice.</p>
+        <h2 data-i18n="terms.limitationTitle">Steward Limitation</h2>
+        <p data-i18n="terms.limitationBody">Steward is an educational assistant. It is not a therapist, emergency service, or final authority.</p>
+        <h2 data-i18n="terms.responsibilityTitle">Learner Responsibility</h2>
+        <p data-i18n="terms.responsibilityBody">You remain responsible for your decisions, actions, and interpretation of outputs.</p>
+        <h2 data-i18n="terms.availabilityTitle">Availability</h2>
+        <p data-i18n="terms.availabilityBody">This private alpha is experimental and may change, pause, or become unavailable without notice.</p>
       </section>
       <footer class="site-footer-links" aria-label="Site links">
-        <a href="/about">About</a>
-        <a href="/privacy">Privacy</a>
-        <a href="/contact">Contact</a>
+        <a href="/about" data-i18n="common.navAbout">About</a>
+        <a href="/privacy" data-i18n="common.navPrivacy">Privacy</a>
+        <a href="/contact" data-i18n="common.navContact">Contact</a>
       </footer>
     </main>
   </body>

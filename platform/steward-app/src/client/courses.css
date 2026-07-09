@@ -57,7 +57,7 @@ textarea {
 .theme-button {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
@@ -66,6 +66,22 @@ textarea {
   cursor: pointer;
   font-size: 0.76rem;
   font-weight: 700;
+}
+
+.feedback-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 30;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--forest), var(--brand-2));
+  box-shadow: 0 16px 35px rgba(17, 24, 39, 0.09);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .brand-row {
@@ -529,6 +545,7 @@ button:disabled {
 
   .theme-button {
     top: -0.55rem;
+    left: 0;
   }
 
   .learning-header-actions {

@@ -129,7 +129,7 @@ function renderPractice() {
       const normalized = entry.text.replace(/\s+/g, " ").trim();
       const summary =
         normalized.match(/^(.+?[.!?])(?:\s|$)/u)?.[1] ?? normalized;
-      takeaway.textContent = `Today's takeaway: ${summary.slice(0, 160)}`;
+      takeaway.textContent = `${i18n.translate("lesson.takeawayPrefix")}: ${summary.slice(0, 160)}`;
       article.append(label, text, takeaway);
     } else {
       article.append(label, text);
@@ -229,10 +229,9 @@ updateExerciseHandoff();
 const askNext = document.createElement("button");
 askNext.type = "button";
 askNext.className = "ask-next-lesson";
-askNext.textContent = "Ask for the next lesson";
+askNext.textContent = i18n.translate("lesson.askNextLesson");
 askNext.addEventListener("click", () => {
-  practicePromptView.value =
-    "Give me the next lesson-sized practice step based on my latest reflection.";
+  practicePromptView.value = i18n.translate("lesson.quickPromptNextLesson");
   practicePromptView.focus();
 });
 practiceFormView.append(askNext);

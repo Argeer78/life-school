@@ -73,7 +73,7 @@ h2 {
 .theme-button {
   position: absolute;
   top: 0.4rem;
-  right: 0;
+  left: 0;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
@@ -90,6 +90,22 @@ h2 {
   right: 0;
   display: flex;
   gap: 0.35rem;
+}
+
+.feedback-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 30;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: var(--shadow);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .locale-button {
@@ -399,7 +415,7 @@ input:focus {
 
   .theme-button {
     top: 0;
-    right: 0;
+    left: 0;
   }
 
   .language-switcher {

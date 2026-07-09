@@ -8,50 +8,64 @@
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
     <script type="module" src="/theme.js"></script>
+    <script type="module" src="/info-i18n.js"></script>
   </head>
-  <body>
+  <body data-title-key="about.documentTitle">
     <main class="home-shell">
       <nav class="learner-nav" aria-label="Main navigation">
-        <a href="/">Home</a>
-        <a href="/courses">Courses</a>
-        <a href="/learn">Steward</a>
+        <a href="/" data-i18n="common.navHome">Home</a>
+        <a href="/courses" data-i18n="common.navCourses">Courses</a>
+        <a href="/learn" data-i18n="common.navSteward">Steward</a>
       </nav>
       <header class="info-header">
         <button class="theme-button" type="button" data-theme-toggle aria-pressed="false">
           Dark mode
         </button>
+        <div
+          class="language-switcher"
+          role="group"
+          aria-label="Language"
+          data-i18n-aria-label="common.language"
+        >
+          <button class="locale-button" type="button" data-locale="en" data-i18n="common.english">
+            English
+          </button>
+          <button class="locale-button" type="button" data-locale="el" data-i18n="common.greek">
+            Ελληνικά
+          </button>
+        </div>
         <div class="brand-row" aria-label="Lifeschool brand">
           <img src="/lifeschool-logo.svg" alt="Lifeschool" width="70" height="70" />
           <div>
             <p class="eyebrow">Lifeschool</p>
-            <p class="brand-tagline">Learn to think. Live with clarity.</p>
+            <p class="brand-tagline" data-i18n="about.brandTagline">Learn to think. Live with clarity.</p>
           </div>
         </div>
-        <p class="eyebrow">About Lifeschool</p>
-        <h1 class="info-title">Learn to think. Live with clarity.</h1>
-        <p class="home-introduction">
+        <p class="eyebrow" data-i18n="about.eyebrow">About Lifeschool</p>
+        <h1 class="info-title" data-i18n="about.title">Learn to think. Live with clarity.</h1>
+        <p class="home-introduction" data-i18n="about.introduction">
           Lifeschool is a private learning space where AI helps you examine choices,
           assumptions, and emotions without replacing your judgment.
         </p>
       </header>
       <section class="info-card-grid">
         <article class="info-card">
-          <h2>Mission</h2>
-          <p>Strengthen self-understanding and lifelong learning through honest examination.</p>
+          <h2 data-i18n="about.missionTitle">Mission</h2>
+          <p data-i18n="about.missionBody">Strengthen self-understanding and lifelong learning through honest examination.</p>
         </article>
         <article class="info-card">
-          <h2>Philosophy</h2>
-          <p>Steward does not command or decide for learners. It supports human freedom and responsibility.</p>
+          <h2 data-i18n="about.philosophyTitle">Philosophy</h2>
+          <p data-i18n="about.philosophyBody">Steward does not command or decide for learners. It supports human freedom and responsibility.</p>
         </article>
         <article class="info-card">
-          <h2>How It Works</h2>
-          <p>Ask a question, examine your assumptions, test evidence, and choose your next step.</p>
+          <h2 data-i18n="about.howTitle">How It Works</h2>
+          <p data-i18n="about.howBody">Ask a question, examine your assumptions, test evidence, and choose your next step.</p>
         </article>
       </section>
       <footer class="site-footer-links" aria-label="Site links">
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-        <a href="/contact">Contact</a>
+        <a href="/privacy" data-i18n="common.navPrivacy">Privacy</a>
+        <a href="/terms" data-i18n="common.navTerms">Terms</a>
+        <a href="/contact" data-i18n="common.navContact">Contact</a>
       </footer>
     </main>
   </body>

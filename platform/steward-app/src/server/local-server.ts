@@ -64,6 +64,8 @@ const staticFiles = new Map<string, StaticAsset>([
     { file: "contact.html", contentType: "text/html; charset=utf-8" },
   ],
   ["/styles.css", { file: "styles.css", contentType: "text/css; charset=utf-8" }],
+  ["/favicon.svg", { file: "favicon.svg", contentType: "image/svg+xml" }],
+  ["/og-image.svg", { file: "og-image.svg", contentType: "image/svg+xml" }],
   ["/theme.js", { file: "theme.js", contentType: "text/javascript; charset=utf-8" }],
   [
     "/lifeschool-logo.svg",
@@ -93,6 +95,10 @@ const staticFiles = new Map<string, StaticAsset>([
   [
     "/i18n-entry.js",
     { file: "i18n-entry.js", contentType: "text/javascript; charset=utf-8" },
+  ],
+  [
+    "/info-i18n.js",
+    { file: "info-i18n.js", contentType: "text/javascript; charset=utf-8" },
   ],
   [
     "/i18n/locales/en.json",
