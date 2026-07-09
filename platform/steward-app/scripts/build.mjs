@@ -12,6 +12,7 @@ const typeScriptCompiler = createRequire(import.meta.url).resolve(
   "typescript/bin/tsc",
 );
 const copiedClientExtensions = new Set([
+  ".js",
   ".html",
   ".css",
   ".svg",
@@ -21,7 +22,32 @@ const copiedClientExtensions = new Set([
   ".webp",
   ".gif",
   ".ico",
+  ".webmanifest",
 ]);
+
+async function copyClientAssets(sourceDirectory, targetDirectory) {
+  await mkdir(targetDirectory, { recursive: true });
+  const entries = await readdir(sourceDirectory, {
+    withFileTypes: true,
+  });
+  for (const entry of entries) {
+    const sourcePath = join(sourceDirectory, entry.name);
+    const targetPath = join(targetDirectory, entry.name);
+    if (entry.isDirectory()) {
+      await copyClientAssets(sourcePath, targetPath);
+      continue;
+    }
+    if (!entry.isFile()) continue;
+
+    const extensionIndex = entry.name.lastIndexOf(".");
+    const extension =
+      extensionIndex === -1
+        ? ""
+        : entry.name.slice(extensionIndex).toLowerCase();
+    if (!copiedClientExtensions.has(extension)) continue;
+    await copyFile(sourcePath, targetPath);
+  }
+}
 
 await rm(outputDirectory, { force: true, recursive: true });
 
@@ -34,19 +60,4 @@ if (compilation.status !== 0) {
   process.exit(compilation.status ?? 1);
 }
 
-await mkdir(clientOutputDirectory, { recursive: true });
-const clientAssets = await readdir(clientSourceDirectory, {
-  withFileTypes: true,
-});
-for (const asset of clientAssets) {
-  if (asset.isFile()) {
-    const extensionIndex = asset.name.lastIndexOf(".");
-    const extension =
-      extensionIndex === -1 ? "" : asset.name.slice(extensionIndex).toLowerCase();
-    if (!copiedClientExtensions.has(extension)) continue;
-    await copyFile(
-      join(clientSourceDirectory, asset.name),
-      join(clientOutputDirectory, asset.name),
-    );
-  }
-}
+await copyClientAssets(clientSourceDirectory, clientOutputDirectory);

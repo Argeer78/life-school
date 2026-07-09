@@ -117,6 +117,14 @@ form.addEventListener("submit", (event) => {
         setStatus("Too many requests. Please wait a few minutes and try again.", "error");
         return;
       }
+      if (error instanceof Error && error.message === "SPAM_DETECTED") {
+        setStatus("Please wait a moment and try again.", "error");
+        return;
+      }
+      if (error instanceof Error && error.message === "INVALID_COMMUNICATION_REQUEST") {
+        setStatus("Please review your form fields and try again.", "error");
+        return;
+      }
       setStatus("Message delivery failed. Please try again shortly.", "error");
     })
     .finally(() => {

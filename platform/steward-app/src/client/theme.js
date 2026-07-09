@@ -487,6 +487,13 @@ function registerFeedbackDialogHandlers(dialog) {
           setFeedbackStatus(form, copyForLocale().feedbackRateLimited, "error");
           return;
         }
+        if (
+          error instanceof Error &&
+          (error.message === "SPAM_DETECTED" || error.message === "INVALID_COMMUNICATION_REQUEST")
+        ) {
+          setFeedbackStatus(form, copyForLocale().feedbackError, "error");
+          return;
+        }
         setFeedbackStatus(form, copyForLocale().feedbackError, "error");
       })
       .finally(() => {

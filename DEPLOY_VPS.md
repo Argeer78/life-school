@@ -271,6 +271,48 @@ As `lifeschool`, generate the systemd startup command:
 pm2 startup systemd -u lifeschool --hp /home/lifeschool
 ```
 
+## Troubleshooting Production Console Errors
+
+If browser devtools on `https://lifesh.app/contact` show any of the following:
+
+- `Uncaught SyntaxError: Unexpected token 'export' (at sw.js...)`
+- `GET /manifest.webmanifest 500 (Internal Server Error)`
+- `POST /api/contact 400 (Bad Request)` immediately after form submit
+
+use this checklist:
+
+1. Rebuild and restart from repository root:
+
+```bash
+cd /home/lifeschool/apps/lifeschool
+npm run build
+set -a
+source .env
+set +a
+pm2 restart lifeschool
+```
+
+2. Verify production assets are served:
+
+```bash
+curl -I https://lifesh.app/sw.js
+curl -I https://lifesh.app/manifest.webmanifest
+```
+
+Both should return `200`.
+
+3. Confirm service worker content does not end with `export {}`:
+
+```bash
+curl -s https://lifesh.app/sw.js | tail -n 5
+```
+
+4. If `/api/contact` still returns `400`, validate contact payload fields and
+confirm SMTP configuration values are loaded in the running process.
+
+5. After fixing server issues, hard-refresh browser cache and unregister old
+service workers from browser devtools before retesting.
+
 PM2 prints a command beginning with `sudo env ...`. Copy and run that exact
 command from a sudo-capable administrator shell. Then return to the
 `lifeschool` shell and save the running process list:

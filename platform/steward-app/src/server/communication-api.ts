@@ -5,7 +5,7 @@ const maxEmailLength = 320;
 const maxSubjectLength = 180;
 const maxMessageLength = 5_000;
 const maxCategoryLength = 64;
-const minimumStartedAgeMs = 1_500;
+const minimumStartedAgeMs = 700;
 
 const contactCategories = new Set([
   "General Question",
