@@ -17,35 +17,32 @@
   </head>
   <body data-title-key="privacy.documentTitle">
     <main class="home-shell">
-      <nav class="learner-nav" aria-label="Main navigation">
-        <a href="/" data-i18n="common.navHome">Home</a>
-        <a href="/courses" data-i18n="common.navCourses">Courses</a>
-        <a href="/learn" data-i18n="common.navSteward">Steward</a>
-      </nav>
-      <header class="info-header">
-        <button class="theme-button" type="button" data-theme-toggle aria-pressed="false">
-          Dark mode
-        </button>
-        <div
-          class="language-switcher"
-          role="group"
-          aria-label="Language"
-          data-i18n-aria-label="common.language"
-        >
-          <button class="locale-button" type="button" data-locale="en" data-i18n="common.english">
-            English
+      <div class="home-topbar">
+        <a class="home-brand" href="/" aria-label="Lifeschool home">
+          <img src="/lifeschool-logo.svg" alt="" width="36" height="36" />
+          <span>Lifeschool</span>
+        </a>
+        <nav class="learner-nav" aria-label="Main navigation">
+          <a href="/" data-i18n="common.navHome">Home</a>
+          <a href="/courses" data-i18n="common.navCourses">Courses</a>
+          <a href="/learn" data-i18n="common.navSteward">Steward</a>
+        </nav>
+        <div class="home-controls">
+          <button class="theme-button home-theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Dark mode">
+            Dark mode
           </button>
-          <button class="locale-button" type="button" data-locale="el" data-i18n="common.greek">
-            Ελληνικά
-          </button>
-        </div>
-        <div class="brand-row" aria-label="Lifeschool brand">
-          <img src="/lifeschool-logo.svg" alt="Lifeschool" width="70" height="70" />
-          <div>
-            <p class="eyebrow">Lifeschool</p>
-            <p class="brand-tagline" data-i18n="about.brandTagline">Learn to think. Live with clarity.</p>
+          <div
+            class="language-switcher home-language-switcher"
+            role="group"
+            aria-label="Language"
+            data-i18n-aria-label="common.language"
+          >
+            <button class="locale-button" type="button" data-locale="en" data-i18n="home.languageEnglish">🌐 English</button>
+            <button class="locale-button" type="button" data-locale="el" data-i18n="home.languageGreek">🌐 Ελληνικά</button>
           </div>
         </div>
+      </div>
+      <header class="info-header">
         <p class="eyebrow" data-i18n="privacy.eyebrow">Privacy Policy</p>
         <h1 class="info-title" data-i18n="privacy.title">Your conversation is your space</h1>
       </header>

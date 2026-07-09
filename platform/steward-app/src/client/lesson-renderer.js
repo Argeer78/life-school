@@ -274,38 +274,45 @@ export function renderLessonPage(lesson) {
         >Lesson ${lesson.lessonNumber}</span>`;
 
   return `<main class="learning-shell lesson-shell">
-    <nav class="learner-nav" aria-label="Main navigation">
-      <a href="/" data-i18n="common.navHome">Home</a>
-      <a href="/courses" aria-current="page" data-i18n="common.navCourses">Courses</a>
-      <a href="/learn" data-i18n="common.navSteward">Steward</a>
-    </nav>
-    <div class="lesson-tools">
-      <button
-        class="theme-button"
-        type="button"
-        data-theme-toggle
-        aria-pressed="false"
-      >
-        Dark mode
-      </button>
-      <div
-        class="language-switcher"
-        role="group"
-        aria-label="Language"
-        data-i18n-aria-label="common.language"
-      >
+    <div class="home-topbar">
+      <a class="home-brand" href="/" aria-label="Lifeschool home">
+        <img src="/lifeschool-logo.svg" alt="" width="36" height="36" />
+        <span>Lifeschool</span>
+      </a>
+      <nav class="learner-nav" aria-label="Main navigation">
+        <a href="/" data-i18n="common.navHome">Home</a>
+        <a href="/courses" aria-current="page" data-i18n="common.navCourses">Courses</a>
+        <a href="/learn" data-i18n="common.navSteward">Steward</a>
+      </nav>
+      <div class="home-controls">
         <button
-          class="locale-button"
+          class="theme-button home-theme-toggle"
           type="button"
-          data-locale="en"
-          data-i18n="common.english"
-        >English</button>
-        <button
-          class="locale-button"
-          type="button"
-          data-locale="el"
-          data-i18n="common.greek"
-        >Ελληνικά</button>
+          data-theme-toggle
+          aria-pressed="false"
+          aria-label="Dark mode"
+        >
+          Dark mode
+        </button>
+        <div
+          class="language-switcher home-language-switcher"
+          role="group"
+          aria-label="Language"
+          data-i18n-aria-label="common.language"
+        >
+          <button
+            class="locale-button"
+            type="button"
+            data-locale="en"
+            data-i18n="home.languageEnglish"
+          >🌐 English</button>
+          <button
+            class="locale-button"
+            type="button"
+            data-locale="el"
+            data-i18n="home.languageGreek"
+          >🌐 Ελληνικά</button>
+        </div>
       </div>
     </div>
     <nav
