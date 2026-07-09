@@ -34,8 +34,8 @@
 }
 
 body {
-  min-width: 320px;
   margin: 0;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 12% 8%, rgba(42, 161, 152, 0.2), transparent 30rem),
     radial-gradient(circle at 88% 16%, rgba(30, 58, 138, 0.2), transparent 26rem),
@@ -283,6 +283,7 @@ button:focus-visible {
 .composer-footer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 1rem;
   margin-top: 0.65rem;
@@ -316,7 +317,7 @@ button:disabled {
 @media (max-width: 600px) {
   .learn-shell {
     width: min(100% - 20px, 780px);
-    padding: 1.35rem 0 1rem;
+    padding: 1.35rem 0 6rem;
   }
 
   .learn-header {
@@ -351,6 +352,21 @@ button:disabled {
   }
 
   .composer-footer {
-    align-items: flex-end;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .composer-footer button {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .feedback-fab {
+    right: 0.75rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    bottom: auto;
+    max-width: calc(100vw - 1.5rem);
+    padding: 0.48rem 0.75rem;
+    font-size: 0.75rem;
   }
 }

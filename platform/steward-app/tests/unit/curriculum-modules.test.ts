@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { buildLessonPracticeMessage } from "../../src/client/lesson-model.js";
+import { renderLessonPage } from "../../src/client/lesson-renderer.js";
 import {
   curriculumLessons,
   curriculumModuleSlugs,
@@ -10,6 +11,8 @@ type LessonExerciseField = {
   id: string;
   label: string;
   placeholder: string;
+  rows: number;
+  maxLength: number;
 };
 
 type LessonDefinition = {
@@ -17,6 +20,7 @@ type LessonDefinition = {
   route: string;
   moduleTitle: string;
   lessonNumber: number;
+  totalLessons: number;
   title: string;
   estimatedDuration: string;
   introduction: string;
@@ -41,7 +45,7 @@ type LessonDefinition = {
     handoff: string;
   };
   completionCriteria: string;
-  nextLesson: { label: string } | null;
+  nextLesson: { href: string; label: string } | null;
 };
 
 describe("Lifeschool curriculum modules 2-6", () => {
@@ -144,6 +148,22 @@ describe("Lifeschool curriculum modules 2-6", () => {
     }
   });
 
+  it("renders lesson breadcrumbs that link to each module root", () => {
+    const english = curriculumLessons.en as readonly LessonDefinition[];
+
+    for (const slug of curriculumModuleSlugs) {
+      const lessonTwo = english.find(
+        (lesson) => lesson.route === `/courses/${slug}/lesson-2`,
+      );
+      expect(lessonTwo).toBeDefined();
+      const rendered = renderLessonPage(lessonTwo!);
+      expect(rendered).toContain(`href="/courses/${slug}"`);
+      if (slug !== "thinking-clearly") {
+        expect(rendered).not.toContain('href="/courses/thinking-clearly"');
+      }
+    }
+  });
+
   it("keeps learner lesson practice on learner-safe API and no privileged trace", async () => {
     const lessonPage = await readFile(
       new URL("../../src/client/lesson-page.js", import.meta.url),
@@ -158,14 +178,21 @@ describe("Lifeschool curriculum modules 2-6", () => {
   });
 
   it("renders mobile lesson routes from responsive shell assets", async () => {
-    const [lessonHtml, lessonCss] = await Promise.all([
+    const [lessonHtml, lessonCss, learnCss, homeCss] = await Promise.all([
       readFile(new URL("../../src/client/lesson.html", import.meta.url), "utf8"),
       readFile(new URL("../../src/client/courses.css", import.meta.url), "utf8"),
+      readFile(new URL("../../src/client/learn.css", import.meta.url), "utf8"),
+      readFile(new URL("../../src/client/styles.css", import.meta.url), "utf8"),
     ]);
 
     expect(lessonHtml).toContain('name="viewport" content="width=device-width, initial-scale=1"');
     expect(lessonHtml).toContain('id="lesson-root"');
     expect(lessonCss).toContain("@media (max-width: 640px)");
     expect(lessonCss).toContain(".lesson-list li");
+    expect(learnCss).toContain("@media (max-width: 600px)");
+    expect(learnCss).toContain(".feedback-fab");
+    expect(lessonCss).not.toContain("min-width: 320px");
+    expect(learnCss).not.toContain("min-width: 320px");
+    expect(homeCss).not.toContain("min-width: 320px");
   });
 });

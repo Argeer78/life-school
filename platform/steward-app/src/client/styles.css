@@ -34,8 +34,8 @@
 }
 
 body {
-  min-width: 320px;
   margin: 0;
+  overflow-x: clip;
   color: var(--ink);
   background:
     radial-gradient(circle at 14% 8%, rgba(42, 161, 152, 0.18), transparent 32rem),
@@ -429,5 +429,15 @@ input:focus {
 
   .info-header {
     padding: 4rem 0 0;
+  }
+
+  .feedback-fab {
+    right: 0.5rem;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+    max-width: calc(100vw - 1rem);
+    padding: 0.48rem 0.72rem;
+    font-size: 0.75rem;
+    text-align: center;
+    white-space: normal;
   }
 }

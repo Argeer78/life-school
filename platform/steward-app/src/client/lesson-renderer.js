@@ -253,6 +253,7 @@ export function renderContinue(lesson) {
 
 /** @param {import("./lesson-model.js").LessonDefinition} lesson */
 export function renderLessonPage(lesson) {
+  const moduleRoot = lesson.route.replace(/\/lesson-\d+$/, "");
   const breadcrumb =
     lesson.lessonNumber === 1
       ? `<a href="/courses" data-i18n="lesson.learningHome">Learning Home</a>
@@ -260,7 +261,7 @@ export function renderLessonPage(lesson) {
         <span>${escapeHtml(lesson.moduleTitle)}</span>`
       : `<a href="/courses" data-i18n="lesson.learningHome">Learning Home</a>
         <span aria-hidden="true">/</span>
-        <a href="/courses/thinking-clearly">${escapeHtml(lesson.moduleTitle)}</a>
+        <a href="${escapeHtml(moduleRoot)}">${escapeHtml(lesson.moduleTitle)}</a>
         <span aria-hidden="true">/</span>
         <span
           data-i18n="lesson.number"

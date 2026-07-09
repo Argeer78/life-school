@@ -34,8 +34,8 @@
 }
 
 body {
-  min-width: 320px;
   margin: 0;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 12% 8%, rgba(42, 161, 152, 0.2), transparent 30rem),
     radial-gradient(circle at 88% 16%, rgba(30, 58, 138, 0.2), transparent 26rem),
@@ -258,7 +258,7 @@ h2 {
 
 .lesson-list li {
   display: grid;
-  grid-template-columns: 5.5rem 1fr;
+  grid-template-columns: minmax(4.4rem, 5.5rem) minmax(0, 1fr);
   gap: 0.75rem;
   padding: 0.75rem;
   border-radius: 0.55rem;
