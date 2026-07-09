@@ -2,6 +2,15 @@ import { initializeI18n } from "./i18n.js";
 import { createShareLinks } from "./share-actions.js";
 
 const i18n = await initializeI18n();
+const homeShareText = "Lifeschool helps people think clearly, understand themselves, and live intentionally.";
+const homeShareLabels = {
+  copy: "Copy Link",
+  x: "X",
+  facebook: "Facebook",
+  linkedin: "LinkedIn",
+  whatsapp: "WhatsApp",
+  email: "Email",
+};
 
 function updateDocumentTitle() {
   document.title = i18n.translate("home.documentTitle");
@@ -12,13 +21,21 @@ function configureHomeSharing() {
   if (!(shareRoot instanceof HTMLElement)) return;
 
   const url = `${window.location.origin}${window.location.pathname}`;
-  const text = i18n.translate("share.homeText");
+  const text = homeShareText;
   const links = createShareLinks(url, text);
+
+  const copyButton = shareRoot.querySelector("[data-share-copy]");
+  if (copyButton instanceof HTMLButtonElement) {
+    copyButton.textContent = homeShareLabels.copy;
+  }
 
   for (const anchor of shareRoot.querySelectorAll("[data-share-link]")) {
     if (!(anchor instanceof HTMLAnchorElement)) continue;
     const key = anchor.dataset.shareLink;
     if (key === undefined) continue;
+    if (key in homeShareLabels) {
+      anchor.textContent = homeShareLabels[/** @type {keyof typeof homeShareLabels} */ (key)];
+    }
     const href = links[/** @type {keyof typeof links} */ (key)];
     if (typeof href === "string") {
       anchor.href = href;
@@ -26,7 +43,6 @@ function configureHomeSharing() {
   }
 
   const status = document.querySelector("[data-share-status]");
-  const copyButton = shareRoot.querySelector("[data-share-copy]");
   if (!(copyButton instanceof HTMLButtonElement)) return;
   copyButton.dataset.shareUrl = url;
 
