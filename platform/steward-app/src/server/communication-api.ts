@@ -5,7 +5,6 @@ const maxEmailLength = 320;
 const maxSubjectLength = 180;
 const maxMessageLength = 5_000;
 const maxCategoryLength = 64;
-const minimumStartedAgeMs = 700;
 
 const contactCategories = new Set([
   "General Question",
@@ -62,10 +61,6 @@ function validateAntiSpam(meta: AntiSpamMeta): void {
   }
   if (!Number.isFinite(meta.startedAt)) {
     throw new InvalidCommunicationRequest("INVALID_COMMUNICATION_REQUEST");
-  }
-  const age = Date.now() - meta.startedAt;
-  if (age < minimumStartedAgeMs) {
-    throw new InvalidCommunicationRequest("SPAM_DETECTED");
   }
 }
 
