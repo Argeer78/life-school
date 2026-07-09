@@ -608,6 +608,7 @@ async function sendClientAsset(
   status = 200,
   revealAlphaNote = false,
   pathname = "/",
+  headOnly = false,
 ): Promise<void> {
   const content = await readFile(join(clientDirectory, asset.file));
   let body = content;
@@ -623,7 +624,7 @@ async function sendClientAsset(
   securityHeaders(response);
   response.statusCode = status;
   response.setHeader("Content-Type", asset.contentType);
-  response.end(body);
+  response.end(headOnly ? undefined : body);
 }
 
 async function readJson(request: IncomingMessage): Promise<unknown> {
@@ -708,6 +709,7 @@ export function createLocalStewardServer(
   };
   return createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", `http://${host}`);
+    const staticReadRequest = request.method === "GET" || request.method === "HEAD";
 
     if (request.method === "GET" && url.pathname === "/health") {
       sendJson(response, 200, { status: "ok" });
@@ -933,7 +935,7 @@ export function createLocalStewardServer(
         ? lessonAsset
         : undefined);
     if (
-      request.method === "GET" &&
+      staticReadRequest &&
       alphaAccessEnabled &&
       isAlphaProtectedPath(url.pathname)
     ) {
@@ -941,13 +943,13 @@ export function createLocalStewardServer(
         await sendClientAsset(response, {
           file: "alpha-access.html",
           contentType: "text/html; charset=utf-8",
-        });
+        }, 200, false, url.pathname, request.method === "HEAD");
       } catch {
         sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
       }
       return;
     }
-    if (request.method === "GET" && asset === undefined) {
+    if (staticReadRequest && asset === undefined) {
       if (url.pathname.startsWith("/api/")) {
         sendJson(response, 404, { error: { code: "NOT_FOUND" } });
         return;
@@ -959,13 +961,14 @@ export function createLocalStewardServer(
           404,
           false,
           url.pathname,
+          request.method === "HEAD",
         );
       } catch {
         sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
       }
       return;
     }
-    if (request.method !== "GET" || asset === undefined) {
+    if (!staticReadRequest || asset === undefined) {
       sendJson(response, 404, { error: { code: "NOT_FOUND" } });
       return;
     }
@@ -977,6 +980,7 @@ export function createLocalStewardServer(
         200,
         alphaAccessEnabled && url.pathname === "/",
         url.pathname,
+        request.method === "HEAD",
       );
     } catch {
       sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });

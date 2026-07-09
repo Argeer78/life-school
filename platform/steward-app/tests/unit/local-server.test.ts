@@ -105,6 +105,22 @@ describe("local HTTP server", () => {
     expect(robots).toContain("Sitemap: https://lifesh.app/sitemap.xml");
   });
 
+  it("supports HEAD for sitemap.xml and robots.txt", async () => {
+    const origin = await startServer();
+    const [sitemapHead, robotsHead] = await Promise.all([
+      fetch(`${origin}/sitemap.xml`, { method: "HEAD" }),
+      fetch(`${origin}/robots.txt`, { method: "HEAD" }),
+    ]);
+
+    expect(sitemapHead.status).toBe(200);
+    expect(sitemapHead.headers.get("content-type")).toBe("application/xml; charset=utf-8");
+    expect(await sitemapHead.text()).toBe("");
+
+    expect(robotsHead.status).toBe(200);
+    expect(robotsHead.headers.get("content-type")).toBe("text/plain; charset=utf-8");
+    expect(await robotsHead.text()).toBe("");
+  });
+
   it("returns exactly the learner-safe response over HTTP", async () => {
     const origin = await startServer();
     const response = await fetch(`${origin}/api/message`, {
