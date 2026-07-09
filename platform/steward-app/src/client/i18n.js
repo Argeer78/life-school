@@ -143,6 +143,11 @@ export async function initializeI18n() {
     }
   }
   applyTranslations();
+  window.dispatchEvent(
+    new CustomEvent("lifeschool:locale-change", {
+      detail: { locale: activeLocale },
+    }),
+  );
   return {
     get locale() {
       return activeLocale;
