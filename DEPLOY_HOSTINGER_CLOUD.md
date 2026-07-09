@@ -72,9 +72,15 @@ variables. Do not commit `.env.local`, `.env`, or API keys.
 | `OPENAI_API_KEY` | When `STEWARD_PROVIDER=openai` | Secret OpenAI API key, entered only in hPanel |
 | `OPENAI_MODEL` | No | Defaults to `gpt-5.4-mini` |
 | `OPENAI_TIMEOUT_MS` | No | Defaults to `30000` |
+| `CONTACT_MAIL_WEBHOOK_URL` | Recommended | Mail webhook endpoint used by `/api/contact` and `/api/feedback` to deliver submissions to `contact@alphasynthai.com` |
 
 The committed `.env.example` lists every supported deployment variable without
 including credentials.
+
+If `CONTACT_MAIL_WEBHOOK_URL` is not configured, contact and feedback requests
+still return success when accepted, but delivery is logged server-side as
+`[contact:mail:queued]` events instead of being forwarded to an external mail
+service.
 
 ## First Deployment Checklist
 

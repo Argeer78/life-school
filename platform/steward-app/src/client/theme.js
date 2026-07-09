@@ -1,6 +1,7 @@
 const storageKey = "lifeschool-theme";
 const cookieChoiceKey = "lifeschool.cookie.choice";
 const pwaDismissKey = "lifeschool.pwa.dismissed";
+const feedbackStartedAt = Date.now();
 
 /**
  * @typedef {Event & {
@@ -13,7 +14,16 @@ const uiCopy = {
   en: {
     themeDark: "Dark mode",
     themeLight: "Light mode",
-    feedback: "Report an issue / Send feedback",
+    feedback: "Send feedback",
+    feedbackTitle: "Share feedback",
+    feedbackMessage: "Message",
+    feedbackCategory: "Category",
+    feedbackEmail: "Optional email",
+    feedbackSubmit: "Send",
+    feedbackCancel: "Cancel",
+    feedbackSuccess: "Feedback sent. Thank you for helping improve Lifeschool.",
+    feedbackError: "Feedback could not be sent right now. Please try again.",
+    feedbackRateLimited: "Too many feedback submissions. Please wait and try again.",
     cookieTitle: "Cookie and storage choice",
     cookieBody:
       "Lifeschool uses storage for session continuity, language preference, and your cookie choice only. No analytics and no advertising cookies.",
@@ -31,7 +41,16 @@ const uiCopy = {
   el: {
     themeDark: "Σκοτεινή λειτουργία",
     themeLight: "Φωτεινή λειτουργία",
-    feedback: "Αναφορά προβλήματος / Σχόλια",
+    feedback: "Σχόλια",
+    feedbackTitle: "Στείλε σχόλιο",
+    feedbackMessage: "Μήνυμα",
+    feedbackCategory: "Κατηγορία",
+    feedbackEmail: "Email (προαιρετικό)",
+    feedbackSubmit: "Αποστολή",
+    feedbackCancel: "Ακύρωση",
+    feedbackSuccess: "Το σχόλιο στάλθηκε. Ευχαριστούμε.",
+    feedbackError: "Το σχόλιο δεν στάλθηκε τώρα. Δοκίμασε ξανά.",
+    feedbackRateLimited: "Πολλά σχόλια σε σύντομο χρόνο. Δοκίμασε ξανά αργότερα.",
     cookieTitle: "Επιλογή για cookies και αποθήκευση",
     cookieBody:
       "Το Lifeschool χρησιμοποιεί αποθήκευση μόνο για συνέχεια συνεδρίας, προτίμηση γλώσσας και την επιλογή σου για cookies. Χωρίς αναλυτικά και χωρίς διαφημιστικά cookies.",
@@ -311,11 +330,20 @@ function ensureFavicon() {
 function ensureFeedbackButton() {
   if (document.querySelector(".feedback-fab") instanceof HTMLElement) return;
 
-  const button = document.createElement("a");
+  const button = document.createElement("button");
+  button.type = "button";
   button.className = "feedback-fab";
-  button.href = "/contact";
+  button.setAttribute("aria-haspopup", "dialog");
+  button.setAttribute("aria-controls", "feedback-modal");
   button.textContent = copyForLocale().feedback;
-  button.setAttribute("aria-label", "Report an issue or send feedback");
+  button.setAttribute("aria-label", copyForLocale().feedback);
+  button.addEventListener("click", () => {
+    const dialog = document.querySelector("#feedback-modal");
+    if (!(dialog instanceof HTMLDialogElement)) return;
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+  });
   document.body.append(button);
   moveFeedbackIntoLandmark();
 }
@@ -323,10 +351,166 @@ function ensureFeedbackButton() {
 function moveFeedbackIntoLandmark() {
   const button = document.querySelector(".feedback-fab");
   const landmark = document.querySelector("main");
-  if (!(button instanceof HTMLAnchorElement)) return;
+  if (!(button instanceof HTMLButtonElement)) return;
   if (!(landmark instanceof HTMLElement)) return;
   if (button.parentElement === landmark) return;
   landmark.append(button);
+}
+
+function ensureFeedbackDialog() {
+  if (document.querySelector("#feedback-modal") instanceof HTMLDialogElement) return;
+  const dialog = document.createElement("dialog");
+  dialog.id = "feedback-modal";
+  dialog.className = "feedback-modal";
+  dialog.innerHTML = `<form method="dialog" class="feedback-modal-shell" id="feedback-form" novalidate>
+      <h2 class="feedback-title"></h2>
+      <label>
+        <span class="feedback-label feedback-category-label"></span>
+        <select name="category" required>
+          <option value="">Select category</option>
+          <option>Suggest Improvement</option>
+          <option>Report Bug</option>
+          <option>Suggest Lesson</option>
+          <option>General Feedback</option>
+        </select>
+      </label>
+      <label>
+        <span class="feedback-label feedback-message-label"></span>
+        <textarea name="message" rows="6" maxlength="5000" required></textarea>
+      </label>
+      <label>
+        <span class="feedback-label feedback-email-label"></span>
+        <input name="email" type="email" maxlength="320" autocomplete="email" />
+      </label>
+      <label class="feedback-honeypot" aria-hidden="true">
+        Company
+        <input name="company" type="text" tabindex="-1" autocomplete="off" />
+      </label>
+      <p class="feedback-status" role="status" aria-live="polite"></p>
+      <div class="feedback-actions">
+        <button type="submit" class="feedback-submit"></button>
+        <button type="button" class="feedback-cancel"></button>
+      </div>
+    </form>`;
+  document.body.append(dialog);
+  updateFeedbackDialogText();
+  registerFeedbackDialogHandlers(dialog);
+}
+
+/** @param {FormData} formData */
+function feedbackPayload(formData) {
+  const width = window.visualViewport?.width ?? window.innerWidth;
+  const height = window.visualViewport?.height ?? window.innerHeight;
+  return {
+    category: String(formData.get("category") ?? "").trim(),
+    message: String(formData.get("message") ?? "").trim(),
+    email: String(formData.get("email") ?? "").trim(),
+    company: String(formData.get("company") ?? "").trim(),
+    page: window.location.pathname,
+    language: document.documentElement.lang || "en",
+    browser: window.navigator.userAgent,
+    viewport: `${Math.round(width)}x${Math.round(height)}`,
+    startedAt: feedbackStartedAt,
+  };
+}
+
+/** @param {{category: string, message: string, email: string}} payload */
+function validFeedback(payload) {
+  if (payload.category.length === 0) return false;
+  if (payload.message.length < 10) return false;
+  if (payload.email.length === 0) return true;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
+}
+
+/** @param {unknown} value */
+function feedbackErrorCode(value) {
+  if (typeof value !== "object" || value === null) return "REQUEST_FAILED";
+  if (!("error" in value) || typeof value.error !== "object" || value.error === null) {
+    return "REQUEST_FAILED";
+  }
+  return "code" in value.error && typeof value.error.code === "string"
+    ? value.error.code
+    : "REQUEST_FAILED";
+}
+
+/** @param {HTMLFormElement} form @param {boolean} loading */
+function setFeedbackLoading(form, loading) {
+  const submit = form.querySelector(".feedback-submit");
+  if (submit instanceof HTMLButtonElement) {
+    submit.disabled = loading;
+  }
+}
+
+/** @param {HTMLFormElement} form @param {string} message @param {"muted" | "success" | "error"} [tone] */
+function setFeedbackStatus(form, message, tone = "muted") {
+  const status = form.querySelector(".feedback-status");
+  if (!(status instanceof HTMLElement)) return;
+  status.textContent = message;
+  status.dataset.tone = tone;
+}
+
+/** @param {HTMLDialogElement} dialog */
+function registerFeedbackDialogHandlers(dialog) {
+  const form = dialog.querySelector("#feedback-form");
+  const cancel = dialog.querySelector(".feedback-cancel");
+  if (!(form instanceof HTMLFormElement) || !(cancel instanceof HTMLButtonElement)) return;
+
+  cancel.addEventListener("click", () => {
+    dialog.close();
+    setFeedbackStatus(form, "");
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const payload = feedbackPayload(new FormData(form));
+    if (!validFeedback(payload)) {
+      setFeedbackStatus(form, copyForLocale().feedbackError, "error");
+      return;
+    }
+    setFeedbackLoading(form, true);
+    setFeedbackStatus(form, "Sending feedback...", "muted");
+    void fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(async (response) => {
+        const body = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(feedbackErrorCode(body));
+        }
+        form.reset();
+        setFeedbackStatus(form, copyForLocale().feedbackSuccess, "success");
+      })
+      .catch((error) => {
+        if (error instanceof Error && error.message === "RATE_LIMITED") {
+          setFeedbackStatus(form, copyForLocale().feedbackRateLimited, "error");
+          return;
+        }
+        setFeedbackStatus(form, copyForLocale().feedbackError, "error");
+      })
+      .finally(() => {
+        setFeedbackLoading(form, false);
+      });
+  });
+}
+
+function updateFeedbackDialogText() {
+  const copy = copyForLocale();
+  const dialog = document.querySelector("#feedback-modal");
+  if (!(dialog instanceof HTMLDialogElement)) return;
+  const title = dialog.querySelector(".feedback-title");
+  const category = dialog.querySelector(".feedback-category-label");
+  const message = dialog.querySelector(".feedback-message-label");
+  const email = dialog.querySelector(".feedback-email-label");
+  const submit = dialog.querySelector(".feedback-submit");
+  const cancel = dialog.querySelector(".feedback-cancel");
+  if (title instanceof HTMLElement) title.textContent = copy.feedbackTitle;
+  if (category instanceof HTMLElement) category.textContent = copy.feedbackCategory;
+  if (message instanceof HTMLElement) message.textContent = copy.feedbackMessage;
+  if (email instanceof HTMLElement) email.textContent = copy.feedbackEmail;
+  if (submit instanceof HTMLButtonElement) submit.textContent = copy.feedbackSubmit;
+  if (cancel instanceof HTMLButtonElement) cancel.textContent = copy.feedbackCancel;
 }
 
 function cookieChoice() {
@@ -409,7 +593,7 @@ function ensureCookieBanner() {
 
 function updateFeedbackButtonText() {
   const button = document.querySelector(".feedback-fab");
-  if (!(button instanceof HTMLAnchorElement)) return;
+  if (!(button instanceof HTMLButtonElement)) return;
   const copy = copyForLocale();
   button.textContent = copy.feedback;
   button.setAttribute("aria-label", copy.feedback);
@@ -442,6 +626,7 @@ const initialTheme = preferredTheme();
 ensureFavicon();
 ensurePwaHead();
 ensureFeedbackButton();
+ensureFeedbackDialog();
 moveFeedbackIntoLandmark();
 const feedbackObserver = new MutationObserver(() => moveFeedbackIntoLandmark());
 feedbackObserver.observe(document.body, { childList: true, subtree: true });
@@ -462,6 +647,7 @@ ensurePwaInstallBanner();
 
 window.addEventListener("lifeschool:locale-change", () => {
   updateFeedbackButtonText();
+  updateFeedbackDialogText();
   updateCookieBannerText();
   updatePwaBannerText();
   const currentTheme = document.documentElement.dataset.theme === "dark"

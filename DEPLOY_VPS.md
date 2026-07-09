@@ -174,6 +174,7 @@ OPENAI_API_KEY=replace_with_the_production_key
 OPENAI_MODEL=gpt-5.4-mini
 OPENAI_TIMEOUT_MS=30000
 ALPHA_ACCESS_CODE=replace_with_the_private_alpha_code
+CONTACT_MAIL_WEBHOOK_URL=replace_with_mail_webhook_endpoint
 ```
 
 Never commit `.env` or print the API key. The repository root server reads
@@ -189,6 +190,11 @@ set +a
 
 Use `STEWARD_PROVIDER=fake` only when intentionally running the local fake
 provider.
+
+`CONTACT_MAIL_WEBHOOK_URL` is optional but recommended in production. When set,
+contact form and feedback submissions are POSTed to that webhook endpoint using
+the production mail payload. When unset, the server keeps operating and logs
+`[contact:mail:queued]` events locally instead of forwarding externally.
 
 ## 7. Install and build
 

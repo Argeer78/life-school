@@ -25,6 +25,19 @@ import {
   processLearnerMessage,
 } from "./message-api.js";
 import { processPlaygroundMessage } from "./playground-api.js";
+import {
+  CommunicationDeliveryFailed,
+  CommunicationRateLimiter,
+  InvalidCommunicationRequest,
+  parseContactSubmission,
+  parseFeedbackSubmission,
+  processContactSubmission,
+  processFeedbackSubmission,
+} from "./communication-api.js";
+import {
+  createContactMailTransport,
+  type ContactMailTransport,
+} from "./contact-mail.js";
 
 const host = "127.0.0.1";
 const defaultPort = 4173;
@@ -90,6 +103,7 @@ const staticFiles = new Map<string, StaticAsset>([
   ],
   ["/og-image.svg", { file: "og-image.svg", contentType: "image/svg+xml" }],
   ["/theme.js", { file: "theme.js", contentType: "text/javascript; charset=utf-8" }],
+  ["/contact.js", { file: "contact.js", contentType: "text/javascript; charset=utf-8" }],
   [
     "/lifeschool-logo.svg",
     { file: "lifeschool-logo.svg", contentType: "image/svg+xml" },
@@ -521,11 +535,12 @@ async function sendClientAsset(
 async function readJson(request: IncomingMessage): Promise<unknown> {
   const chunks: Buffer[] = [];
   let length = 0;
+  const maxRequestBodyLength = Math.max(maximumMessageLength + 1_000, 25_000);
 
   for await (const chunk of request) {
     const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
     length += buffer.length;
-    if (length > maximumMessageLength + 1_000) {
+    if (length > maxRequestBodyLength) {
       throw new InvalidMessageRequest();
     }
     chunks.push(buffer);
@@ -541,6 +556,11 @@ async function readJson(request: IncomingMessage): Promise<unknown> {
 export interface LocalStewardServerOptions {
   readonly environment?: NodeJS.ProcessEnv;
   readonly generationProvider?: GenerationProvider | null;
+  readonly contactMailTransport?: ContactMailTransport;
+  readonly communicationRateLimit?: {
+    readonly maxRequests: number;
+    readonly windowMs: number;
+  };
 }
 
 export function createLocalStewardServer(
@@ -568,6 +588,11 @@ export function createLocalStewardServer(
       : providerMode === "fake"
         ? "local-demo"
         : "configured-provider";
+  const mailTransport =
+    options.contactMailTransport ?? createContactMailTransport(environment);
+  const communicationRateLimiter = new CommunicationRateLimiter(
+    options.communicationRateLimit ?? { maxRequests: 5, windowMs: 10 * 60 * 1000 },
+  );
 
   console.info("[server:provider:boot]", {
     providerMode,
@@ -681,6 +706,58 @@ export function createLocalStewardServer(
           sendJson(response, 400, { error: { code: error.code } });
         } else if (error instanceof InvalidMessageRequest) {
           sendJson(response, 400, { error: { code: error.code } });
+        } else {
+          sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
+        }
+      }
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/contact") {
+      try {
+        const body = await readJson(request);
+        const submission = parseContactSubmission(body);
+        const ipAddress = request.socket.remoteAddress ?? "unknown";
+        const rate = communicationRateLimiter.check("contact", ipAddress);
+        response.setHeader("X-RateLimit-Remaining", String(rate.remaining));
+        response.setHeader("X-RateLimit-Reset", String(rate.resetAt));
+        await processContactSubmission(mailTransport, submission, ipAddress);
+        sendJson(response, 200, { ok: true, destination: "contact@alphasynthai.com" });
+      } catch (error) {
+        if (
+          error instanceof InvalidCommunicationRequest ||
+          error instanceof InvalidMessageRequest
+        ) {
+          const status = error.code === "RATE_LIMITED" ? 429 : 400;
+          sendJson(response, status, { error: { code: error.code } });
+        } else if (error instanceof CommunicationDeliveryFailed) {
+          sendJson(response, 503, { error: { code: error.code } });
+        } else {
+          sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
+        }
+      }
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/feedback") {
+      try {
+        const body = await readJson(request);
+        const submission = parseFeedbackSubmission(body);
+        const ipAddress = request.socket.remoteAddress ?? "unknown";
+        const rate = communicationRateLimiter.check("feedback", ipAddress);
+        response.setHeader("X-RateLimit-Remaining", String(rate.remaining));
+        response.setHeader("X-RateLimit-Reset", String(rate.resetAt));
+        await processFeedbackSubmission(mailTransport, submission, ipAddress);
+        sendJson(response, 200, { ok: true, destination: "contact@alphasynthai.com" });
+      } catch (error) {
+        if (
+          error instanceof InvalidCommunicationRequest ||
+          error instanceof InvalidMessageRequest
+        ) {
+          const status = error.code === "RATE_LIMITED" ? 429 : 400;
+          sendJson(response, status, { error: { code: error.code } });
+        } else if (error instanceof CommunicationDeliveryFailed) {
+          sendJson(response, 503, { error: { code: error.code } });
         } else {
           sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
         }

@@ -5,6 +5,7 @@ import {
   type LocalStewardServerOptions,
 } from "../../src/server/local-server.js";
 import { OpenAIGenerationProvider } from "../../src/provider/openai/adapter.js";
+import type { ContactMailTransport } from "../../src/server/contact-mail.js";
 
 const servers: ReturnType<typeof createLocalStewardServer>[] = [];
 
@@ -427,5 +428,121 @@ describe("local HTTP server", () => {
     } finally {
       errorSpy.mockRestore();
     }
+  });
+
+  it("sends production contact form requests through the mail transport", async () => {
+    const send = vi.fn<
+      ContactMailTransport["send"]
+    >(async () => {});
+    const origin = await startServer({
+      contactMailTransport: { send },
+    });
+
+    const response = await fetch(`${origin}/api/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "Learner",
+        email: "learner@example.com",
+        subject: "Question about lessons",
+        category: "General Question",
+        message: "Could you add one more example to lesson 2?",
+        company: "",
+        startedAt: Date.now() - 2_000,
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "contact",
+        to: "contact@alphasynthai.com",
+      }),
+    );
+  });
+
+  it("sends modal feedback requests including page and viewport metadata", async () => {
+    const send = vi.fn<
+      ContactMailTransport["send"]
+    >(async () => {});
+    const origin = await startServer({
+      contactMailTransport: { send },
+    });
+
+    const response = await fetch(`${origin}/api/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: "Report Bug",
+        message: "The submit button appears disabled on Safari after one failure.",
+        email: "",
+        page: "/learn",
+        language: "en",
+        browser: "Mozilla/5.0 test",
+        viewport: "390x844",
+        company: "",
+        startedAt: Date.now() - 2_000,
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "feedback",
+        to: "contact@alphasynthai.com",
+        metadata: expect.objectContaining({
+          page: "/learn",
+        }),
+      }),
+    );
+  });
+
+  it("enforces communication endpoint rate limiting", async () => {
+    const send = vi.fn<
+      ContactMailTransport["send"]
+    >(async () => {});
+    const origin = await startServer({
+      contactMailTransport: { send },
+      communicationRateLimit: { maxRequests: 1, windowMs: 60_000 },
+    });
+
+    const first = await fetch(`${origin}/api/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: "General Feedback",
+        message: "First feedback message with enough detail.",
+        email: "",
+        page: "/",
+        language: "en",
+        browser: "Mozilla/5.0 test",
+        viewport: "1280x720",
+        company: "",
+        startedAt: Date.now() - 2_000,
+      }),
+    });
+    const second = await fetch(`${origin}/api/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: "General Feedback",
+        message: "Second feedback message that should be rate limited.",
+        email: "",
+        page: "/",
+        language: "en",
+        browser: "Mozilla/5.0 test",
+        viewport: "1280x720",
+        company: "",
+        startedAt: Date.now() - 2_000,
+      }),
+    });
+
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(429);
+    expect(await second.json()).toEqual({
+      error: { code: "RATE_LIMITED" },
+    });
   });
 });
