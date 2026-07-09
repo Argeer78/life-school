@@ -72,15 +72,21 @@ variables. Do not commit `.env.local`, `.env`, or API keys.
 | `OPENAI_API_KEY` | When `STEWARD_PROVIDER=openai` | Secret OpenAI API key, entered only in hPanel |
 | `OPENAI_MODEL` | No | Defaults to `gpt-5.4-mini` |
 | `OPENAI_TIMEOUT_MS` | No | Defaults to `30000` |
-| `CONTACT_MAIL_WEBHOOK_URL` | Recommended | Mail webhook endpoint used by `/api/contact` and `/api/feedback` to deliver submissions to `contact@alphasynthai.com` |
+| `SMTP_HOST` | Recommended | `smtp.hostinger.com` |
+| `SMTP_PORT` | Recommended | `465` |
+| `SMTP_SECURE` | Recommended | `true` |
+| `SMTP_USER` | Recommended | `contact@alphasynthai.com` |
+| `SMTP_PASS` | Recommended | Hostinger mailbox password (secret in hPanel only) |
+| `MAIL_FROM` | Recommended | `Lifeschool <contact@alphasynthai.com>` |
+| `MAIL_TO` | Recommended | `contact@alphasynthai.com` |
 
 The committed `.env.example` lists every supported deployment variable without
 including credentials.
 
-If `CONTACT_MAIL_WEBHOOK_URL` is not configured, contact and feedback requests
-still return success when accepted, but delivery is logged server-side as
-`[contact:mail:queued]` events instead of being forwarded to an external mail
-service.
+If SMTP variables are not configured in local/development environments,
+contact and feedback requests still return success when accepted, but delivery
+is logged server-side as `[contact:mail:queued]` events instead of being sent
+externally.
 
 ## First Deployment Checklist
 

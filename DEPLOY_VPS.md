@@ -174,7 +174,13 @@ OPENAI_API_KEY=replace_with_the_production_key
 OPENAI_MODEL=gpt-5.4-mini
 OPENAI_TIMEOUT_MS=30000
 ALPHA_ACCESS_CODE=replace_with_the_private_alpha_code
-CONTACT_MAIL_WEBHOOK_URL=replace_with_mail_webhook_endpoint
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=contact@alphasynthai.com
+SMTP_PASS=replace_with_the_mail_password
+MAIL_FROM=Lifeschool <contact@alphasynthai.com>
+MAIL_TO=contact@alphasynthai.com
 ```
 
 Never commit `.env` or print the API key. The repository root server reads
@@ -191,10 +197,11 @@ set +a
 Use `STEWARD_PROVIDER=fake` only when intentionally running the local fake
 provider.
 
-`CONTACT_MAIL_WEBHOOK_URL` is optional but recommended in production. When set,
-contact form and feedback submissions are POSTed to that webhook endpoint using
-the production mail payload. When unset, the server keeps operating and logs
-`[contact:mail:queued]` events locally instead of forwarding externally.
+SMTP variables are recommended in production so contact and feedback
+submissions are delivered through Hostinger SMTP to
+`contact@alphasynthai.com`. When SMTP variables are missing in local or
+development environments, the server keeps operating and logs
+`[contact:mail:queued]` events locally instead of sending externally.
 
 ## 7. Install and build
 

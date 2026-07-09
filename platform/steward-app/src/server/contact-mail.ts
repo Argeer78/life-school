@@ -1,3 +1,5 @@
+import nodemailer from "nodemailer";
+
 export const contactInbox = "contact@alphasynthai.com";
 
 export interface ContactMailPayload {
@@ -13,33 +15,28 @@ export interface ContactMailTransport {
   send(payload: ContactMailPayload): Promise<void>;
 }
 
-interface MailWebhookBody {
-  readonly to: string;
-  readonly replyTo: string | null;
-  readonly subject: string;
-  readonly text: string;
-  readonly metadata: Record<string, string>;
+interface SmtpMailConfig {
+  readonly from: string;
+  readonly defaultTo: string;
 }
 
-class WebhookMailTransport implements ContactMailTransport {
-  constructor(private readonly webhookUrl: string) {}
+class SmtpMailTransport implements ContactMailTransport {
+  constructor(
+    private readonly transporter: nodemailer.Transporter,
+    private readonly config: SmtpMailConfig,
+  ) {}
 
   async send(payload: ContactMailPayload): Promise<void> {
-    const body: MailWebhookBody = {
-      to: payload.to,
-      replyTo: payload.replyTo,
+    await this.transporter.sendMail({
+      from: this.config.from,
+      to: payload.to || this.config.defaultTo,
+      replyTo: payload.replyTo ?? undefined,
       subject: payload.subject,
       text: payload.text,
-      metadata: payload.metadata,
-    };
-    const response = await fetch(this.webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      headers: {
+        "X-Lifeschool-Mail-Kind": payload.kind,
+      },
     });
-    if (!response.ok) {
-      throw new Error("CONTACT_MAIL_DELIVERY_FAILED");
-    }
   }
 }
 
@@ -58,9 +55,41 @@ class ConsoleMailTransport implements ContactMailTransport {
 export function createContactMailTransport(
   environment: NodeJS.ProcessEnv,
 ): ContactMailTransport {
-  const webhookUrl = environment.CONTACT_MAIL_WEBHOOK_URL?.trim() ?? "";
-  if (webhookUrl.length > 0) {
-    return new WebhookMailTransport(webhookUrl);
+  const host = environment.SMTP_HOST?.trim() ?? "";
+  const port = Number(environment.SMTP_PORT?.trim() ?? "0");
+  const secureRaw = (environment.SMTP_SECURE?.trim() ?? "").toLowerCase();
+  const user = environment.SMTP_USER?.trim() ?? "";
+  const pass = environment.SMTP_PASS?.trim() ?? "";
+  const from = environment.MAIL_FROM?.trim() || `Lifeschool <${contactInbox}>`;
+  const defaultTo = environment.MAIL_TO?.trim() || contactInbox;
+  const secure = secureRaw === "true";
+
+  const missing = [
+    ["SMTP_HOST", host.length > 0],
+    ["SMTP_PORT", Number.isInteger(port) && port > 0],
+    ["SMTP_SECURE", secureRaw === "true" || secureRaw === "false"],
+    ["SMTP_USER", user.length > 0],
+    ["SMTP_PASS", pass.length > 0],
+  ]
+    .filter(([, ok]) => !ok)
+    .map(([name]) => name);
+
+  if (missing.length > 0) {
+    console.warn("[contact:mail:fallback]", {
+      mode: environment.NODE_ENV?.trim() || "development",
+      missing,
+    });
+    return new ConsoleMailTransport();
   }
-  return new ConsoleMailTransport();
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user,
+      pass,
+    },
+  });
+  return new SmtpMailTransport(transporter, { from, defaultTo });
 }

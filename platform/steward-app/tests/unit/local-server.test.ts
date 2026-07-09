@@ -458,6 +458,9 @@ describe("local HTTP server", () => {
       expect.objectContaining({
         kind: "contact",
         to: "contact@alphasynthai.com",
+        replyTo: "learner@example.com",
+        subject: "[Lifeschool Contact] General Question: Question about lessons",
+        text: expect.stringContaining("Name: Learner"),
       }),
     );
   });
@@ -492,11 +495,62 @@ describe("local HTTP server", () => {
       expect.objectContaining({
         kind: "feedback",
         to: "contact@alphasynthai.com",
+        replyTo: null,
+        subject: "[Lifeschool Feedback] Report Bug",
+        text: expect.stringContaining("Viewport: 390x844"),
         metadata: expect.objectContaining({
           page: "/learn",
         }),
       }),
     );
+  });
+
+  it("returns safe success when SMTP env is missing in development", async () => {
+    const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const origin = await startServer({
+        environment: {
+          ...process.env,
+          NODE_ENV: "development",
+          SMTP_HOST: "",
+          SMTP_PORT: "",
+          SMTP_SECURE: "",
+          SMTP_USER: "",
+          SMTP_PASS: "",
+        },
+      });
+      const response = await fetch(`${origin}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Fallback Learner",
+          email: "fallback@example.com",
+          subject: "Fallback check",
+          category: "General Question",
+          message: "Checking missing SMTP fallback behavior in development mode.",
+          company: "",
+          startedAt: Date.now() - 2_000,
+        }),
+      });
+
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        ok: true,
+        destination: "contact@alphasynthai.com",
+      });
+      expect(warnSpy).toHaveBeenCalledWith(
+        "[contact:mail:fallback]",
+        expect.objectContaining({ mode: "development" }),
+      );
+      expect(infoSpy).toHaveBeenCalledWith(
+        "[contact:mail:queued]",
+        expect.objectContaining({ kind: "contact" }),
+      );
+    } finally {
+      infoSpy.mockRestore();
+      warnSpy.mockRestore();
+    }
   });
 
   it("enforces communication endpoint rate limiting", async () => {

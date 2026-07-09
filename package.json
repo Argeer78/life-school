@@ -17,10 +17,12 @@
   },
   "dependencies": {
     "express": "^5.1.0",
+    "nodemailer": "^9.0.3",
     "openai": "^6.45.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
+    "@types/nodemailer": "^8.0.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
