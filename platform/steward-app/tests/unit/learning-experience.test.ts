@@ -338,6 +338,26 @@ describe("Lifeschool Lesson Framework v1", () => {
     }
   });
 
+  it("shows certificate controls only on final lesson completion flow", () => {
+    const firstLesson = thinkingClearlyLessons[0];
+    const finalLesson = thinkingClearlyLessons[5];
+    if (firstLesson === undefined || finalLesson === undefined) {
+      throw new Error("Certificate fixture lessons are missing.");
+    }
+
+    const firstRendered = renderLessonPage(firstLesson);
+    const finalRendered = renderLessonPage(finalLesson);
+
+    expect(firstRendered).not.toContain('id="module-certificate"');
+    expect(finalRendered).toContain('id="module-certificate"');
+    expect(finalRendered).toContain('id="certificate-download"');
+    expect(finalRendered).toContain('id="certificate-print"');
+    expect(finalRendered).toContain('id="certificate-share"');
+    expect(finalRendered).toContain('id="certificate-helpful"');
+    expect(finalRendered).toContain("AlphaSynth AI");
+    expect(finalRendered).not.toMatch(/badge|points|leaderboard|streak|gamification/i);
+  });
+
   it("keeps lesson completion in page-session memory only", () => {
     const session = createCourseSession();
     for (const lesson of thinkingClearlyLessons) {

@@ -6,25 +6,22 @@
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Lifeschool roadmap: what is completed, what is in progress, and what is planned next for thinking education."
+      content="Frequently asked questions about Lifeschool, Steward, data handling, educational use, partnerships, support, and future modules."
     />
-    <link rel="canonical" href="https://lifesh.app/roadmap" />
+    <link rel="canonical" href="https://lifesh.app/faq" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Roadmap | Lifeschool" />
+    <meta property="og:title" content="FAQ | Lifeschool" />
     <meta
       property="og:description"
-      content="Building the future of thinking education, one step at a time."
+      content="Answers to common questions about Lifeschool and Steward."
     />
-    <meta property="og:url" content="https://lifesh.app/roadmap" />
+    <meta property="og:url" content="https://lifesh.app/faq" />
     <meta property="og:image" content="https://lifesh.app/og-image.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Roadmap | Lifeschool" />
-    <meta
-      name="twitter:description"
-      content="Building the future of thinking education, one step at a time."
-    />
+    <meta name="twitter:title" content="FAQ | Lifeschool" />
+    <meta name="twitter:description" content="Answers to common questions about Lifeschool and Steward." />
     <meta name="twitter:image" content="https://lifesh.app/og-image.svg" />
-    <title>Roadmap</title>
+    <title>FAQ</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
     <script type="module" src="/theme.js"></script>
@@ -32,30 +29,30 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@graph": [
+        "@type": "FAQPage",
+        "mainEntity": [
           {
-            "@type": "WebPage",
-            "name": "Roadmap",
-            "url": "https://lifesh.app/roadmap",
-            "description": "Lifeschool roadmap with completed milestones, current production work, and planned next modules.",
-            "isPartOf": {
-              "@type": "WebSite",
-              "name": "Lifeschool",
-              "url": "https://lifesh.app"
+            "@type": "Question",
+            "name": "What is Lifeschool?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Lifeschool is an educational platform for clearer thinking, better decisions, and stronger self-understanding."
             }
           },
           {
-            "@type": "Organization",
-            "name": "Lifeschool",
-            "url": "https://lifesh.app",
-            "email": "contact@alphasynthai.com"
+            "@type": "Question",
+            "name": "Who is Steward?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Steward is Lifeschool's educational guide that helps learners examine ideas and assumptions without replacing human judgment."
+            }
           }
         ]
       }
     </script>
   </head>
-  <body data-title-key="roadmap.documentTitle">
-    <main class="home-shell roadmap-shell">
+  <body data-title-key="faq.documentTitle">
+    <main class="home-shell faq-shell">
       <div class="home-topbar">
         <a class="home-brand" href="/" aria-label="Lifeschool home">
           <img src="/lifeschool-logo.svg" alt="" width="36" height="36" />
@@ -85,69 +82,72 @@
         </div>
       </div>
 
-      <header class="roadmap-hero" aria-labelledby="roadmap-title">
-        <p class="eyebrow" data-i18n="roadmap.pageTitle">Roadmap</p>
-        <h1 id="roadmap-title" data-i18n="roadmap.heroTitle">Roadmap</h1>
-        <p class="roadmap-subtitle" data-i18n="roadmap.heroSubtitle">Building the future of thinking education, one step at a time.</p>
+      <header class="faq-hero" aria-labelledby="faq-title">
+        <p class="eyebrow" data-i18n="faq.pageTitle">FAQ</p>
+        <h1 id="faq-title" data-i18n="faq.heroTitle">Frequently Asked Questions</h1>
+        <p class="faq-subtitle" data-i18n="faq.heroSubtitle">Clear answers to the most common questions about Lifeschool.</p>
       </header>
 
-      <section class="roadmap-timeline" aria-labelledby="timeline-title">
-        <h2 id="timeline-title" data-i18n="roadmap.timelineTitle">Timeline</h2>
-        <div class="roadmap-columns">
-          <article class="roadmap-column" aria-labelledby="completed-title">
-            <h3 id="completed-title" data-i18n="roadmap.completedTitle">Completed</h3>
-            <ul class="roadmap-list" aria-label="Completed milestones" data-i18n-aria-label="roadmap.completedAria">
-              <li data-i18n="roadmap.completed1">Thinking Clearly</li>
-              <li data-i18n="roadmap.completed2">Communicating Clearly</li>
-              <li data-i18n="roadmap.completed3">Making Decisions</li>
-              <li data-i18n="roadmap.completed4">Understanding Emotions</li>
-              <li data-i18n="roadmap.completed5">Relationships</li>
-              <li data-i18n="roadmap.completed6">Purpose &amp; Meaning</li>
-              <li data-i18n="roadmap.completed7">English</li>
-              <li data-i18n="roadmap.completed8">Greek</li>
-              <li data-i18n="roadmap.completed9">Steward</li>
-              <li data-i18n="roadmap.completed10">PWA</li>
-              <li data-i18n="roadmap.completed11">Accessibility</li>
-              <li data-i18n="roadmap.completed12">SEO</li>
-            </ul>
-          </article>
-
-          <article class="roadmap-column" aria-labelledby="in-progress-title">
-            <h3 id="in-progress-title" data-i18n="roadmap.inProgressTitle">In Progress</h3>
-            <p class="roadmap-column-copy" data-i18n="roadmap.inProgressLead">Current production work</p>
-            <ul class="roadmap-list" aria-label="In progress work" data-i18n-aria-label="roadmap.inProgressAria">
-              <li data-i18n="roadmap.inProgress1">Roadmap and support information pages</li>
-              <li data-i18n="roadmap.inProgress2">Cross-page navigation consistency</li>
-              <li data-i18n="roadmap.inProgress3">Production quality hardening and audits</li>
-            </ul>
-          </article>
-
-          <article class="roadmap-column" aria-labelledby="planned-title">
-            <h3 id="planned-title" data-i18n="roadmap.plannedTitle">Planned</h3>
-            <ul class="roadmap-list" aria-label="Planned modules" data-i18n-aria-label="roadmap.plannedAria">
-              <li data-i18n="roadmap.planned1">Critical Thinking</li>
-              <li data-i18n="roadmap.planned2">Media Literacy</li>
-              <li data-i18n="roadmap.planned3">Financial Thinking</li>
-              <li data-i18n="roadmap.planned4">Scientific Thinking</li>
-              <li data-i18n="roadmap.planned5">Leadership</li>
-              <li data-i18n="roadmap.planned6">Negotiation</li>
-              <li data-i18n="roadmap.planned7">Conflict Resolution</li>
-              <li data-i18n="roadmap.planned8">Ethics</li>
-              <li data-i18n="roadmap.planned9">Parenting</li>
-              <li data-i18n="roadmap.planned10">Digital Wellbeing</li>
-            </ul>
-          </article>
+      <section class="faq-section" aria-labelledby="faq-accordion-title">
+        <h2 id="faq-accordion-title" data-i18n="faq.sectionTitle">Questions</h2>
+        <div class="faq-accordion" role="list">
+          <details role="listitem">
+            <summary data-i18n="faq.q1">What is Lifeschool?</summary>
+            <p data-i18n="faq.a1">Lifeschool is an educational platform for clearer thinking, better decisions, and stronger self-understanding.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q2">Who is Steward?</summary>
+            <p data-i18n="faq.a2">Steward is Lifeschool's educational guide that helps learners examine ideas and assumptions without replacing human judgment.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q3">Is Steward AI?</summary>
+            <p data-i18n="faq.a3">Yes. Steward uses AI to support reflection and learning conversations under educational boundaries.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q4">Is this therapy?</summary>
+            <p data-i18n="faq.a4">No. Lifeschool is educational, not therapy or medical care.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q5">Is this coaching?</summary>
+            <p data-i18n="faq.a5">No. Lifeschool provides educational guidance, not personal coaching services.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q6">Is my data stored?</summary>
+            <p data-i18n="faq.a6">Lifeschool stores only limited local preferences and does not provide persistent learner account history.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q7">Can schools use Lifeschool?</summary>
+            <p data-i18n="faq.a7">Yes. Schools can use Lifeschool as a thinking and reflection learning companion.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q8">Can universities partner?</summary>
+            <p data-i18n="faq.a8">Yes. Universities and educational institutions can discuss partnerships through the contact channel.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q9">Is Lifeschool free?</summary>
+            <p data-i18n="faq.a9">Core learning access is currently available without paid accounts during this stage.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q10">Why no accounts?</summary>
+            <p data-i18n="faq.a10">The current design prioritizes simplicity, privacy, and learner-first access without account friction.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q11">Will more modules come?</summary>
+            <p data-i18n="faq.a11">Yes. More modules are planned and expanded over time through roadmap milestones.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q12">Can I contribute?</summary>
+            <p data-i18n="faq.a12">Yes. You can contribute feedback, issues, and ideas through official contact channels.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q13">Can I support Lifeschool?</summary>
+            <p data-i18n="faq.a13">Yes. Visit the support page for collaboration and support pathways.</p>
+          </details>
+          <details role="listitem">
+            <summary data-i18n="faq.q14">Can organizations partner?</summary>
+            <p data-i18n="faq.a14">Yes. Organizations can partner with Lifeschool while respecting educational independence.</p>
+          </details>
         </div>
-      </section>
-
-      <section class="roadmap-note" aria-labelledby="roadmap-note-title">
-        <h2 id="roadmap-note-title" data-i18n="roadmap.noteTitle">Roadmap Evolution</h2>
-        <p data-i18n="roadmap.noteBody">This roadmap may evolve based on learner feedback, educational priorities, and implementation learnings.</p>
-      </section>
-
-      <section class="roadmap-cta" aria-labelledby="roadmap-cta-title">
-        <h2 id="roadmap-cta-title" data-i18n="roadmap.ctaTitle">Ready to begin?</h2>
-        <a class="primary-link" href="/courses" data-i18n="roadmap.ctaButton">Start Learning</a>
       </section>
 
       <footer class="site-footer-links" aria-label="Site links">

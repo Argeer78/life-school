@@ -47,6 +47,10 @@ textarea {
   font: inherit;
 }
 
+input {
+  font: inherit;
+}
+
 .learning-shell {
   width: min(880px, calc(100% - 32px));
   min-height: 100vh;
@@ -462,16 +466,122 @@ textarea {
   background: var(--paper);
 }
 
+input[type="text"] {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 0.68rem 0.75rem;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+input[type="text"]::placeholder {
+  color: var(--muted);
+  opacity: 0.95;
+}
+
 textarea::placeholder {
   color: var(--muted);
   opacity: 0.95;
 }
 
 textarea:focus,
+input[type="text"]:focus,
 button:focus-visible,
 a:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--forest) 35%, transparent);
   outline-offset: 2px;
+}
+
+.module-certificate {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--forest-soft) 80%, transparent), transparent),
+    var(--paper);
+}
+
+.certificate-eyebrow {
+  margin: 0;
+  color: var(--forest);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.certificate-intro {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.certificate-form {
+  margin-top: 0.7rem;
+}
+
+.certificate-preview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0.9rem 0 0;
+}
+
+.certificate-preview div {
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--paper) 94%, var(--forest-soft));
+}
+
+.certificate-preview dt {
+  font-size: 0.66rem;
+}
+
+.certificate-preview dd {
+  margin-top: 0.28rem;
+  word-break: break-word;
+}
+
+.certificate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.52rem;
+  margin-top: 0.85rem;
+}
+
+.certificate-actions button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.32rem 0.82rem;
+  color: var(--forest);
+  background: color-mix(in srgb, var(--paper) 97%, transparent);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.certificate-branding {
+  margin: 0.85rem 0 0;
+  color: var(--forest);
+  font-family: "Alegreya", "Georgia", serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.certificate-footer {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.certificate-status {
+  min-height: 1rem;
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .field-note {
@@ -656,6 +766,10 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 
+  .certificate-preview {
+    grid-template-columns: 1fr;
+  }
+
   .primary-link,
   button {
     width: 100%;
@@ -668,5 +782,40 @@ button:disabled {
 
   .practice-message {
     max-width: 96%;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .home-topbar,
+  .breadcrumb,
+  .lesson-share,
+  .exercise-handoff,
+  .practice-form,
+  .practice-transcript,
+  .ask-next-lesson,
+  #complete-lesson,
+  #module-return,
+  #next-lesson,
+  .certificate-actions,
+  .certificate-status,
+  .feedback-fab {
+    display: none !important;
+  }
+
+  .lesson-content > section {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    background: #fff;
+  }
+
+  .module-certificate {
+    border: 2px solid #1e3a8a;
+    border-radius: 0;
+    page-break-inside: avoid;
   }
 }

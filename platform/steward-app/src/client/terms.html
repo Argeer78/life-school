@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -25,8 +25,10 @@
         <nav class="learner-nav" aria-label="Main navigation">
           <a href="/" data-i18n="common.navHome">Home</a>
           <a href="/courses" data-i18n="common.navCourses">Courses</a>
-          <a href="/learn" data-i18n="common.navSteward">Steward</a>
+          <a href="/learn" data-i18n="common.navLearn">Learn</a>
+          <a href="/about" data-i18n="common.navAbout">About</a>
           <a href="/support" data-i18n="common.navSupport">Support</a>
+          <a href="/contact" data-i18n="common.navContact">Contact</a>
         </nav>
         <div class="home-controls">
           <button class="theme-button home-theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Dark mode">
@@ -38,8 +40,8 @@
             aria-label="Language"
             data-i18n-aria-label="common.language"
           >
-            <button class="locale-button" type="button" data-locale="en" data-i18n="home.languageEnglish">🌐 English</button>
-            <button class="locale-button" type="button" data-locale="el" data-i18n="home.languageGreek">🌐 Ελληνικά</button>
+            <button class="locale-button" type="button" data-locale="en" data-i18n="home.languageEnglish">English</button>
+            <button class="locale-button" type="button" data-locale="el" data-i18n="home.languageGreek">Greek</button>
           </div>
         </div>
       </div>
@@ -85,13 +87,62 @@
         <p data-i18n="terms.availabilityBody">This private alpha is experimental and may change, pause, or become unavailable without notice.</p>
       </section>
       <footer class="site-footer-links" aria-label="Site links">
-        <a href="/about" data-i18n="common.navAbout">About</a>
-        <a href="/privacy" data-i18n="common.navPrivacy">Privacy</a>
-        <a href="/terms" data-i18n="common.navTerms">Terms</a>
-        <a href="/contact" data-i18n="common.navContact">Contact</a>
-        <p class="site-footer-attribution" data-i18n="common.footerRights">
-          © 2026 Lifeschool. All rights reserved.
-        </p>
+        <section class="site-footer-brand-block" aria-label="Lifeschool">
+          <h2>Lifeschool</h2>
+          <p data-i18n="footer.brandLine1">Learn to think clearly.</p>
+          <p data-i18n="footer.brandLine2">Understand yourself.</p>
+          <p data-i18n="footer.brandLine3">Live intentionally.</p>
+        </section>
+
+        <section class="site-footer-column" aria-label="Learn">
+          <h3 data-i18n="footer.learnTitle">Learn</h3>
+          <ul>
+            <li><a href="/courses" data-i18n="footer.learnCourses">Courses</a></li>
+            <li><a href="/learn" data-i18n="footer.learnSteward">Steward</a></li>
+            <li><a href="/roadmap" data-i18n="footer.learnRoadmap">Roadmap</a></li>
+            <li><a href="/updates" data-i18n="footer.learnUpdates">Updates</a></li>
+          </ul>
+        </section>
+
+        <section class="site-footer-column" aria-label="About">
+          <h3 data-i18n="footer.aboutTitle">About</h3>
+          <ul>
+            <li><a href="/about" data-i18n="footer.aboutAbout">About</a></li>
+            <li><a href="/faq" data-i18n="footer.aboutFaq">FAQ</a></li>
+            <li><a href="/research" data-i18n="footer.aboutResearch">Research</a></li>
+            <li><a href="/transparency" data-i18n="footer.aboutTransparency">Transparency</a></li>
+            <li><a href="/impact" data-i18n="footer.aboutImpact">Impact</a></li>
+          </ul>
+        </section>
+
+        <section class="site-footer-column" aria-label="Partners">
+          <h3 data-i18n="footer.partnersTitle">Partners</h3>
+          <ul>
+            <li><a href="/support" data-i18n="footer.partnersSupport">Support Lifeschool</a></li>
+            <li><a href="/educators" data-i18n="footer.partnersEducators">Educators</a></li>
+            <li><a href="/press" data-i18n="footer.partnersPress">Press</a></li>
+            <li><a href="/careers" data-i18n="footer.partnersCareers">Careers</a></li>
+          </ul>
+        </section>
+
+        <section class="site-footer-column" aria-label="Legal">
+          <h3 data-i18n="footer.legalTitle">Legal</h3>
+          <ul>
+            <li><a href="/privacy" data-i18n="footer.legalPrivacy">Privacy Policy</a></li>
+            <li><a href="/terms" data-i18n="footer.legalTerms">Terms</a></li>
+            <li><a href="/privacy#cookie-policy" data-i18n="footer.legalCookies">Cookie Policy</a></li>
+          </ul>
+        </section>
+
+        <section class="site-footer-column" aria-label="Connect">
+          <h3 data-i18n="footer.connectTitle">Connect</h3>
+          <ul>
+            <li><a href="/contact" data-i18n="footer.connectContact">Contact</a></li>
+            <li><button type="button" class="footer-feedback-button" data-feedback-open data-i18n="footer.connectFeedback">Send Feedback</button></li>
+          </ul>
+        </section>
+
+        <p class="site-footer-attribution" data-i18n="footer.copyright">© 2026 Lifeschool</p>
         <p class="site-footer-attribution">
           <span data-i18n="common.footerMadeByPrefix">Made by</span>
           <a href="https://alphasynthai.com" target="_blank" rel="noopener noreferrer">AlphaSynth AI</a>

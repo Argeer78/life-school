@@ -105,6 +105,21 @@ async function staleWhileRevalidate(request) {
   return network ?? new Response("Offline", { status: 503 });
 }
 
+/** @param {Request} request */
+async function networkFirstStatic(request) {
+  const staticCache = await caches.open(STATIC_CACHE);
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      await staticCache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await staticCache.match(request);
+    return cached ?? new Response("Offline", { status: 503 });
+  }
+}
+
 function offlineApiResponse() {
   return new Response(
     JSON.stringify({
@@ -140,6 +155,11 @@ sw.addEventListener("fetch", /** @param {any} event */ (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(networkFirstPage(request));
+    return;
+  }
+
+  if (url.pathname.startsWith("/i18n/locales/")) {
+    event.respondWith(networkFirstStatic(request));
     return;
   }
 

@@ -1,3 +1,5 @@
+import { initializeInternalAnalytics } from "./analytics.js";
+
 const storageKey = "lifeschool-theme";
 const cookieChoiceKey = "lifeschool.cookie.choice";
 const pwaDismissKey = "lifeschool.pwa.dismissed";
@@ -26,7 +28,7 @@ const uiCopy = {
     feedbackRateLimited: "Too many feedback submissions. Please wait and try again.",
     cookieTitle: "Cookie and storage choice",
     cookieBody:
-      "Lifeschool uses storage for session continuity, language preference, and your cookie choice only. No analytics and no advertising cookies.",
+      "Lifeschool uses storage for session continuity, language preference, and your cookie choice only. No third-party analytics and no advertising cookies.",
     cookieAccept: "Accept",
     cookieDecline: "Decline",
     pwaInstallTitle: "Install Lifeschool app",
@@ -53,7 +55,7 @@ const uiCopy = {
     feedbackRateLimited: "Πολλά σχόλια σε σύντομο χρόνο. Δοκίμασε ξανά αργότερα.",
     cookieTitle: "Επιλογή για cookies και αποθήκευση",
     cookieBody:
-      "Το Lifeschool χρησιμοποιεί αποθήκευση μόνο για συνέχεια συνεδρίας, προτίμηση γλώσσας και την επιλογή σου για cookies. Χωρίς αναλυτικά και χωρίς διαφημιστικά cookies.",
+      "Το Lifeschool χρησιμοποιεί αποθήκευση μόνο για συνέχεια συνεδρίας, προτίμηση γλώσσας και την επιλογή σου για cookies. Χωρίς αναλυτικά τρίτων και χωρίς διαφημιστικά cookies.",
     cookieAccept: "Αποδοχή",
     cookieDecline: "Απόρριψη",
     pwaInstallTitle: "Εγκατάσταση εφαρμογής Lifeschool",
@@ -637,6 +639,7 @@ feedbackObserver.observe(document.body, { childList: true, subtree: true });
 ensureCookieBanner();
 updateFeedbackButtonText();
 applyTheme(initialTheme);
+initializeInternalAnalytics();
 void registerPwaRuntime();
 window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();

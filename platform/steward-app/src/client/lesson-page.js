@@ -6,6 +6,13 @@ import { projectLearnerResponse } from "./learner-response.js";
 import { findCurriculumLesson } from "./curriculum-lessons.js";
 import { browserPreference, initializeI18n } from "./i18n.js";
 import { createShareLinks } from "./share-actions.js";
+import {
+  createCertificateId,
+  downloadCertificatePdf,
+  formatCompletionDate,
+  printCertificate,
+  shareCertificate,
+} from "./module-certificate.js";
 
 /** @typedef {import("./lesson-model.js").LessonDefinition} LessonDefinition */
 /** @typedef {import("./lesson-model.js").LessonExerciseField} LessonExerciseField */
@@ -21,6 +28,7 @@ const lessonRoot = document.querySelector("#lesson-root");
 if (lesson === undefined || !(lessonRoot instanceof HTMLElement)) {
   throw new Error("Lesson data is unavailable.");
 }
+const currentLesson = lesson;
 
 lessonRoot.replaceChildren();
 lessonRoot.insertAdjacentHTML("afterbegin", renderLessonPage(lesson));
@@ -79,10 +87,92 @@ const completionStatusView = completionStatus;
 const moduleReturnLink = moduleReturn;
 const nextLessonLink = nextLesson;
 const lessonShare = document.querySelector(".lesson-share");
+const certificateShell = document.querySelector("#module-certificate");
+const certificateNameInput = document.querySelector("#certificate-learner-name");
+const certificateDateValue = document.querySelector("#certificate-date-value");
+const certificateIdValue = document.querySelector("#certificate-id-value");
+const certificateStatus = document.querySelector("#certificate-status");
+const certificateDownload = document.querySelector("#certificate-download");
+const certificatePrint = document.querySelector("#certificate-print");
+const certificateShareButton = document.querySelector("#certificate-share");
+const certificateHelpful = document.querySelector("#certificate-helpful");
 
 const courseSession = createCourseSession();
 const transcript = createMemoryTranscript();
 let practiceInFlight = false;
+/** @type {Date | null} */
+let moduleCompletedAt = null;
+const lessonOpenedAt = Date.now();
+
+/** @param {string} route */
+function moduleSlugFromLessonRoute(route) {
+  const match = route.match(/^\/courses\/([a-z-]+)/);
+  return match?.[1] ?? "module";
+}
+
+function moduleCertificateData() {
+  if (moduleCompletedAt === null) return null;
+  const learnerName =
+    certificateNameInput instanceof HTMLInputElement
+      ? certificateNameInput.value.trim()
+      : "";
+  return {
+    learnerName,
+    moduleTitle: currentLesson.moduleTitle,
+    moduleSlug: moduleSlugFromLessonRoute(currentLesson.route),
+    completionDate: moduleCompletedAt,
+    certificateId: createCertificateId(
+      moduleSlugFromLessonRoute(currentLesson.route),
+      moduleCompletedAt,
+      learnerName,
+    ),
+  };
+}
+
+/** @param {string} key */
+function setCertificateStatus(key) {
+  if (!(certificateStatus instanceof HTMLElement)) return;
+  certificateStatus.dataset.i18n = key;
+  certificateStatus.textContent = i18n.translate(key);
+}
+
+function updateCertificatePreview() {
+  if (!(certificateShell instanceof HTMLElement)) return;
+  const certificate = moduleCertificateData();
+  const enabled = certificate !== null;
+
+  if (certificateDateValue instanceof HTMLElement) {
+    certificateDateValue.textContent =
+      certificate === null ? "-" : formatCompletionDate(certificate.completionDate);
+  }
+  if (certificateIdValue instanceof HTMLElement) {
+    certificateIdValue.textContent =
+      certificate === null ? "-" : certificate.certificateId;
+  }
+  if (certificateDownload instanceof HTMLButtonElement) {
+    certificateDownload.disabled = !enabled;
+  }
+  if (certificatePrint instanceof HTMLButtonElement) {
+    certificatePrint.disabled = !enabled;
+  }
+  if (certificateShareButton instanceof HTMLButtonElement) {
+    certificateShareButton.disabled = !enabled;
+  }
+}
+
+function revealCertificatePanel() {
+  if (!(certificateShell instanceof HTMLElement)) return;
+  if (moduleCompletedAt === null) {
+    moduleCompletedAt = new Date();
+  }
+  certificateShell.classList.remove("hidden");
+  updateCertificatePreview();
+}
+
+/** @param {string} eventName @param {Record<string, unknown>} detail */
+function emitModuleEvent(eventName, detail) {
+  window.dispatchEvent(new CustomEvent(eventName, { detail }));
+}
 
 function exerciseValues() {
   return Object.fromEntries(
@@ -314,6 +404,65 @@ completeLessonButton.addEventListener("click", () => {
   completeLessonButton.disabled = courseSession.isComplete(lesson.id);
   moduleReturnLink.classList.remove("hidden");
   nextLessonLink?.classList.remove("hidden");
+  revealCertificatePanel();
+  setCertificateStatus("certificate.ready");
+
+  const moduleSlug = moduleSlugFromLessonRoute(currentLesson.route);
+  const durationMs = Math.max(0, Date.now() - lessonOpenedAt);
+  emitModuleEvent("lifeschool:lesson-completed", {
+    moduleSlug,
+    lessonNumber: currentLesson.lessonNumber,
+    durationMs,
+  });
+  if (currentLesson.nextLesson === null) {
+    emitModuleEvent("lifeschool:module-completed", {
+      moduleSlug,
+    });
+  }
+});
+
+certificateNameInput?.addEventListener("input", () => {
+  updateCertificatePreview();
+});
+
+certificateDownload?.addEventListener("click", () => {
+  const certificate = moduleCertificateData();
+  if (certificate === null) return;
+  try {
+    downloadCertificatePdf(certificate);
+    setCertificateStatus("certificate.downloadReady");
+  } catch {
+    setCertificateStatus("certificate.unavailable");
+  }
+});
+
+certificatePrint?.addEventListener("click", () => {
+  const certificate = moduleCertificateData();
+  if (certificate === null) return;
+  try {
+    printCertificate(certificate);
+    setCertificateStatus("certificate.printReady");
+  } catch {
+    setCertificateStatus("certificate.unavailable");
+  }
+});
+
+certificateShareButton?.addEventListener("click", async () => {
+  const certificate = moduleCertificateData();
+  if (certificate === null) return;
+  try {
+    await shareCertificate(certificate);
+    setCertificateStatus("certificate.shareReady");
+  } catch {
+    setCertificateStatus("certificate.shareFallback");
+  }
+});
+
+certificateHelpful?.addEventListener("click", () => {
+  emitModuleEvent("lifeschool:module-helpful", {
+    moduleSlug: moduleSlugFromLessonRoute(currentLesson.route),
+  });
+  setCertificateStatus("certificate.helpfulSaved");
 });
 
 window.addEventListener("lifeschool:locale-change", (event) => {
@@ -331,6 +480,7 @@ window.addEventListener("lifeschool:locale-change", (event) => {
 
 updateExerciseHandoff();
 configureLessonSharing();
+updateCertificatePreview();
 
 const askNext = document.createElement("button");
 askNext.type = "button";

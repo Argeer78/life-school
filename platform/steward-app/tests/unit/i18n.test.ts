@@ -34,7 +34,7 @@ describe("Lifeschool multilingual foundation v1", () => {
   it("contains no untranslated English UI copy in the Greek catalog", () => {
     const greekUiCopy = Object.values(localeCatalogs.el)
       .join(" ")
-      .replaceAll(/Steward|Lifeschool|\{[a-z]+\}/g, "");
+      .replaceAll(/Steward|Lifeschool|AlphaSynth|\{[a-z]+\}/g, "");
 
     expect(greekUiCopy).not.toMatch(/[A-Za-z]{3,}/);
   });

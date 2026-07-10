@@ -3,27 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Contact Lifeschool for feedback, bug reports, and collaboration requests." />
-    <link rel="canonical" href="https://lifesh.app/contact" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Lifeschool careers: future hiring direction, current hiring status, and mission-aligned areas of interest."
+    />
+    <link rel="canonical" href="https://lifesh.app/careers" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Contact Lifeschool" />
-    <meta property="og:description" content="Reach the Lifeschool team with feedback, bug reports, and collaboration inquiries." />
-    <meta property="og:url" content="https://lifesh.app/contact" />
+    <meta property="og:title" content="Careers | Lifeschool" />
+    <meta
+      property="og:description"
+      content="Future hiring and mission-aligned opportunity areas at Lifeschool."
+    />
+    <meta property="og:url" content="https://lifesh.app/careers" />
     <meta property="og:image" content="https://lifesh.app/og-image.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Contact Lifeschool" />
-    <meta name="twitter:description" content="Reach the Lifeschool team with feedback, bug reports, and collaboration inquiries." />
+    <meta name="twitter:title" content="Careers | Lifeschool" />
+    <meta
+      name="twitter:description"
+      content="Future hiring and mission-aligned opportunity areas at Lifeschool."
+    />
     <meta name="twitter:image" content="https://lifesh.app/og-image.svg" />
-    <meta name="color-scheme" content="light dark" />
-    <title>Contact Lifeschool</title>
+    <title>Careers</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
     <script type="module" src="/theme.js"></script>
     <script type="module" src="/info-i18n.js"></script>
-    <script type="module" src="/contact.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Careers",
+        "url": "https://lifesh.app/careers",
+        "description": "Future hiring and mission-aligned opportunity areas at Lifeschool.",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Lifeschool",
+          "url": "https://lifesh.app"
+        }
+      }
+    </script>
   </head>
-  <body data-title-key="contact.documentTitle">
-    <main class="home-shell">
+  <body data-title-key="careers.documentTitle">
+    <main class="home-shell careers-shell">
       <div class="home-topbar">
         <a class="home-brand" href="/" aria-label="Lifeschool home">
           <img src="/lifeschool-logo.svg" alt="" width="36" height="36" />
@@ -52,51 +74,40 @@
           </div>
         </div>
       </div>
-      <header class="info-header">
-        <p class="eyebrow" data-i18n="contact.eyebrow">Contact & Feedback</p>
-        <h1 class="info-title" data-i18n="contact.title">Help us improve this alpha</h1>
-      </header>
-      <section class="legal-card">
-        <p data-i18n="contact.intro">For feedback, bug reports, and collaboration requests, contact the Lifeschool team at:</p>
-        <p><a href="mailto:contact@alphasynthai.com">contact@alphasynthai.com</a></p>
-        <p data-i18n="contact.reportHint">Include your browser, route, and a short reproduction note when reporting issues.</p>
 
-        <form id="contact-form" class="contact-form" novalidate>
-          <div class="contact-grid">
-            <label>
-              Name
-              <input id="contact-name" name="name" type="text" required maxlength="120" autocomplete="name" />
-            </label>
-            <label>
-              Email
-              <input id="contact-email" name="email" type="email" required maxlength="320" autocomplete="email" />
-            </label>
-            <label>
-              Subject
-              <input id="contact-subject" name="subject" type="text" required maxlength="180" />
-            </label>
-            <label>
-              Category
-              <select id="contact-category" name="category" required>
-                <option value="">Select category</option>
-                <option>General Question</option>
-                <option>Bug Report</option>
-                <option>Partnership</option>
-                <option>Press</option>
-                <option>Educational Institution</option>
-              </select>
-            </label>
-          </div>
-          <label>
-            Message
-            <textarea id="contact-message" name="message" required maxlength="5000" rows="7"></textarea>
-          </label>
-          <div class="contact-form-actions">
-            <button id="contact-submit" type="submit">Send message</button>
-            <p id="contact-status" class="contact-status" role="status" aria-live="polite"></p>
-          </div>
-        </form>
+      <header class="careers-hero" aria-labelledby="careers-title">
+        <p class="eyebrow" data-i18n="careers.pageTitle">Careers</p>
+        <h1 id="careers-title" data-i18n="careers.heroTitle">Future Hiring</h1>
+        <p class="careers-subtitle" data-i18n="careers.heroSubtitle">
+          Lifeschool future opportunities and mission-aligned interest.
+        </p>
+      </header>
+
+      <section class="careers-section" aria-labelledby="careers-message-title">
+        <h2 id="careers-message-title" data-i18n="careers.currentMessageTitle">Current message</h2>
+        <p data-i18n="careers.currentLine1">We are not actively hiring.</p>
+        <p data-i18n="careers.currentLine2">If you believe in Lifeschool's mission,</p>
+        <p data-i18n="careers.currentLine3">we would still love to hear from you.</p>
       </section>
+
+      <section class="careers-section" aria-labelledby="careers-interest-title">
+        <h2 id="careers-interest-title" data-i18n="careers.futureInterestTitle">Areas of future interest</h2>
+        <div class="careers-grid" aria-label="Future hiring interest areas" data-i18n-aria-label="careers.interestAria">
+          <article class="careers-card"><h3 data-i18n="careers.interestEducation">Education</h3></article>
+          <article class="careers-card"><h3 data-i18n="careers.interestResearch">Research</h3></article>
+          <article class="careers-card"><h3 data-i18n="careers.interestCurriculum">Curriculum</h3></article>
+          <article class="careers-card"><h3 data-i18n="careers.interestEngineering">Engineering</h3></article>
+          <article class="careers-card"><h3 data-i18n="careers.interestTranslation">Translation</h3></article>
+          <article class="careers-card"><h3 data-i18n="careers.interestAccessibility">Accessibility</h3></article>
+          <article class="careers-card"><h3 data-i18n="careers.interestDesign">Design</h3></article>
+        </div>
+      </section>
+
+      <section class="careers-section" aria-labelledby="careers-cta-title">
+        <h2 id="careers-cta-title" data-i18n="careers.pageTitle">Careers</h2>
+        <a class="primary-link" href="/contact" data-i18n="careers.ctaButton">Contact Us</a>
+      </section>
+
       <footer class="site-footer-links" aria-label="Site links">
         <section class="site-footer-brand-block" aria-label="Lifeschool">
           <h2>Lifeschool</h2>

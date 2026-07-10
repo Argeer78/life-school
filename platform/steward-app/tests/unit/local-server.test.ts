@@ -38,6 +38,91 @@ describe("local HTTP server", () => {
     expect(await response.json()).toEqual({ status: "ok" });
   });
 
+  it("ingests anonymous internal analytics and serves future admin summaries with token auth", async () => {
+    const origin = await startServer({
+      environment: {
+        NODE_ENV: "test",
+        STEWARD_PROVIDER: "fake",
+        ANALYTICS_ADMIN_TOKEN: "admin-token",
+      },
+    });
+
+    const events = [
+      { type: "page_view", path: "/courses", locale: "en" },
+      { type: "module_started", moduleSlug: "thinking-clearly" },
+      { type: "lesson_completed", moduleSlug: "thinking-clearly", lessonNumber: 1 },
+      { type: "lesson_duration", moduleSlug: "thinking-clearly", lessonNumber: 1, durationMs: 120000 },
+      { type: "module_helpful", moduleSlug: "thinking-clearly" },
+      { type: "language_usage", locale: "el" },
+      { type: "module_completed", moduleSlug: "thinking-clearly" },
+    ];
+    const responses = await Promise.all(
+      events.map((event) =>
+        fetch(`${origin}/api/analytics`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(event),
+        }),
+      ),
+    );
+
+    expect(responses.every((response) => response.status === 202)).toBe(true);
+    for (const response of responses) {
+      expect(response.headers.get("cache-control")).toBe("no-store");
+    }
+
+    const forbidden = await fetch(`${origin}/api/admin/analytics-summary`);
+    expect(forbidden.status).toBe(403);
+    expect(await forbidden.json()).toEqual({
+      error: { code: "ANALYTICS_ADMIN_FORBIDDEN" },
+    });
+
+    const summaryResponse = await fetch(`${origin}/api/admin/analytics-summary`, {
+      headers: { "x-lifeschool-admin-token": "admin-token" },
+    });
+    const summary = (await summaryResponse.json()) as Record<string, unknown>;
+
+    expect(summaryResponse.status).toBe(200);
+    expect(summary).toHaveProperty("totals.eventsIngested", events.length);
+    expect(summary).toHaveProperty("modulesStarted.thinking-clearly", 1);
+    expect(summary).toHaveProperty("modulesCompleted.thinking-clearly", 1);
+    expect(summary).toHaveProperty("helpfulModules.thinking-clearly", 1);
+    expect(summary).toHaveProperty("lessonCompletion.thinking-clearly/lesson-1", 1);
+    expect(summary).toHaveProperty("totals.averageLessonDurationMs", 120000);
+    expect(summary).toHaveProperty("mostVisitedPages.0.path", "/courses");
+  });
+
+  it("rejects analytics payloads containing learner conversation or reflection fields", async () => {
+    const origin = await startServer({
+      environment: {
+        NODE_ENV: "test",
+        STEWARD_PROVIDER: "fake",
+        ANALYTICS_ADMIN_TOKEN: "admin-token",
+      },
+    });
+    const response = await fetch(`${origin}/api/analytics`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "page_view",
+        path: "/learn",
+        message: "private conversation content",
+      }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      error: { code: "INVALID_ANALYTICS_REQUEST" },
+    });
+
+    const summaryResponse = await fetch(`${origin}/api/admin/analytics-summary`, {
+      headers: { "x-lifeschool-admin-token": "admin-token" },
+    });
+    const summary = (await summaryResponse.json()) as Record<string, unknown>;
+    expect(summaryResponse.status).toBe(200);
+    expect(summary).toHaveProperty("totals.eventsIngested", 0);
+  });
+
   it("serves sitemap.xml for search engines", async () => {
     const origin = await startServer();
     const response = await fetch(`${origin}/sitemap.xml`);
@@ -51,6 +136,15 @@ describe("local HTTP server", () => {
       "https://lifesh.app/about",
       "https://lifesh.app/support",
       "https://lifesh.app/roadmap",
+      "https://lifesh.app/updates",
+      "https://lifesh.app/faq",
+      "https://lifesh.app/impact",
+      "https://lifesh.app/press",
+      "https://lifesh.app/educators",
+      "https://lifesh.app/research",
+      "https://lifesh.app/transparency",
+      "https://lifesh.app/careers",
+      "https://lifesh.app/developers",
       "https://lifesh.app/contact",
       "https://lifesh.app/privacy",
       "https://lifesh.app/terms",
@@ -388,18 +482,21 @@ describe("local HTTP server", () => {
       lessonDataResponse,
       lessonPageResponse,
       rendererResponse,
+      certificateModuleResponse,
     ] = await Promise.all([
       fetch(`${origin}/courses`),
       fetch(`${origin}/thinking-clearly-lessons.js`),
       fetch(`${origin}/lesson-page.js`),
       fetch(`${origin}/lesson-renderer.js`),
+      fetch(`${origin}/module-certificate.js`),
     ]);
-    const [home, lessonData, lessonPage, renderer] =
+    const [home, lessonData, lessonPage, renderer, certificateModule] =
       await Promise.all([
         homeResponse.text(),
         lessonDataResponse.text(),
         lessonPageResponse.text(),
         rendererResponse.text(),
+        certificateModuleResponse.text(),
       ]);
 
     const routeResponses = await Promise.all(
@@ -444,6 +541,8 @@ describe("local HTTP server", () => {
     expect(rendererResponse.status).toBe(200);
     expect(renderer).toContain("renderWhyThisMatters");
     expect(renderer).toContain("renderPracticeWithSteward");
+    expect(certificateModuleResponse.status).toBe(200);
+    expect(certificateModule).toContain("createCertificatePdf");
   });
 
   it("keeps curriculum Steward practice on the learner-safe API", async () => {

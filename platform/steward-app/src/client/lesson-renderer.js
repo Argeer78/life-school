@@ -214,6 +214,54 @@ export function renderContinue(lesson) {
           data-i18n="lesson.nextLesson"
           data-i18n-param-number="${lesson.lessonNumber + 1}"
         >${escapeHtml(lesson.nextLesson.label)}</a>`;
+  const completionCertificate = lesson.nextLesson !== null
+    ? ""
+    : `<section
+        class="module-certificate hidden"
+        id="module-certificate"
+        aria-labelledby="module-certificate-title"
+      >
+        <p class="certificate-eyebrow" data-i18n="certificate.eyebrow">Module completed</p>
+        <h3 id="module-certificate-title" data-i18n="certificate.title">Module Completion Certificate</h3>
+        <p class="certificate-intro" data-i18n="certificate.intro">
+          Generate a professional certificate PDF for this module completion.
+        </p>
+        <div class="certificate-form">
+          <label for="certificate-learner-name" data-i18n="certificate.learnerNameLabel">Learner name (optional)</label>
+          <input
+            id="certificate-learner-name"
+            name="certificate-learner-name"
+            type="text"
+            maxlength="120"
+            autocomplete="name"
+            data-i18n-placeholder="certificate.learnerNamePlaceholder"
+            placeholder="Enter learner name"
+          />
+        </div>
+        <dl class="certificate-preview" aria-label="Certificate details" data-i18n-aria-label="certificate.previewAria">
+          <div>
+            <dt data-i18n="certificate.moduleLabel">Module</dt>
+            <dd id="certificate-module-value">${escapeHtml(lesson.moduleTitle)}</dd>
+          </div>
+          <div>
+            <dt data-i18n="certificate.dateLabel">Completion date</dt>
+            <dd id="certificate-date-value">-</dd>
+          </div>
+          <div>
+            <dt data-i18n="certificate.idLabel">Certificate ID</dt>
+            <dd id="certificate-id-value">-</dd>
+          </div>
+        </dl>
+        <div class="certificate-actions" role="group" aria-label="Certificate actions" data-i18n-aria-label="certificate.actionsAria">
+          <button id="certificate-download" type="button" data-i18n="certificate.downloadPdf" disabled>Download PDF</button>
+          <button id="certificate-print" type="button" data-i18n="certificate.print" disabled>Print</button>
+          <button id="certificate-share" type="button" data-i18n="certificate.share" disabled>Share</button>
+          <button id="certificate-helpful" type="button" data-i18n="certificate.helpful">This module was helpful</button>
+        </div>
+        <p class="certificate-branding" data-i18n="certificate.branding">Lifeschool</p>
+        <p class="certificate-footer" data-i18n="certificate.footer">AlphaSynth AI</p>
+        <p class="certificate-status" id="certificate-status" role="status" aria-live="polite"></p>
+      </section>`;
   return renderSection(
     7,
     "Continue",
@@ -247,7 +295,8 @@ export function renderContinue(lesson) {
     >
       Return to module overview
     </a>
-    ${nextLesson}`,
+    ${nextLesson}
+    ${completionCertificate}`,
   );
 }
 

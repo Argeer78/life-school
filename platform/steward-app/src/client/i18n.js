@@ -85,7 +85,10 @@ export function applyTranslations(root = document) {
   }
   for (const element of root.querySelectorAll("[data-i18n-placeholder]")) {
     const key = element.getAttribute("data-i18n-placeholder");
-    if (key !== null && element instanceof HTMLTextAreaElement) {
+    if (
+      key !== null &&
+      (element instanceof HTMLTextAreaElement || element instanceof HTMLInputElement)
+    ) {
       element.placeholder = translate(key, parametersFor(element));
     }
   }

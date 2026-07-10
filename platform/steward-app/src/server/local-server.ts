@@ -38,6 +38,11 @@ import {
   createContactMailTransport,
   type ContactMailTransport,
 } from "./contact-mail.js";
+import {
+  InternalAnalytics,
+  InvalidAnalyticsRequest,
+  parseAnalyticsEvent,
+} from "./internal-analytics.js";
 
 const host = "127.0.0.1";
 const defaultPort = 4173;
@@ -93,6 +98,78 @@ const staticFiles = new Map<string, StaticAsset>([
     "/roadmap/",
     { file: "roadmap.html", contentType: "text/html; charset=utf-8" },
   ],
+  [
+    "/updates",
+    { file: "updates.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/updates/",
+    { file: "updates.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/faq",
+    { file: "faq.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/faq/",
+    { file: "faq.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/impact",
+    { file: "impact.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/impact/",
+    { file: "impact.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/press",
+    { file: "press.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/press/",
+    { file: "press.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/educators",
+    { file: "educators.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/educators/",
+    { file: "educators.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/research",
+    { file: "research.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/research/",
+    { file: "research.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/transparency",
+    { file: "transparency.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/transparency/",
+    { file: "transparency.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/careers",
+    { file: "careers.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/careers/",
+    { file: "careers.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/developers",
+    { file: "developers.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/developers/",
+    { file: "developers.html", contentType: "text/html; charset=utf-8" },
+  ],
   ["/styles.css", { file: "styles.css", contentType: "text/css; charset=utf-8" }],
   [
     "/manifest.webmanifest",
@@ -125,6 +202,10 @@ const staticFiles = new Map<string, StaticAsset>([
   ],
   ["/og-image.svg", { file: "og-image.svg", contentType: "image/svg+xml" }],
   ["/theme.js", { file: "theme.js", contentType: "text/javascript; charset=utf-8" }],
+  [
+    "/analytics.js",
+    { file: "analytics.js", contentType: "text/javascript; charset=utf-8" },
+  ],
   ["/contact.js", { file: "contact.js", contentType: "text/javascript; charset=utf-8" }],
   [
     "/lifeschool-logo.svg",
@@ -419,6 +500,13 @@ const staticFiles = new Map<string, StaticAsset>([
     },
   ],
   [
+    "/module-certificate.js",
+    {
+      file: "module-certificate.js",
+      contentType: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
     "/thinking-clearly-lessons.js",
     {
       file: "thinking-clearly-lessons.js",
@@ -704,6 +792,8 @@ export function createLocalStewardServer(
   const communicationRateLimiter = new CommunicationRateLimiter(
     options.communicationRateLimit ?? { maxRequests: 5, windowMs: 10 * 60 * 1000 },
   );
+  const internalAnalytics = new InternalAnalytics();
+  const analyticsAdminToken = environment.ANALYTICS_ADMIN_TOKEN?.trim() ?? "";
 
   console.info("[server:provider:boot]", {
     providerMode,
@@ -729,6 +819,42 @@ export function createLocalStewardServer(
 
     if (request.method === "GET" && url.pathname === "/health") {
       sendJson(response, 200, { status: "ok" });
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/analytics") {
+      try {
+        const event = parseAnalyticsEvent(await readJson(request));
+        const userAgentHeader = request.headers["user-agent"];
+        const acceptLanguageHeader = request.headers["accept-language"];
+        const analyticsMeta = {
+          ...(typeof userAgentHeader === "string" ? { userAgent: userAgentHeader } : {}),
+          ...(typeof acceptLanguageHeader === "string"
+            ? { acceptLanguage: acceptLanguageHeader }
+            : {}),
+        };
+        internalAnalytics.ingest(event, {
+          ...analyticsMeta,
+        });
+        sendJson(response, 202, { ok: true });
+      } catch (error) {
+        if (error instanceof InvalidAnalyticsRequest || error instanceof InvalidMessageRequest) {
+          sendJson(response, 400, { error: { code: "INVALID_ANALYTICS_REQUEST" } });
+        } else {
+          sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
+        }
+      }
+      return;
+    }
+
+    // Reserved for future admin dashboard integration. No public UI uses this endpoint.
+    if (request.method === "GET" && url.pathname === "/api/admin/analytics-summary") {
+      const suppliedToken = String(request.headers["x-lifeschool-admin-token"] ?? "").trim();
+      if (analyticsAdminToken.length === 0 || suppliedToken.length === 0 || !equalSecret(suppliedToken, analyticsAdminToken)) {
+        sendJson(response, 403, { error: { code: "ANALYTICS_ADMIN_FORBIDDEN" } });
+        return;
+      }
+      sendJson(response, 200, internalAnalytics.summary());
       return;
     }
 

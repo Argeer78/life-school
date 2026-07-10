@@ -20,9 +20,17 @@ ST-001
 
 This specification prepares Life School for future learner accounts without introducing account behavior now.
 
-It defines a guest-first architecture where learners can start immediately, optionally connect an account later, and move reflections safely through export and import.
+It defines a guest-first architecture where learners can start immediately, optionally connect an account later, save progress in a portable way, and move reflections safely across devices through export, import, and future sync.
 
 This is architecture only.
+
+No implementation.
+
+No authentication.
+
+No database.
+
+Documentation only.
 
 ---
 
@@ -32,9 +40,12 @@ In scope:
 
 - Guest-first learning flow.
 - Optional account attachment model.
+- Save-progress architecture (guest and future attached contexts).
 - Future sync-later architecture.
 - Reflection export architecture.
 - Reflection import architecture.
+- Cross-device continuity model.
+- Future migration model from guest-first operation to optional account operation.
 - Data boundaries and contracts for future implementation.
 
 Out of scope:
@@ -90,6 +101,86 @@ Account architecture must remain subordinate to constitutional purpose, dignity,
 
 ---
 
+# Requested Architecture Explanations
+
+## Guest-First Philosophy
+
+Life School must remain immediately available without account creation.
+
+Architecture implication:
+
+- Guest is the default and primary entry state.
+- Core learning flow cannot depend on identity systems.
+- Account prompts (future) must be optional and non-blocking.
+
+Constitutional rationale:
+
+- Protects dignity and freedom by reducing gatekeeping at first use.
+
+## Optional Account
+
+Accounts are a future continuity feature, not an access control requirement.
+
+Architecture implication:
+
+- Introduce an account boundary only as an additive layer.
+- Keep conversation and curriculum behavior identical across guest and attached modes.
+- Ensure feature flags can keep optional account capabilities disabled without affecting core learning.
+
+## Save Progress
+
+Progress is modeled as learner-owned progress artifacts that can exist in guest context now and attached context later.
+
+Architecture implication:
+
+- Define a normalized progress artifact model independent of identity provider decisions.
+- Track progress state transitions as contract events (created, updated, exported, imported, synced).
+- Keep persistence strategy abstract in this phase (no storage implementation in this milestone).
+
+## Cross-Device Sync
+
+Cross-device continuity is a future capability activated only after optional account attachment.
+
+Architecture implication:
+
+- Define sync contracts as idempotent, retry-safe, and conflict-visible.
+- Separate sync logic from conversation runtime so temporary sync failures do not block learning.
+- Support explicit learner actions for conflict resolution instead of silent overwrites.
+
+## Saved Reflections
+
+Reflections are learner-authored records that require portability and clear ownership boundaries.
+
+Architecture implication:
+
+- Use export/import contracts as the canonical portability path.
+- Preserve authored content during merge operations.
+- Maintain schema versioning so future changes do not invalidate prior reflection packages.
+
+## Privacy
+
+Privacy is a first-class architectural constraint rather than a late implementation add-on.
+
+Architecture implication:
+
+- Apply data minimization to future sync payloads.
+- Require explicit user intent before attachment, import, or sync operations.
+- Keep operational telemetry free of raw reflection text by default.
+- Make attachment and sync behavior transparent and auditable to the learner.
+
+## Future Migration
+
+Migration means evolving from guest-only operation to optional account operation without breaking existing learner continuity.
+
+Architecture implication:
+
+- Introduce versioned contracts before any account rollout.
+- Keep guest-mode invariants stable throughout migration phases.
+- Support reversible attachment posture: a learner can continue as guest without loss of core functionality.
+- Plan migration as staged capability release: contracts -> verification -> optional activation.
+
+---
+
 # Conceptual Domain Model
 
 ## Learner Modes
@@ -117,8 +208,9 @@ Account architecture must remain subordinate to constitutional purpose, dignity,
 | Start learning instantly | Yes | Yes | Yes |
 | Requires login | No | No | Yes, only when attaching |
 | Core conversation flow | Yes | Yes | Yes |
-| Reflection export | Not implemented | Yes | Yes |
-| Reflection import | Not implemented | Yes | Yes |
+| Save progress | Runtime-only | Portable package support | Attached continuity support |
+| Reflection export | Not implemented | Yes (planned) | Yes (planned) |
+| Reflection import | Not implemented | Yes (planned) | Yes (planned) |
 | Cloud sync | No | No | Yes |
 | Account recovery | No | No | Yes |
 
@@ -206,6 +298,7 @@ Minimum package fields:
 - packageVersion
 - exportedAt
 - sourceMode
+- progressSummary
 - reflectionItems
 - integrity
 
@@ -242,6 +335,24 @@ Minimum behavior:
 - Idempotent operations.
 - Conflict visibility.
 - Retry-safe protocol.
+
+---
+
+# Save-Progress and Continuity Model (Architecture Only)
+
+Progress continuity is represented as a contract-level model, not a storage implementation.
+
+Core continuity units:
+
+- Reflection item.
+- Progress checkpoint.
+- Curriculum position marker.
+
+Continuity guarantees required before implementation:
+
+- A learner can keep learning without account attachment.
+- A learner can export continuity units in a portable package.
+- A future attached mode can import and sync the same continuity units without schema breakage.
 
 ---
 
@@ -284,6 +395,12 @@ The architecture requires the following safeguards when implementation begins:
 - Data minimization for synced reflection payloads.
 - Auditability of import and sync actions.
 
+Privacy non-negotiables for implementation readiness:
+
+- No forced account prompts during first-use learning.
+- No hidden transfer of guest reflections to attached identity.
+- Clear learner controls for export, import, and future sync scopes.
+
 ---
 
 # Observability Requirements (Future)
@@ -318,6 +435,21 @@ The following invariants must remain true:
 - Optional account never becomes mandatory for first-use learning.
 - Export and import remain learner-controlled actions.
 - Account architecture never alters constitutional authority.
+
+---
+
+# Explicit Milestone Guardrails
+
+This AR-004 milestone is complete only as documentation architecture.
+
+The following are explicitly excluded from this milestone:
+
+- Authentication implementation.
+- Authorization implementation.
+- Account UI implementation.
+- API endpoints.
+- Database schema and data migrations.
+- Runtime persistence changes.
 
 ---
 

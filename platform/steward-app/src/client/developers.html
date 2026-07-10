@@ -3,27 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Contact Lifeschool for feedback, bug reports, and collaboration requests." />
-    <link rel="canonical" href="https://lifesh.app/contact" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Lifeschool developers page: future integration plans, current status, and documentation-first roadmap."
+    />
+    <link rel="canonical" href="https://lifesh.app/developers" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Contact Lifeschool" />
-    <meta property="og:description" content="Reach the Lifeschool team with feedback, bug reports, and collaboration inquiries." />
-    <meta property="og:url" content="https://lifesh.app/contact" />
+    <meta property="og:title" content="Developers | Lifeschool" />
+    <meta
+      property="og:description"
+      content="Documentation for planned future integrations and technical directions at Lifeschool."
+    />
+    <meta property="og:url" content="https://lifesh.app/developers" />
     <meta property="og:image" content="https://lifesh.app/og-image.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Contact Lifeschool" />
-    <meta name="twitter:description" content="Reach the Lifeschool team with feedback, bug reports, and collaboration inquiries." />
+    <meta name="twitter:title" content="Developers | Lifeschool" />
+    <meta
+      name="twitter:description"
+      content="Documentation for planned future integrations and technical directions at Lifeschool."
+    />
     <meta name="twitter:image" content="https://lifesh.app/og-image.svg" />
-    <meta name="color-scheme" content="light dark" />
-    <title>Contact Lifeschool</title>
+    <title>Developers</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/learner-nav.css" />
     <script type="module" src="/theme.js"></script>
     <script type="module" src="/info-i18n.js"></script>
-    <script type="module" src="/contact.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Developers",
+        "url": "https://lifesh.app/developers",
+        "description": "Documentation roadmap for future Lifeschool integrations.",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Lifeschool",
+          "url": "https://lifesh.app"
+        }
+      }
+    </script>
   </head>
-  <body data-title-key="contact.documentTitle">
-    <main class="home-shell">
+  <body data-title-key="developers.documentTitle">
+    <main class="home-shell developers-shell">
       <div class="home-topbar">
         <a class="home-brand" href="/" aria-label="Lifeschool home">
           <img src="/lifeschool-logo.svg" alt="" width="36" height="36" />
@@ -52,51 +74,46 @@
           </div>
         </div>
       </div>
-      <header class="info-header">
-        <p class="eyebrow" data-i18n="contact.eyebrow">Contact & Feedback</p>
-        <h1 class="info-title" data-i18n="contact.title">Help us improve this alpha</h1>
-      </header>
-      <section class="legal-card">
-        <p data-i18n="contact.intro">For feedback, bug reports, and collaboration requests, contact the Lifeschool team at:</p>
-        <p><a href="mailto:contact@alphasynthai.com">contact@alphasynthai.com</a></p>
-        <p data-i18n="contact.reportHint">Include your browser, route, and a short reproduction note when reporting issues.</p>
 
-        <form id="contact-form" class="contact-form" novalidate>
-          <div class="contact-grid">
-            <label>
-              Name
-              <input id="contact-name" name="name" type="text" required maxlength="120" autocomplete="name" />
-            </label>
-            <label>
-              Email
-              <input id="contact-email" name="email" type="email" required maxlength="320" autocomplete="email" />
-            </label>
-            <label>
-              Subject
-              <input id="contact-subject" name="subject" type="text" required maxlength="180" />
-            </label>
-            <label>
-              Category
-              <select id="contact-category" name="category" required>
-                <option value="">Select category</option>
-                <option>General Question</option>
-                <option>Bug Report</option>
-                <option>Partnership</option>
-                <option>Press</option>
-                <option>Educational Institution</option>
-              </select>
-            </label>
-          </div>
-          <label>
-            Message
-            <textarea id="contact-message" name="message" required maxlength="5000" rows="7"></textarea>
-          </label>
-          <div class="contact-form-actions">
-            <button id="contact-submit" type="submit">Send message</button>
-            <p id="contact-status" class="contact-status" role="status" aria-live="polite"></p>
-          </div>
-        </form>
+      <header class="developers-hero" aria-labelledby="developers-title">
+        <p class="eyebrow" data-i18n="developers.pageTitle">Developers</p>
+        <h1 id="developers-title" data-i18n="developers.heroTitle">Future Integrations</h1>
+        <p class="developers-subtitle" data-i18n="developers.heroSubtitle">
+          Documentation roadmap for future technical integrations.
+        </p>
+      </header>
+
+      <section class="developers-section" aria-labelledby="developers-status-title">
+        <h2 id="developers-status-title" data-i18n="developers.statusTitle">Current status</h2>
+        <p data-i18n="developers.statusBody">Coming Soon.</p>
       </section>
+
+      <section class="developers-section" aria-labelledby="developers-doc-title">
+        <h2 id="developers-doc-title" data-i18n="developers.documentationOnlyTitle">Documentation scope</h2>
+        <p data-i18n="developers.documentationOnlyBody">
+          No implementation is available yet. This page documents planned integration directions only.
+        </p>
+      </section>
+
+      <section class="developers-section" aria-labelledby="developers-plans-title">
+        <h2 id="developers-plans-title" data-i18n="developers.plansTitle">Future plans</h2>
+        <div class="developers-grid" aria-label="Future integration plans" data-i18n-aria-label="developers.plansAria">
+          <article class="developers-card"><h3 data-i18n="developers.planLearningApis">Learning APIs</h3></article>
+          <article class="developers-card"><h3 data-i18n="developers.planOrganizationIntegrations">Organization integrations</h3></article>
+          <article class="developers-card"><h3 data-i18n="developers.planEducationalExports">Educational exports</h3></article>
+          <article class="developers-card"><h3 data-i18n="developers.planLmsIntegration">Future LMS integration</h3></article>
+          <article class="developers-card"><h3 data-i18n="developers.planSso">Future SSO</h3></article>
+          <article class="developers-card"><h3 data-i18n="developers.planClassroomApis">Future classroom APIs</h3></article>
+          <article class="developers-card"><h3 data-i18n="developers.planWebhookSupport">Future webhook support</h3></article>
+        </div>
+      </section>
+
+      <section class="developers-section" aria-labelledby="developers-contact-title">
+        <h2 id="developers-contact-title" data-i18n="developers.contactTitle">Contact</h2>
+        <p data-i18n="developers.contactBody">If your organization is interested in future integrations, contact us to share context and needs.</p>
+        <p><a href="mailto:contact@alphasynthai.com">contact@alphasynthai.com</a></p>
+      </section>
+
       <footer class="site-footer-links" aria-label="Site links">
         <section class="site-footer-brand-block" aria-label="Lifeschool">
           <h2>Lifeschool</h2>
