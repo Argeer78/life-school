@@ -1036,6 +1036,78 @@ h3 {
   text-underline-offset: 0.2rem;
 }
 
+.roadmap-shell {
+  padding-top: 1.75rem;
+}
+
+.roadmap-hero,
+.roadmap-timeline,
+.roadmap-note,
+.roadmap-cta {
+  margin-top: 1rem;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.roadmap-hero {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.roadmap-subtitle {
+  margin: 0;
+  color: var(--brand);
+  font-size: clamp(1rem, 2.5vw, 1.18rem);
+  font-weight: 700;
+}
+
+.roadmap-columns {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0.8rem;
+}
+
+.roadmap-column {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--panel) 95%, transparent);
+  padding: 0.95rem;
+}
+
+.roadmap-column h3 {
+  margin: 0;
+}
+
+.roadmap-column-copy {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.roadmap-list {
+  margin: 0.65rem 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.roadmap-list li,
+.roadmap-note p {
+  color: var(--muted);
+}
+
+.roadmap-note h2,
+.roadmap-cta h2 {
+  margin-top: 0;
+}
+
+.roadmap-cta {
+  text-align: center;
+}
+
 .alpha-shell,
 .not-found-shell {
   display: grid;
@@ -1204,6 +1276,10 @@ input:focus {
 
   .support-hero-actions {
     width: 100%;
+  }
+
+  .roadmap-columns {
+    grid-template-columns: 1fr;
   }
 
   .info-header {
