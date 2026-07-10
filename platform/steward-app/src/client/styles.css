@@ -859,6 +859,183 @@ h3 {
   text-underline-offset: 0.2rem;
 }
 
+.support-shell {
+  padding-top: 1.75rem;
+}
+
+.support-hero,
+.support-section,
+.support-status,
+.support-contact {
+  margin-top: 1rem;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.support-hero {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.support-subtitle {
+  margin: 0;
+  color: var(--brand);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 700;
+}
+
+.support-hero p,
+.support-section p,
+.support-status p,
+.support-contact p,
+.support-faq-list p {
+  color: var(--muted);
+}
+
+.support-icon-grid,
+.support-tier-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.95rem;
+}
+
+.support-icon-card,
+.support-tier-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+}
+
+.support-icon-card svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--brand);
+}
+
+.support-list {
+  margin: 0.85rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.32rem;
+}
+
+.support-list li,
+.support-tier-card li,
+.support-timeline li {
+  color: var(--muted);
+}
+
+.support-quote {
+  margin: 1rem 0 0;
+  border-left: 3px solid var(--brand);
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--ink);
+  font-family: "Alegreya", "Georgia", serif;
+  font-size: 1.2rem;
+}
+
+.support-tier-card h3 {
+  margin: 0;
+}
+
+.support-tier-card ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.support-placeholder {
+  margin: 0;
+  border: 1px dashed color-mix(in srgb, var(--line) 72%, var(--brand));
+  border-radius: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.support-status {
+  text-align: center;
+}
+
+.support-status h2 {
+  margin-bottom: 0.55rem;
+}
+
+.support-timeline {
+  margin: 0.85rem 0 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.support-timeline li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.support-timeline li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 0.52rem;
+  height: 0.52rem;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+
+.support-emphasis {
+  margin-top: 0.65rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.support-faq-list {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+}
+
+.support-faq-list details {
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--panel) 95%, transparent);
+  padding: 0.65rem 0.75rem;
+}
+
+.support-faq-list summary {
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.support-faq-list details[open] {
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+}
+
+.support-contact {
+  text-align: center;
+}
+
+.support-contact a[href^="mailto:"] {
+  color: var(--brand);
+  font-weight: 700;
+  text-underline-offset: 0.2rem;
+}
+
 .alpha-shell,
 .not-found-shell {
   display: grid;
@@ -958,6 +1135,11 @@ input:focus {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .support-icon-grid,
+  .support-tier-grid {
+    grid-template-columns: 1fr;
+  }
+
   .principle-grid,
   .info-card-grid {
     grid-template-columns: 1fr;
@@ -1018,6 +1200,10 @@ input:focus {
   .home-actions a {
     width: 100%;
     text-align: center;
+  }
+
+  .support-hero-actions {
+    width: 100%;
   }
 
   .info-header {

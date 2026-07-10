@@ -124,6 +124,11 @@ sw.addEventListener("fetch", /** @param {any} event */ (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
+  // Ignore browser-generated only-if-cached probes that are invalid with non-same-origin mode.
+  if (request.cache === "only-if-cached" && request.mode !== "same-origin") {
+    return;
+  }
+
   if (request.method !== "GET") {
     if (url.origin === sw.location.origin && url.pathname === "/api/message") {
       event.respondWith(fetch(request).catch(() => offlineApiResponse()));

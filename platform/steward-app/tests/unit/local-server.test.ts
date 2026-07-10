@@ -49,6 +49,7 @@ describe("local HTTP server", () => {
     const requiredPublicPages = [
       "https://lifesh.app/",
       "https://lifesh.app/about",
+      "https://lifesh.app/support",
       "https://lifesh.app/contact",
       "https://lifesh.app/privacy",
       "https://lifesh.app/terms",

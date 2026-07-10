@@ -77,6 +77,14 @@ const staticFiles = new Map<string, StaticAsset>([
     "/contact/",
     { file: "contact.html", contentType: "text/html; charset=utf-8" },
   ],
+  [
+    "/support",
+    { file: "support.html", contentType: "text/html; charset=utf-8" },
+  ],
+  [
+    "/support/",
+    { file: "support.html", contentType: "text/html; charset=utf-8" },
+  ],
   ["/styles.css", { file: "styles.css", contentType: "text/css; charset=utf-8" }],
   [
     "/manifest.webmanifest",
