@@ -1827,6 +1827,23 @@ h3 {
   margin-top: 1.4rem;
 }
 
+.not-found-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--brand) 42%, var(--line));
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  background: color-mix(in srgb, var(--brand) 9%, transparent);
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.not-found-action:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  border-color: color-mix(in srgb, var(--brand) 55%, var(--line));
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus {
