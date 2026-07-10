@@ -283,6 +283,7 @@ export function renderLessonPage(lesson) {
         <a href="/" data-i18n="common.navHome">Home</a>
         <a href="/courses" aria-current="page" data-i18n="common.navCourses">Courses</a>
         <a href="/learn" data-i18n="common.navSteward">Steward</a>
+        <a href="/support" data-i18n="common.navSupport">Support</a>
       </nav>
       <div class="home-controls">
         <button
