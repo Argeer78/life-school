@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
+import { gzipSync } from "node:zlib";
 import type { GenerationProvider } from "../provider/contract.js";
 import {
   configuredProviderMode,
@@ -36,6 +37,7 @@ import {
 } from "./communication-api.js";
 import {
   createContactMailTransport,
+  MissingSmtpConfigurationError,
   type ContactMailTransport,
 } from "./contact-mail.js";
 import {
@@ -611,13 +613,32 @@ function equalSecret(left: string, right: string): boolean {
 }
 
 function securityHeaders(response: ServerResponse): void {
-  response.setHeader("Cache-Control", "no-store");
   response.setHeader(
     "Content-Security-Policy",
     "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
   );
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Content-Type-Options", "nosniff");
+}
+
+function cacheControlForAsset(asset: StaticAsset): string {
+  if (asset.contentType.startsWith("text/html")) {
+    return "no-store";
+  }
+  if (asset.file.endsWith(".json")) {
+    return "public, max-age=300";
+  }
+  return "public, max-age=86400";
+}
+
+function isCompressibleContentType(contentType: string): boolean {
+  return (
+    contentType.startsWith("text/") ||
+    contentType.startsWith("application/javascript") ||
+    contentType.startsWith("application/json") ||
+    contentType.startsWith("application/xml") ||
+    contentType.startsWith("application/manifest+json")
+  );
 }
 
 function escapeMeta(value: string): string {
@@ -703,6 +724,7 @@ function sendJson(
   securityHeaders(response);
   response.statusCode = status;
   response.setHeader("Content-Type", "application/json; charset=utf-8");
+  response.setHeader("Cache-Control", "no-store");
   response.end(JSON.stringify(value));
 }
 
@@ -713,6 +735,7 @@ async function sendClientAsset(
   revealAlphaNote = false,
   pathname = "/",
   headOnly = false,
+  acceptEncoding?: string,
 ): Promise<void> {
   const content = await readFile(join(clientDirectory, asset.file));
   let body = content;
@@ -725,10 +748,24 @@ async function sendClientAsset(
       "utf8",
     );
   }
+
+  const canGzip =
+    !headOnly &&
+    typeof acceptEncoding === "string" &&
+    /\bgzip\b/i.test(acceptEncoding) &&
+    body.byteLength > 512 &&
+    isCompressibleContentType(asset.contentType);
+  const payload = canGzip ? gzipSync(body) : body;
+
   securityHeaders(response);
   response.statusCode = status;
   response.setHeader("Content-Type", asset.contentType);
-  response.end(headOnly ? undefined : body);
+  response.setHeader("Cache-Control", cacheControlForAsset(asset));
+  response.setHeader("Vary", "Accept-Encoding");
+  if (canGzip) {
+    response.setHeader("Content-Encoding", "gzip");
+  }
+  response.end(headOnly ? undefined : payload);
 }
 
 async function readJson(request: IncomingMessage): Promise<unknown> {
@@ -972,15 +1009,21 @@ export function createLocalStewardServer(
           const status = error.code === "RATE_LIMITED" ? 429 : 400;
           sendJson(response, status, { error: { code: error.code } });
         } else if (error instanceof CommunicationDeliveryFailed) {
-          console.warn("[contact:mail:delivery-degraded]", {
-            endpoint: "/api/contact",
-            reason: error.code,
-          });
-          sendJson(response, 202, {
-            ok: true,
-            destination: "contact@alphasynthai.com",
-            warning: "DELIVERY_DEGRADED",
-          });
+          if ((environment.NODE_ENV?.trim() ?? "").toLowerCase() === "production") {
+            sendJson(response, 503, {
+              error: { code: "COMMUNICATION_DELIVERY_FAILED" },
+            });
+          } else {
+            console.warn("[contact:mail:delivery-degraded]", {
+              endpoint: "/api/contact",
+              reason: error.code,
+            });
+            sendJson(response, 202, {
+              ok: true,
+              destination: "contact@alphasynthai.com",
+              warning: "DELIVERY_DEGRADED",
+            });
+          }
         } else {
           sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
         }
@@ -1006,15 +1049,21 @@ export function createLocalStewardServer(
           const status = error.code === "RATE_LIMITED" ? 429 : 400;
           sendJson(response, status, { error: { code: error.code } });
         } else if (error instanceof CommunicationDeliveryFailed) {
-          console.warn("[contact:mail:delivery-degraded]", {
-            endpoint: "/api/feedback",
-            reason: error.code,
-          });
-          sendJson(response, 202, {
-            ok: true,
-            destination: "contact@alphasynthai.com",
-            warning: "DELIVERY_DEGRADED",
-          });
+          if ((environment.NODE_ENV?.trim() ?? "").toLowerCase() === "production") {
+            sendJson(response, 503, {
+              error: { code: "COMMUNICATION_DELIVERY_FAILED" },
+            });
+          } else {
+            console.warn("[contact:mail:delivery-degraded]", {
+              endpoint: "/api/feedback",
+              reason: error.code,
+            });
+            sendJson(response, 202, {
+              ok: true,
+              destination: "contact@alphasynthai.com",
+              warning: "DELIVERY_DEGRADED",
+            });
+          }
         } else {
           sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
         }
@@ -1085,7 +1134,7 @@ export function createLocalStewardServer(
         await sendClientAsset(response, {
           file: "alpha-access.html",
           contentType: "text/html; charset=utf-8",
-        }, 200, false, url.pathname, request.method === "HEAD");
+        }, 200, false, url.pathname, request.method === "HEAD", typeof request.headers["accept-encoding"] === "string" ? request.headers["accept-encoding"] : undefined);
       } catch {
         sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
       }
@@ -1104,6 +1153,7 @@ export function createLocalStewardServer(
           false,
           url.pathname,
           request.method === "HEAD",
+          typeof request.headers["accept-encoding"] === "string" ? request.headers["accept-encoding"] : undefined,
         );
       } catch {
         sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
@@ -1123,6 +1173,7 @@ export function createLocalStewardServer(
         alphaAccessEnabled && url.pathname === "/",
         url.pathname,
         request.method === "HEAD",
+        typeof request.headers["accept-encoding"] === "string" ? request.headers["accept-encoding"] : undefined,
       );
     } catch {
       sendJson(response, 500, { error: { code: "LOCAL_SERVER_ERROR" } });
@@ -1137,7 +1188,19 @@ const launchedDirectly =
 
 if (launchedDirectly) {
   const port = Number(process.env.PORT ?? defaultPort);
-  createLocalStewardServer().listen(port, host, () => {
-    console.log(`Steward local UI: http://${host}:${port}`);
-  });
+  try {
+    createLocalStewardServer().listen(port, host, () => {
+      console.log(`Steward local UI: http://${host}:${port}`);
+    });
+  } catch (error) {
+    if (error instanceof MissingSmtpConfigurationError) {
+      console.error("[contact:mail:configuration-error]", {
+        mode: process.env.NODE_ENV?.trim() || "development",
+        missing: error.missing,
+      });
+      process.exitCode = 1;
+    } else {
+      throw error;
+    }
+  }
 }

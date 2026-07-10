@@ -20,6 +20,16 @@ interface SmtpMailConfig {
   readonly defaultTo: string;
 }
 
+export class MissingSmtpConfigurationError extends Error {
+  readonly code = "SMTP_CONFIGURATION_MISSING";
+  readonly missing: ReadonlyArray<string>;
+
+  constructor(missing: ReadonlyArray<string>) {
+    super("SMTP_CONFIGURATION_MISSING");
+    this.missing = missing;
+  }
+}
+
 class SmtpMailTransport implements ContactMailTransport {
   constructor(
     private readonly transporter: nodemailer.Transporter,
@@ -55,11 +65,15 @@ class ConsoleMailTransport implements ContactMailTransport {
 export function createContactMailTransport(
   environment: NodeJS.ProcessEnv,
 ): ContactMailTransport {
+  const mode = environment.NODE_ENV?.trim() || "development";
   const host = environment.SMTP_HOST?.trim() ?? "";
   const port = Number(environment.SMTP_PORT?.trim() ?? "0");
   const secureRaw = (environment.SMTP_SECURE?.trim() ?? "").toLowerCase();
   const user = environment.SMTP_USER?.trim() ?? "";
   const pass = environment.SMTP_PASS?.trim() ?? "";
+  const streamTransport =
+    (environment.SMTP_STREAM_TRANSPORT?.trim() ?? "").toLowerCase() ===
+    "true";
   const from = environment.MAIL_FROM?.trim() || `Lifeschool <${contactInbox}>`;
   const defaultTo = environment.MAIL_TO?.trim() || contactInbox;
   const secure = secureRaw === "true";
@@ -70,26 +84,36 @@ export function createContactMailTransport(
     ["SMTP_SECURE", secureRaw === "true" || secureRaw === "false"],
     ["SMTP_USER", user.length > 0],
     ["SMTP_PASS", pass.length > 0],
-  ]
+  ] as const;
+  const missingFields = missing
     .filter(([, ok]) => !ok)
     .map(([name]) => name);
 
-  if (missing.length > 0) {
+  if (missingFields.length > 0 && !streamTransport) {
+    if (mode === "production") {
+      throw new MissingSmtpConfigurationError(missingFields);
+    }
     console.warn("[contact:mail:fallback]", {
-      mode: environment.NODE_ENV?.trim() || "development",
-      missing,
+      mode,
+      missing: missingFields,
     });
     return new ConsoleMailTransport();
   }
 
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure,
-    auth: {
-      user,
-      pass,
-    },
-  });
+  const transporter = streamTransport
+    ? nodemailer.createTransport({
+        streamTransport: true,
+        newline: "unix",
+        buffer: true,
+      })
+    : nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: {
+          user,
+          pass,
+        },
+      });
   return new SmtpMailTransport(transporter, { from, defaultTo });
 }

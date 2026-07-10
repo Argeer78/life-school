@@ -79,7 +79,16 @@ async function networkFirstPage(request) {
     }
 
     const offline = await caches.match("/offline.html");
-    return offline ?? new Response("Offline", { status: 503 });
+    if (offline !== undefined) {
+      return new Response(await offline.text(), {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-store",
+        },
+      });
+    }
+    return new Response("Offline", { status: 200 });
   }
 }
 
@@ -102,7 +111,7 @@ async function staleWhileRevalidate(request) {
   }
 
   const network = await refresh;
-  return network ?? new Response("Offline", { status: 503 });
+  return network ?? new Response("", { status: 204 });
 }
 
 /** @param {Request} request */
@@ -116,7 +125,7 @@ async function networkFirstStatic(request) {
     return response;
   } catch {
     const cached = await staticCache.match(request);
-    return cached ?? new Response("Offline", { status: 503 });
+    return cached ?? new Response("", { status: 204 });
   }
 }
 
