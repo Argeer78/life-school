@@ -1,4 +1,4 @@
-# Steward Foundation v1.0
+﻿# Steward Foundation v1.0
 
 Status: Certified freeze checkpoint
 
@@ -84,3 +84,14 @@ Platform work should preserve the learner-safe boundary and keep constitutional
 behavior traceable to the Foundation. New capabilities should be introduced
 only when they are necessary, constitutionally justified, and verified without
 weakening human dignity, freedom, or responsibility.
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+

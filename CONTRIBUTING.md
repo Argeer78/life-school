@@ -82,6 +82,23 @@ If a proposal conflicts with the Constitution, the Constitution prevails.
 
 ---
 
+# FP-001 Reference Discipline
+
+FP-001 is the canonical reference identifier for the Foundation Principle:
+
+Perfection may never be reached.
+
+Understanding can always deepen.
+
+Contributor usage guidance:
+
+- quote the full wording when defining the principle in foundational or public trust contexts,
+- reference FP-001 when cross-referencing principle use in policy, decisions, revision notes, or reviews,
+- express the idea indirectly in operational writing when direct quotation is unnecessary,
+- avoid forcing principle references in low-level technical content unless context requires it.
+
+---
+
 # The Contribution Process
 
 Every significant contribution follows the same process:

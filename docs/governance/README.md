@@ -1,4 +1,4 @@
-# Governance
+﻿# Governance
 
 This section contains the operational governance of Life School.
 
@@ -16,3 +16,16 @@ Topics that may eventually be defined here include:
 Governance documents are created only when the Foundation provides sufficient constitutional guidance.
 
 Until then, the Foundation remains the primary source of authority.
+
+Governance review and policy refinement should reference FP-001 where applicable, while remaining subordinate to constitutional authority.
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+

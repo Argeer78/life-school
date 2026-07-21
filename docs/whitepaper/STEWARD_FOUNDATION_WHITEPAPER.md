@@ -1,4 +1,4 @@
-Steward
+﻿Steward
 A Constitutionally Governed Conversational Reasoning System
 
 Foundation Edition v1.0
@@ -77,31 +77,31 @@ Every learner request passes through a constitutional pipeline.
 
 Learner
 
-↓
+v
 
 Strategy Selection
 
-↓
+v
 
 Behavior Planning
 
-↓
+v
 
 Provider Boundary
 
-↓
+v
 
 Provider Validation
 
-↓
+v
 
 Constitutional Review
 
-↓
+v
 
 Revision (if required)
 
-↓
+v
 
 Approved Response
 
@@ -293,3 +293,14 @@ It promises to help you examine questions honestly, think carefully, and remain 
 That is the purpose of Steward.
 
 No lies. No shortcuts. Think for yourself.
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+

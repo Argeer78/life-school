@@ -31,6 +31,12 @@ This Purpose is defined by **Constitutional Anchor CA-001**.
 ```
 docs/
 │
+├── foundation-notebook/
+│   Institutional reasoning notebooks (non-doctrinal)
+│
+├── institutional-learning/
+│   Institutional learning reviews, reflection, and memory process
+│
 ├── foundation/
 │   Constitutional Foundation
 │
@@ -152,13 +158,13 @@ Software
 
 Repository Status:
 
-**Foundation Edition v0.0.1 (Draft)**
+**Foundation Edition v1.0 (Release Ready)**
 
 Current focus:
 
-- Complete Foundation audit
-- Finalize Steward specification
-- Begin implementation of the first Life School systems
+- Publish the first official educational work (CUR-001)
+- Continue institutional learning through normal review cycles
+- Improve through publication, evidence, and revision
 
 ---
 

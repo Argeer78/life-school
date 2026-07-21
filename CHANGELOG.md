@@ -1,5 +1,35 @@
 # Changelog
 
+## CUR-001 Official Publication v1
+
+Release date: 2026-07-22
+
+Status: Official educational publication
+
+### Published
+
+- [CUR-001 Thinking Clearly](docs/curriculum/CUR-001-thinking-clearly.md) as
+  Lifeschool's first official educational publication;
+- publication release record:
+  [RELEASE_CURRICULUM_RC1.md](RELEASE_CURRICULUM_RC1.md);
+- the first publication preserves learner judgment, constitutional fidelity,
+  and transparent known limitations.
+
+### Validation
+
+- CUR-001 end-to-end review: PASS.
+- Learner Experience validation: PASS.
+- TypeScript typecheck passes.
+- 458 automated tests pass.
+- No constitutional changes.
+
+### Notes
+
+- This publication supersedes the previous release-candidate framing without
+  changing curriculum meaning.
+
+---
+
 ## Greek Localization v1
 
 Release date: 2026-07-06

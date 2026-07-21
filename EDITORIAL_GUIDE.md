@@ -186,6 +186,21 @@ When terminology changes, update the Constitution before updating derived docume
 
 ---
 
+# FP-001 Usage Discipline
+
+Use FP-001 consistently and without overuse.
+
+When writing, choose one of these levels intentionally:
+
+- Full wording: use when defining the principle in foundational or public trust statements.
+- FP-001 reference: use when documenting traceability across governance, decisions, revisions, and institutional learning.
+- Indirect reflection: use when operational text already communicates humility, reviewability, and correction.
+- No explicit reference: use in technical details where repeating the principle does not improve understanding.
+
+The goal is coherence, not repetition.
+
+---
+
 # Compression Before Expansion
 
 Whenever editing a document, ask:

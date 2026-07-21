@@ -4,7 +4,7 @@
 
 Version: 1.0
 
-Status: Curriculum Module Draft
+Status: Official Educational Publication
 
 Derived From:
 

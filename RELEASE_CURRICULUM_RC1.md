@@ -1,6 +1,6 @@
-# CUR-001 Release Candidate 1
+﻿# CUR-001 Official Publication v1
 
-Status: Curriculum release candidate
+Status: Official educational publication
 
 Foundation baseline: Foundation v1.0 Certified
 
@@ -18,7 +18,7 @@ Verification: 458 automated tests passing
 
 ## Purpose
 
-CUR-001 Release Candidate 1 establishes the first complete Lifeschool
+CUR-001 Official Publication v1 establishes the first complete Lifeschool
 curriculum module over Steward's certified learner-safe conversation pipeline.
 
 Thinking Clearly gives learners a structured way to separate observations,
@@ -26,9 +26,9 @@ feelings, assumptions, interpretations, evidence, alternatives, consequences,
 and open questions. It teaches examination rather than obedience and preserves
 learner judgment throughout.
 
-## Completed work
+## Published scope
 
-This release candidate includes:
+This publication includes:
 
 - **CUR-000 Curriculum Architecture**, defining the relationship between
   curriculum, Steward, learner judgment, exercises, and completion;
@@ -52,14 +52,14 @@ This release candidate includes:
 
 ## Validation
 
-Release Candidate 1 has been validated through:
+The publication has been validated through:
 
-- **CUR-001 Review: PASS** — the module home, six lessons, required lesson
+- **CUR-001 Review: PASS** - the module home, six lessons, required lesson
   sections, exercises, handoffs, navigation, completion behavior, and overall
   Lifeschool learning experience were reviewed end to end;
-- **Learner Experience: PASS** — the curriculum retains the learner-safe,
+- **Learner Experience: PASS** - the curriculum retains the learner-safe,
   calm, practical, non-controlling experience established by LX-001;
-- **458 automated tests: PASS** — the complete test suite passes;
+- **458 automated tests: PASS** - the complete test suite passes;
 - TypeScript typecheck: PASS;
 - mobile browser smoke tests: PASS;
 - confirmation that curriculum output does not expose privileged trace,
@@ -77,6 +77,9 @@ Release Candidate 1 has been validated through:
 These limitations are intentional for the release candidate. They keep the
 initial learning experience simple and avoid introducing data collection,
 tracking, or learner identity systems without separate examination.
+
+For this first official publication, the same limitations remain intentional to
+preserve learner safety, simplicity, and constitutional fidelity.
 
 ## Recommended next phase: Curriculum Expansion
 
@@ -96,3 +99,15 @@ Expansion should add substantive learning opportunities without introducing
 accounts, persistence, tracking, or engagement mechanics by default.
 
 No lies. No shortcuts. Think for yourself.
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+
+

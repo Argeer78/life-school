@@ -1,4 +1,4 @@
-# Roadmap
+﻿# Roadmap
 
 Version: Foundation Edition v0.0.1 (Draft)
 
@@ -12,7 +12,7 @@ The objective is to complete, audit, and approve the constitutional and editoria
 
 ---
 
-# Phase 1 — Foundation
+# Phase 1 - Foundation
 
 Status: In Progress
 
@@ -27,7 +27,7 @@ Goals:
 
 ---
 
-# Phase 2 — Steward Behavior
+# Phase 2 - Steward Behavior
 
 Status: Pending
 
@@ -42,7 +42,7 @@ Goals:
 
 ---
 
-# Phase 3 — First Prototype
+# Phase 3 - First Prototype
 
 Status: Pending
 
@@ -55,7 +55,7 @@ Goals:
 
 ---
 
-# Phase 4 — Question Library
+# Phase 4 - Question Library
 
 Status: Pending
 
@@ -67,7 +67,7 @@ Goals:
 
 ---
 
-# Phase 5 — Public Alpha
+# Phase 5 - Public Alpha
 
 Status: Pending
 
@@ -86,3 +86,15 @@ The roadmap may change.
 The Purpose does not.
 
 Every phase exists only to help Life School fulfill CA-001.
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+
+

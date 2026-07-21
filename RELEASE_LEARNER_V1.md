@@ -1,4 +1,4 @@
-# Steward Learner Product v1
+﻿# Steward Learner Product v1
 
 Status: Learner product release checkpoint
 
@@ -31,7 +31,7 @@ The product includes:
 - a Clear conversation control;
 - clear identity text explaining that Steward supports examination without
   replacing learner judgment;
-- the slogan, “No lies. No shortcuts. Think for yourself.”;
+- the slogan, "No lies. No shortcuts. Think for yourself.";
 - a visible statement that Steward is not a therapist, emergency service, or
   final authority;
 - LX-001 Learner Experience Principles;
@@ -117,3 +117,15 @@ Curriculum work should:
 
 The curriculum should strengthen what Steward helps learners do without
 turning Steward into an authority over what learners must believe or become.
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+
+

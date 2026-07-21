@@ -1,4 +1,4 @@
-# Life School Documentation Index
+﻿# Life School Documentation Index
 
 Version: Foundation Edition v1.0
 
@@ -20,43 +20,51 @@ It does not create constitutional authority.
 
 Purpose
 
-↓
+v
 
 CA Constitution
 
-↓
+v
 
 LS Foundation
 
-↓
+v
+
+FN Foundation Notebook (Institutional Memory)
+
+v
 
 ST Steward
 
-↓
+v
 
 CS Conversation Strategies
 
-↓
+v
 
 EN Constitutional Engine
 
-↓
+v
 
 VR Verification
 
-↓
+v
 
 PB Provider Boundary
 
-↓
+v
 
 AR Architecture
 
-↓
+v
+
+IL Institutional Learning (Operational Memory)
+
+v
 
 Implementation
 
-↓
+v
 
 Infrastructure
 
@@ -64,7 +72,7 @@ Infrastructure
 
 # Constitutional Documents
 
-## CA — Constitution
+## CA - Constitution
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -72,7 +80,7 @@ Infrastructure
 
 ---
 
-## LS — Foundation
+## LS - Foundation
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -88,7 +96,39 @@ Infrastructure
 
 ---
 
-## ST — Steward
+## FP - Foundation Principle Reference
+
+| ID | Title | Status |
+|----|-------|--------|
+| FP-001 | Perfection may never be reached. Understanding can always deepen. | Stable Reference |
+
+Location:
+
+- Anchored in CA-001.
+- Introduced in LS-000.
+
+---
+
+## FN - Foundation Notebook
+
+Status:
+
+Institutional Memory (Non-Authoritative)
+
+Purpose:
+
+Preserve reasoning behind important discoveries while Life School is still learning.
+
+| ID | Title | Status |
+|----|-------|--------|
+| FN-001 | The Day LifeSchool Became the First Student | Open Notebook |
+| FN-002 | Perfection May Never Be Reached. Understanding Can Always Deepen. | Open Notebook |
+| FN-003 | Why Documentation Should Preserve Reasoning | Open Notebook |
+| FN-004 | Why "Why this exists ->" Matters | Open Notebook |
+
+---
+
+## ST - Steward
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -96,7 +136,7 @@ Infrastructure
 
 ---
 
-## CS — Conversation Strategies
+## CS - Conversation Strategies
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -116,7 +156,7 @@ Infrastructure
 
 ---
 
-## EN — Constitutional Engine
+## EN - Constitutional Engine
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -128,7 +168,7 @@ Infrastructure
 
 ---
 
-## VR — Verification
+## VR - Verification
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -137,7 +177,7 @@ Infrastructure
 
 ---
 
-## PB — Provider Boundary
+## PB - Provider Boundary
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -151,7 +191,7 @@ Infrastructure
 
 ---
 
-## AR — Architecture
+## AR - Architecture
 
 | ID | Title | Status |
 |----|-------|--------|
@@ -164,19 +204,41 @@ Infrastructure
 
 ---
 
+## IL - Institutional Learning
+
+Status:
+
+Operational Architecture (Non-Constitutional)
+
+Purpose:
+
+Define how LifeSchool documents institutional learning over time.
+
+| ID | Title | Status |
+|----|-------|--------|
+| IL-000 | Institutional Learning System | Operational Draft |
+| IL-001 | Learning Reviews | Operational Draft |
+| IL-002 | Reflection Reports | Operational Draft |
+| IL-003 | Revision History | Operational Draft |
+| IL-004 | Question History | Operational Draft |
+| IL-005 | Institutional Memory | Operational Draft |
+| IL-006 | Public Learning Transparency | Operational Draft |
+
+---
+
 # Current Milestone
 
 Foundation Edition v1.0
 
 Status:
 
-✓ Constitutional Architecture Complete
+- [x] Constitutional Architecture Complete
 
-✓ Deterministic Prototype Complete
+- [x] Deterministic Prototype Complete
 
-✓ Engine Verification Complete
+- [x] Engine Verification Complete
 
-✓ Provider Boundary Defined
+- [x] Provider Boundary Defined
 
 Current Phase:
 
@@ -202,47 +264,47 @@ scripts/
 
 Purpose
 
-↓
+v
 
 CA
 
-↓
+v
 
 LS
 
-↓
+v
 
 ST
 
-↓
+v
 
 CS
 
-↓
+v
 
 EN
 
-↓
+v
 
 VR
 
-↓
+v
 
 PB
 
-↓
+v
 
 AR
 
-↓
+v
 
 Implementation
 
-↓
+v
 
 Tests
 
-↓
+v
 
 Deployment
 
@@ -251,3 +313,14 @@ Deployment
 # Change History
 
 See CHANGELOG.md
+---
+
+## Foundation Principle Reference
+
+See CA-001 (FP-001) for canonical wording and interpretation.
+
+
+
+
+
+
