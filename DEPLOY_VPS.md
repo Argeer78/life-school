@@ -13,7 +13,7 @@ learner experience remain unchanged.
 | Deployment root | Repository root |
 | Application user | `lifeschool` |
 | Application path | `/home/lifeschool/apps/lifeschool` |
-| Node.js | `22.x` |
+| Node.js | `22.x` or `24.x` |
 | Application command | `npm start` |
 | Internal address | `127.0.0.1:3048` |
 | PM2 process | `lifeschool` |
@@ -43,7 +43,7 @@ dig +short lifesh.app
 dig +short www.lifesh.app
 ```
 
-## 2. Prepare Ubuntu and Node.js 22
+## 2. Prepare Ubuntu and Node.js (22.x or 24.x)
 
 Install the operating-system dependencies:
 
@@ -52,10 +52,13 @@ sudo apt update
 sudo apt install -y curl git nginx
 ```
 
-Install Node.js 22 from the NodeSource Ubuntu repository:
+Install Node.js from the NodeSource Ubuntu repository. Choose the major line
+that matches your deployment target (`24` for parity with current VPS,
+`22` remains fully supported):
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x -o /tmp/nodesource_setup.sh
+NODE_MAJOR=24
+curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x -o /tmp/nodesource_setup.sh
 sudo -E bash /tmp/nodesource_setup.sh
 sudo apt install -y nodejs
 rm /tmp/nodesource_setup.sh
@@ -63,7 +66,7 @@ node --version
 npm --version
 ```
 
-`node --version` must report Node.js `v22.x`.
+`node --version` must report either Node.js `v22.x` or `v24.x`.
 
 Install PM2:
 
@@ -488,7 +491,7 @@ Use this checklist for each update:
 
 The repository-root package is compatible with this VPS plan:
 
-- `engines.node` requires Node.js `22.x`.
+- `engines.node` supports Node.js `22.x` and `24.x`.
 - `npm install` installs the root production and build dependencies.
 - `npm run build` compiles the Steward application into
   `platform/steward-app/dist`.

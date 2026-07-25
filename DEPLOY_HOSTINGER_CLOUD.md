@@ -9,7 +9,7 @@
 | Repository root | repository checkout root |
 | Deployment root | repository root (`.`) |
 | Framework preset | `Express.js` |
-| Node.js version | `22.x` |
+| Node.js version | `22.x` or `24.x` |
 | Package manager | `npm` |
 | Install command | `npm install` |
 | Build command | `npm run build` |
@@ -95,7 +95,7 @@ externally.
 3. Select `Argeer78/life-school` and branch `main`.
 4. Keep the root directory at the repository root (`.`).
 5. Confirm Hostinger detects the **Express.js** framework preset.
-6. Select Node.js `22.x`.
+6. Select Node.js `24.x` for VPS parity (or `22.x`, also supported).
 7. Confirm the package manager is `npm`.
 8. Set the install command to `npm install`.
 9. Set the build command to `npm run build`.

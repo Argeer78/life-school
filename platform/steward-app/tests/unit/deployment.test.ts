@@ -3,6 +3,8 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
+const SUPPORTED_NODE_ENGINES = "22.x || 24.x";
+
 interface PackageMetadata {
   readonly name?: string;
   readonly version?: string;
@@ -22,7 +24,7 @@ describe("production deployment metadata", () => {
     expect(packageJson.name).toBeTruthy();
     expect(packageJson.version).toBeTruthy();
     expect(packageJson.private).toBe(true);
-    expect(packageJson.engines?.node).toBe("22.x");
+    expect(packageJson.engines?.node).toBe(SUPPORTED_NODE_ENGINES);
     expect(packageJson.main).toBe("dist/server/production-server.js");
     expect(packageJson.scripts).toMatchObject({
       dev: expect.any(String),
@@ -41,7 +43,7 @@ describe("production deployment metadata", () => {
     ) as PackageMetadata;
 
     expect(rootPackage.private).toBe(true);
-    expect(rootPackage.engines?.node).toBe("22.x");
+    expect(rootPackage.engines?.node).toBe(SUPPORTED_NODE_ENGINES);
     expect(rootPackage.main).toBe("app.js");
     expect(rootPackage.scripts).toMatchObject({
       install: "node scripts/install.mjs",
