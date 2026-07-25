@@ -19,6 +19,12 @@ learner experience remain unchanged.
 | PM2 process | `lifeschool` |
 | Domains | `lifesh.app`, `www.lifesh.app` |
 
+PM2 process naming is standardized on `lifeschool` in this repository.
+If an existing server still uses `lifesh`, do not rename it during an active
+incident. First validate current state with `pm2 status`, then migrate during a
+planned maintenance window by creating `lifeschool`, validating traffic, and
+removing the legacy process.
+
 Run system-administration commands from an existing Ubuntu user with `sudo`
 access. Run repository, npm, and PM2 commands as `lifeschool`.
 
@@ -187,9 +193,30 @@ MAIL_TO=contact@alphasynthai.com
 ```
 
 Never commit `.env` or print the API key. The repository root server reads
-environment variables from the process; it does not load `.env` automatically.
-Before starting or restarting the application, load the file into the current
-shell:
+environment variables using the precedence below.
+
+Environment variable precedence for `npm start` (`app.js`):
+
+1. Process environment variables take precedence (recommended production mode).
+2. Optional fallback file `platform/steward-app/.env` is loaded only if present.
+
+When fallback is used:
+
+- `platform/steward-app/.env` exists.
+- a variable is not already defined in the process environment.
+
+When fallback is ignored for a variable:
+
+- the variable is already defined in the process environment.
+
+Recommended production configuration on VPS:
+
+- keep canonical deployment values in repository-root `.env` (not committed),
+- export it into the process before PM2 start/restart,
+- treat `platform/steward-app/.env` as optional fallback only.
+
+Before starting or restarting the application, load root `.env` into the
+current shell:
 
 ```bash
 set -a
@@ -332,6 +359,30 @@ sudo systemctl status pm2-lifeschool
 
 After upgrading Node.js or PM2, regenerate the PM2 startup configuration so its
 systemd service uses the current executable paths.
+
+## 10.1 VPS restart recovery procedure
+
+After a VPS reboot, re-assert environment and PM2 state with the canonical
+process name `lifeschool`:
+
+```bash
+sudo -iu lifeschool
+cd /home/lifeschool/apps/lifeschool
+set -a
+source .env
+set +a
+pm2 restart lifeschool --update-env
+pm2 save
+pm2 status lifeschool
+curl --fail --show-error http://localhost:3048/health
+```
+
+If the PM2 service is not active after reboot, verify and start it:
+
+```bash
+sudo systemctl status pm2-lifeschool
+sudo systemctl start pm2-lifeschool
+```
 
 ## 11. Configure Nginx
 
@@ -499,6 +550,26 @@ The repository-root package is compatible with this VPS plan:
 - `app.js` reads `HOST` and `PORT`; the VPS configuration binds it to
   `127.0.0.1:3048`.
 - `GET /health` returns HTTP `200` with `{"status":"ok"}`.
+
+## Dependency maintenance
+
+Current deferred advisory (no dependency upgrade in this change):
+
+- Advisory: GHSA-r28c-9q8g-f849
+- Affected package: `postcss` (transitive)
+- Dependency path: `lifeschool` -> `vitest` -> `vite` -> `postcss`
+- Production impact: none detected (`npm audit --omit=dev` reports zero
+  production vulnerabilities)
+- Development impact: affects development/test tooling dependency graph
+- Deferral reason: this runbook alignment change is documentation-only and does
+  not include unrelated dependency updates
+
+Normal maintenance policy:
+
+- review `npm audit` during scheduled dependency maintenance,
+- apply non-breaking updates in a dedicated dependency PR,
+- re-run `npm ci`, `npm run typecheck`, `npm test`, and `npm run build` after
+  the update.
 
 ## References
 

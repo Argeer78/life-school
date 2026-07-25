@@ -63,6 +63,18 @@ The production server:
 Add production values in hPanel under the Node.js application's environment
 variables. Do not commit `.env.local`, `.env`, or API keys.
 
+Environment variable precedence for `npm start` (`app.js`):
+
+1. Process environment variables from Hostinger hPanel (recommended production mode).
+2. Optional fallback file `platform/steward-app/.env` loaded only if present and
+     only for variables not already defined in the process environment.
+
+Hostinger recommendation:
+
+- set all production variables in hPanel,
+- keep `platform/steward-app/.env` absent in cloud deployments unless you
+    intentionally need fallback defaults.
+
 | Variable | Required | Production value or purpose |
 |---|---|---|
 | `NODE_ENV` | Yes | `production` |
@@ -133,6 +145,25 @@ revert rather than rewriting branch history:
 If a deployment fails before becoming active, leave the existing deployment in
 place, correct the configuration or code on a new commit, and redeploy. Do not
 commit secrets or force-push `main` as a rollback mechanism.
+
+## Dependency maintenance
+
+Current deferred advisory (no dependency upgrade in this documentation change):
+
+- Advisory: GHSA-r28c-9q8g-f849
+- Affected package: `postcss` (transitive)
+- Dependency path: `lifeschool` -> `vitest` -> `vite` -> `postcss`
+- Production impact: none detected (`npm audit --omit=dev` reports zero
+    production vulnerabilities)
+- Development impact: affects development/test tooling dependency graph
+- Deferral reason: deployment documentation alignment should not bundle
+    unrelated dependency upgrades
+
+Normal maintenance policy:
+
+- review `npm audit` during scheduled dependency maintenance,
+- apply non-breaking updates in a dedicated dependency PR,
+- re-run `npm ci`, `npm run typecheck`, `npm test`, and `npm run build`.
 
 ## Official Hostinger References
 

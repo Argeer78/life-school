@@ -168,6 +168,24 @@ Current focus:
 
 ---
 
+# Production Operations Note
+
+For deployment behavior and commands, use:
+
+- DEPLOY_VPS.md
+- DEPLOY_HOSTINGER_CLOUD.md
+
+Environment variable precedence in production runtime (`npm start`):
+
+1. Process environment variables (recommended deployment mode).
+2. Optional fallback `platform/steward-app/.env` if present, only for
+        variables not already set in the process environment.
+
+PM2 process naming for VPS operations is standardized as `lifeschool` in
+`DEPLOY_VPS.md`.
+
+---
+
 # Closing
 
 Life School is never considered complete.
