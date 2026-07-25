@@ -798,6 +798,16 @@ h3 {
   text-underline-offset: 0.2rem;
 }
 
+.module-preview a.primary-link,
+.module-preview a.primary-link:visited {
+  color: #fff;
+}
+
+.module-preview a.secondary-link,
+.module-preview a.secondary-link:visited {
+  color: var(--brand);
+}
+
 .info-header {
   position: relative;
   margin-top: 1rem;
