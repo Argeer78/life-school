@@ -59,6 +59,18 @@ function containsRefusal(value: unknown): boolean {
   return record.type === "refusal" || Object.values(record).some(containsRefusal);
 }
 
+function isInsufficientQuotaError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const record = error as Error & {
+    status?: number;
+    code?: string;
+    type?: string;
+  };
+  const code = String(record.code ?? "").toLowerCase();
+  const type = String(record.type ?? "").toLowerCase();
+  return record.status === 429 && (code === "insufficient_quota" || type === "insufficient_quota");
+}
+
 export function mapOpenAIError(error: unknown): ProviderBoundaryError {
   if (error instanceof ProviderBoundaryError) return error;
   if (
@@ -85,6 +97,9 @@ export function mapOpenAIError(error: unknown): ProviderBoundaryError {
         error.name,
       ))
   ) {
+    if (isInsufficientQuotaError(error)) {
+      return new ProviderBoundaryError("PB-FAIL-006", "OPENAI_INSUFFICIENT_QUOTA");
+    }
     return new ProviderBoundaryError("PB-FAIL-006", "OPENAI_API_ERROR");
   }
   return new ProviderBoundaryError("PB-FAIL-007", "OPENAI_UNKNOWN_ERROR");
@@ -243,6 +258,7 @@ export class OpenAIGenerationProvider implements GenerationProvider {
       console.error("[provider:openai:generate:error]", {
         model: this.model,
         timeoutMs: this.timeoutMs,
+        quotaDepleted: isInsufficientQuotaError(error),
         error: errorDetails(error),
       });
       throw mapOpenAIError(error);

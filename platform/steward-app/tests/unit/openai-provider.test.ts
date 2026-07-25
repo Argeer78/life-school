@@ -582,6 +582,23 @@ describe("OpenAI generation provider", () => {
     expect(mapOpenAIError(error).category).toBe(category);
   });
 
+  it("maps OpenAI insufficient_quota to PB-FAIL-006 with explicit audit code", () => {
+    const error = new Error("You exceeded your current quota") as Error & {
+      status?: number;
+      code?: string;
+      type?: string;
+    };
+    error.name = "RateLimitError";
+    error.status = 429;
+    error.code = "insufficient_quota";
+    error.type = "insufficient_quota";
+
+    expect(mapOpenAIError(error)).toMatchObject({
+      category: "PB-FAIL-006",
+      auditCode: "OPENAI_INSUFFICIENT_QUOTA",
+    });
+  });
+
   it("keeps fake mode as the default and requires explicit OpenAI mode", () => {
     const factory = vi.fn(
       (): GenerationProvider => ({
@@ -645,6 +662,46 @@ describe("OpenAI generation provider", () => {
       kind: "fallback",
       text: preApprovedFallbacks.TECHNICAL_LIMITATION.text,
       revisions: 0,
+    });
+  });
+
+  it("returns a friendly learner-safe message for OpenAI insufficient quota", async () => {
+    const quotaError = new Error("You exceeded your current quota") as Error & {
+      status?: number;
+      code?: string;
+      type?: string;
+    };
+    quotaError.name = "RateLimitError";
+    quotaError.status = 429;
+    quotaError.code = "insufficient_quota";
+    quotaError.type = "insufficient_quota";
+
+    const provider = new OpenAIGenerationProvider({
+      client: {
+        create: async () => {
+          throw quotaError;
+        },
+      },
+      timeoutMs: 100,
+    });
+
+    const model = createLocalDemoFakeModel(
+      "Help me examine this.",
+      provider,
+    );
+    const result = await runConstitutionalConversation(
+      model,
+      "Help me examine this.",
+    );
+
+    expect(result.learnerResponse).toEqual({
+      kind: "fallback",
+      text: "The AI service is temporarily unavailable. Please try again later.",
+      revisions: 0,
+    });
+    expect(result.inspection.responseGeneration.error).toMatchObject({
+      providerFailure: "PB-FAIL-006",
+      providerAuditCode: "OPENAI_INSUFFICIENT_QUOTA",
     });
   });
 

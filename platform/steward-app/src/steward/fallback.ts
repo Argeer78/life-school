@@ -50,6 +50,7 @@ export interface CurrentSessionContext {
   readonly behaviorPlanAvailable: boolean;
   readonly failureReason: FallbackReason;
   readonly providerFailure: ProviderFailureCategory | null;
+  readonly providerAuditCode?: string | null;
 }
 
 export interface FallbackSelectionInput {
@@ -230,6 +231,19 @@ export const preApprovedFallbackVariants = {
       ],
     },
   },
+  OPENAI_INSUFFICIENT_QUOTA: {
+    category: "TECHNICAL_LIMITATION",
+    text: "The AI service is temporarily unavailable. Please try again later.",
+    approval: {
+      status: "PRE_APPROVED",
+      approvalId: "EN-005-FB-013",
+      constitutionalReferences: [
+        "LS-004:the-limits-of-life-school",
+        "LS-004:humility",
+        "LS-002:human-freedom",
+      ],
+    },
+  },
 } as const satisfies Record<string, PreApprovedFallback>;
 
 function ethicalBoundaryFallbackFor(
@@ -273,6 +287,13 @@ function fallbackFor(input: FallbackSelectionInput): PreApprovedFallback {
     input.currentSessionContext.providerFailure === "PB-FAIL-005"
   ) {
     return preApprovedFallbackVariants.SELF_WORTH_PROVIDER_REFUSAL;
+  }
+
+  if (
+    input.currentSessionContext.failureReason === "response-generation-failed" &&
+    input.currentSessionContext.providerAuditCode === "OPENAI_INSUFFICIENT_QUOTA"
+  ) {
+    return preApprovedFallbackVariants.OPENAI_INSUFFICIENT_QUOTA;
   }
 
   if (

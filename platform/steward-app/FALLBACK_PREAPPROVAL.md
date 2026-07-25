@@ -24,6 +24,7 @@ pre-approval until it is examined and approved again.
 | EN-005-FB-010 | Ethical boundary — deception | I can't help deceive someone or make a lie believable. Use a truthful proposal or repair step instead: state what you want, give the real reasons, and correct any fact you previously misrepresented. |
 | EN-005-FB-011 | Ethical boundary — intimidation | I can't help scare or intimidate someone into listening. Frustration can be expressed without threats. Try saying: “This matters because __; if we cannot resolve it, I will __,” using a boundary you control. |
 | EN-005-FB-012 | Ethical boundary — dependency | I can't help create emotional dependence or reduce another person's autonomy. Wanting closeness is understandable, but connection should be mutual and consent-based. Try asking: “I would like more closeness; what level of contact feels comfortable and mutual to you?” |
+| EN-005-FB-013 | Technical limitation — OpenAI quota | The AI service is temporarily unavailable. Please try again later. |
 
 ## Permitted pre-planning path
 

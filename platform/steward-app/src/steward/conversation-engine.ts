@@ -6,6 +6,7 @@ import {
 } from "../provider/contract.js";
 import {
   classifyProviderFailure,
+  providerAuditCode,
   type ProviderFailureCategory,
 } from "../provider/failure.js";
 import { validateProviderResult } from "../provider/validation.js";
@@ -51,6 +52,7 @@ export type StepStatus = "completed" | "failed" | "skipped" | "not-required";
 export interface InspectionError {
   readonly code: EngineErrorCode;
   readonly providerFailure?: ProviderFailureCategory;
+  readonly providerAuditCode?: string;
 }
 
 export type EngineErrorCode =
@@ -141,6 +143,7 @@ function failed<T>(
 
 function providerFailed<T>(
   category: ProviderFailureCategory,
+  auditCode: string | null,
   value: T | null = null,
 ): StepTrace<T> {
   return {
@@ -149,6 +152,7 @@ function providerFailed<T>(
     error: {
       code: "RESPONSE_GENERATION_ERROR",
       providerFailure: category,
+      ...(auditCode === null ? {} : { providerAuditCode: auditCode }),
     },
   };
 }
@@ -174,6 +178,8 @@ function fallbackResult(
       failureReason: reason,
       providerFailure:
         inspection.responseGeneration.error?.providerFailure ?? null,
+      providerAuditCode:
+        inspection.responseGeneration.error?.providerAuditCode ?? null,
     },
   });
   return {
@@ -312,7 +318,10 @@ export async function runConstitutionalConversation(
   } catch (error) {
     inspection = {
       ...inspection,
-      responseGeneration: providerFailed(classifyProviderFailure(error)),
+      responseGeneration: providerFailed(
+        classifyProviderFailure(error),
+        providerAuditCode(error),
+      ),
     };
     return fallbackResult(
       inspection,

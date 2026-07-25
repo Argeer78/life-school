@@ -28,3 +28,10 @@ export function classifyProviderFailure(
   if (error instanceof Error) return "PB-FAIL-006";
   return "PB-FAIL-007";
 }
+
+export function providerAuditCode(
+  error: unknown,
+): string | null {
+  if (error instanceof ProviderBoundaryError) return error.auditCode;
+  return null;
+}
