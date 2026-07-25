@@ -599,6 +599,14 @@ h3 {
   background: color-mix(in srgb, var(--panel) 96%, transparent);
 }
 
+.primary-link:visited {
+  color: #fff;
+}
+
+.secondary-link:visited {
+  color: var(--brand);
+}
+
 .primary-link:hover,
 .secondary-link:hover {
   transform: translateY(-1px);
@@ -744,6 +752,26 @@ h3 {
 
 .module-card a {
   width: fit-content;
+  border: 1px solid var(--brand);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.95rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  font-size: 0.84rem;
+  font-weight: 760;
+  text-decoration: none;
+  text-underline-offset: 0;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.module-card a:visited {
+  color: #fff;
+}
+
+.module-card a:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.06);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.14);
 }
 
 .module-preview p:not(.eyebrow),
@@ -867,6 +895,19 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 0.42rem;
+}
+
+@media (min-width: 841px) {
+  .site-footer-links > .site-footer-column:last-of-type {
+    grid-column: span 3;
+    min-width: 20rem;
+  }
+
+  .site-footer-links > .site-footer-column:last-of-type .site-share-actions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
 }
 
 .site-share-actions button,

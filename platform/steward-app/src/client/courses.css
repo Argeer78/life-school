@@ -297,6 +297,10 @@ button {
   cursor: pointer;
 }
 
+.primary-link:visited {
+  color: #fff;
+}
+
 .learning-note {
   margin: 1rem 0 0;
   text-align: center;
