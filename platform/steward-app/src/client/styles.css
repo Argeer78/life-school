@@ -1500,7 +1500,13 @@ h3 {
 }
 
 .press-block h3 {
-  margin: 0;
+  margin: 0 0 0.45rem;
+}
+
+.press-block .primary-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.15rem;
 }
 
 .press-block p,
